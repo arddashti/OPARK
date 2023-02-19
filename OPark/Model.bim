@@ -3,6 +3,330 @@
   "compatibilityLevel": 1500,
   "model": {
     "culture": "en-US",
+    "dataSources": [
+      {
+        "type": "structured",
+        "name": "SQL/192 168 26 26;OPARK_BI",
+        "connectionDetails": {
+          "protocol": "tds",
+          "address": {
+            "server": "192.168.26.26",
+            "database": "OPARK_BI"
+          },
+          "authentication": null,
+          "query": null
+        },
+        "credential": {
+          "AuthenticationKind": "UsernamePassword",
+          "Username": "sa",
+          "EncryptConnection": false
+        }
+      }
+    ],
+    "tables": [
+      {
+        "name": "bi DimDate",
+        "columns": [
+          {
+            "name": "Miladi",
+            "dataType": "string",
+            "sourceColumn": "Miladi"
+          },
+          {
+            "name": "Jalali_1",
+            "dataType": "string",
+            "sourceColumn": "Jalali_1"
+          },
+          {
+            "name": "Jalali_2",
+            "dataType": "string",
+            "sourceColumn": "Jalali_2"
+          },
+          {
+            "name": "Jalali_3",
+            "dataType": "string",
+            "sourceColumn": "Jalali_3"
+          },
+          {
+            "name": "Miladi (#1)",
+            "dataType": "string",
+            "sourceColumn": "Miladi (#1)"
+          },
+          {
+            "name": "jyear",
+            "dataType": "string",
+            "sourceColumn": "jyear"
+          },
+          {
+            "name": "mmonthN",
+            "dataType": "int64",
+            "sourceColumn": "mmonthN"
+          },
+          {
+            "name": "jmonthN",
+            "dataType": "int64",
+            "sourceColumn": "jmonthN"
+          },
+          {
+            "name": "mmonthT",
+            "dataType": "string",
+            "sourceColumn": "mmonthT"
+          },
+          {
+            "name": "jmonthT",
+            "dataType": "string",
+            "sourceColumn": "jmonthT"
+          },
+          {
+            "name": "mnime",
+            "dataType": "string",
+            "sourceColumn": "mnime"
+          },
+          {
+            "name": "jnime",
+            "dataType": "string",
+            "sourceColumn": "jnime"
+          },
+          {
+            "name": "JquarterN",
+            "dataType": "int64",
+            "sourceColumn": "JquarterN"
+          },
+          {
+            "name": "JQuarterT",
+            "dataType": "string",
+            "sourceColumn": "JQuarterT"
+          },
+          {
+            "name": "MquarterN",
+            "dataType": "int64",
+            "sourceColumn": "MquarterN"
+          },
+          {
+            "name": "JWeekDay",
+            "dataType": "string",
+            "sourceColumn": "JWeekDay"
+          },
+          {
+            "name": "MWeekDay",
+            "dataType": "string",
+            "sourceColumn": "MWeekDay"
+          },
+          {
+            "name": "MWeekNum",
+            "dataType": "int64",
+            "sourceColumn": "MWeekNum"
+          },
+          {
+            "name": "JWeekNum",
+            "dataType": "int64",
+            "sourceColumn": "JWeekNum"
+          },
+          {
+            "name": "date_search",
+            "dataType": "string",
+            "sourceColumn": "date_search"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Sql.Databases(\"192.168.26.26\"),",
+                "    OPARK_BI = Source{[Name=\"OPARK_BI\"]}[Data],",
+                "    bi_DimDate = OPARK_BI{[Schema=\"bi\",Item=\"DimDate\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(bi_DimDate,\"ي\",\"ی\",Replacer.ReplaceText,{\"Miladi\", \"jmonthT\", \"jnime\", \"JQuarterT\", \"JWeekDay\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah cash_detail",
+        "columns": [
+          {
+            "name": "description",
+            "dataType": "string",
+            "sourceColumn": "description"
+          },
+          {
+            "name": "amount",
+            "dataType": "double",
+            "sourceColumn": "amount"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          },
+          {
+            "name": "max_indicator",
+            "dataType": "string",
+            "sourceColumn": "max_indicator"
+          },
+          {
+            "name": "id",
+            "dataType": "string",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "type_description",
+            "dataType": "int64",
+            "sourceColumn": "type_description"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Sql.Databases(\"192.168.26.26\"),",
+                "    OPARK_BI = Source{[Name=\"OPARK_BI\"]}[Data],",
+                "    rah_cash_detail = OPARK_BI{[Schema=\"rah\",Item=\"cash_detail\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_cash_detail,\"ي\",\"ی\",Replacer.ReplaceText,{\"description\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "bi last_refresh_time_knime",
+        "columns": [
+          {
+            "name": "Time",
+            "dataType": "string",
+            "sourceColumn": "Time"
+          },
+          {
+            "name": "Date",
+            "dataType": "string",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Miladi_report_date",
+            "dataType": "string",
+            "sourceColumn": "Miladi_report_date"
+          },
+          {
+            "name": "report_date",
+            "dataType": "string",
+            "sourceColumn": "report_date"
+          },
+          {
+            "name": "today_index_no",
+            "dataType": "int64",
+            "sourceColumn": "today_index_no"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Sql.Databases(\"192.168.26.26\"),",
+                "    OPARK_BI = Source{[Name=\"OPARK_BI\"]}[Data],",
+                "    bi_last_refresh_time_knime = OPARK_BI{[Schema=\"bi\",Item=\"last_refresh_time_knime\"]}[Data]",
+                "in",
+                "    bi_last_refresh_time_knime"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah cash_balance",
+        "columns": [
+          {
+            "name": "Title_DL",
+            "dataType": "string",
+            "sourceColumn": "Title_DL"
+          },
+          {
+            "name": "cash_rah",
+            "dataType": "double",
+            "sourceColumn": "cash_rah"
+          },
+          {
+            "name": "account number",
+            "dataType": "string",
+            "sourceColumn": "account number"
+          },
+          {
+            "name": "bank",
+            "dataType": "string",
+            "sourceColumn": "bank"
+          },
+          {
+            "name": "type_account",
+            "dataType": "string",
+            "sourceColumn": "type_account"
+          },
+          {
+            "name": "branch",
+            "dataType": "string",
+            "sourceColumn": "branch"
+          },
+          {
+            "name": "branch_code",
+            "dataType": "string",
+            "sourceColumn": "branch_code"
+          },
+          {
+            "name": "cash_excel",
+            "dataType": "int64",
+            "sourceColumn": "cash_excel"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          },
+          {
+            "name": "max_indicator",
+            "dataType": "string",
+            "sourceColumn": "max_indicator"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Sql.Databases(\"192.168.26.26\"),",
+                "    OPARK_BI = Source{[Name=\"OPARK_BI\"]}[Data],",
+                "    rah_cash_balance = OPARK_BI{[Schema=\"rah\",Item=\"cash_balance\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_cash_balance,\"ي\",\"ی\",Replacer.ReplaceText,{\"Title_DL\", \"bank\", \"type_account\", \"branch\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_total_amount",
+            "expression": " CALCULATE(SUM('rah cash_balance'[cash_excel]),FILTER('rah cash_balance','rah cash_balance'[max_indicator] = \"1\" ))"
+          }
+        ]
+      }
+    ],
     "annotations": [
       {
         "name": "ClientCompatibilityLevel",
