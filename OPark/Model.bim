@@ -18,6 +18,8 @@
         },
         "credential": {
           "AuthenticationKind": "UsernamePassword",
+          "kind": "SQL",
+          "path": "192.168.26.26;OPARK_BI",
           "Username": "sa",
           "EncryptConnection": false
         }
@@ -26,139 +28,152 @@
     "tables": [
       {
         "name": "bi DimDate",
+        "description": "جدول تاریخ و تقویم",
         "columns": [
           {
             "name": "Miladi",
-            "dataType": "string",
+            "dataType": "dateTime",
+            "description": "تاریخ میلادی با فرمت تاریخ برای مواردی که نیاز به محاسبات تاریخ داریم",
             "sourceColumn": "Miladi"
           },
           {
             "name": "Jalali_1",
             "dataType": "string",
+            "description": "تاریخ شمسی",
             "sourceColumn": "Jalali_1"
-          },
-          {
-            "name": "Jalali_2",
-            "dataType": "string",
-            "sourceColumn": "Jalali_2"
-          },
-          {
-            "name": "Jalali_3",
-            "dataType": "string",
-            "sourceColumn": "Jalali_3"
-          },
-          {
-            "name": "Miladi (#1)",
-            "dataType": "string",
-            "sourceColumn": "Miladi (#1)"
           },
           {
             "name": "jyear",
             "dataType": "string",
+            "description": "سال شمسی",
             "sourceColumn": "jyear"
-          },
-          {
-            "name": "mmonthN",
-            "dataType": "int64",
-            "sourceColumn": "mmonthN"
           },
           {
             "name": "jmonthN",
             "dataType": "int64",
+            "description": "شماره ماه تاریخ شمسی",
             "sourceColumn": "jmonthN"
-          },
-          {
-            "name": "mmonthT",
-            "dataType": "string",
-            "sourceColumn": "mmonthT"
           },
           {
             "name": "jmonthT",
             "dataType": "string",
+            "description": "عنوان ماه تاریخ شمسی",
             "sourceColumn": "jmonthT"
-          },
-          {
-            "name": "mnime",
-            "dataType": "string",
-            "sourceColumn": "mnime"
           },
           {
             "name": "jnime",
             "dataType": "string",
+            "description": "نام نیمه سال تاریخ شمسی",
             "sourceColumn": "jnime"
           },
           {
             "name": "JquarterN",
             "dataType": "int64",
+            "description": "شماره فصل تاریخ شمسی",
             "sourceColumn": "JquarterN"
           },
           {
             "name": "JQuarterT",
             "dataType": "string",
+            "description": "نام فصل تاریخ شمسی",
             "sourceColumn": "JQuarterT"
-          },
-          {
-            "name": "MquarterN",
-            "dataType": "int64",
-            "sourceColumn": "MquarterN"
           },
           {
             "name": "JWeekDay",
             "dataType": "string",
+            "description": "نام روز های هفته",
             "sourceColumn": "JWeekDay"
-          },
-          {
-            "name": "MWeekDay",
-            "dataType": "string",
-            "sourceColumn": "MWeekDay"
-          },
-          {
-            "name": "MWeekNum",
-            "dataType": "int64",
-            "sourceColumn": "MWeekNum"
           },
           {
             "name": "JWeekNum",
             "dataType": "int64",
+            "description": "شماره هفته در سال شمسی",
             "sourceColumn": "JWeekNum"
           },
           {
             "name": "date_search",
-            "dataType": "string",
+            "dataType": "int64",
+            "description": "چون برای جستجوی تاریخ ها نیاز به یک فیلد تاریخ از نوع عددی داشتیم این فیلد به جدول تاریخ اضافه شد",
             "sourceColumn": "date_search"
+          },
+          {
+            "name": "dayNUM",
+            "dataType": "string",
+            "description": "شماره روز در ماه شمسی",
+            "sourceColumn": "dayNUM"
+          },
+          {
+            "name": "Miladi - text",
+            "dataType": "string",
+            "description": "پون بعضی از رابطه بین جداول نیاز به فیلد تاریخ میلادی از نوع متن داشت بنابرانی این ستون به این جدول اضافه شد",
+            "sourceColumn": "Miladi - text"
+          },
+          {
+            "name": "Counter",
+            "dataType": "int64",
+            "sourceColumn": "Counter"
           }
         ],
         "partitions": [
           {
-            "name": "Partition",
-            "dataView": "full",
+            "name": "after_2022_12_01",
             "source": {
               "type": "m",
               "expression": [
                 "let",
-                "    Source = Sql.Databases(\"192.168.26.26\"),",
-                "    OPARK_BI = Source{[Name=\"OPARK_BI\"]}[Data],",
-                "    bi_DimDate = OPARK_BI{[Schema=\"bi\",Item=\"DimDate\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(bi_DimDate,\"ي\",\"ی\",Replacer.ReplaceText,{\"Miladi\", \"jmonthT\", \"jnime\", \"JQuarterT\", \"JWeekDay\"})",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_DimDate = Source{[Schema=\"bi\",Item=\"DimDate\"]}[Data],",
+                "    #\"Removed Columns\" = Table.RemoveColumns(bi_DimDate,{\"Jalali_2\", \"Jalali_3\", \"Miladi (#1)\", \"mmonthN\", \"mmonthT\", \"mnime\", \"MquarterN\", \"MWeekDay\", \"MWeekNum\"}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"jmonthT\", \"jnime\", \"JQuarterT\", \"JWeekDay\"}),",
+                "    #\"Duplicated Column\" = Table.DuplicateColumn(#\"Replaced Value\", \"Jalali_1\", \"Jalali_1 - Copy\"),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Duplicated Column\",{{\"Jalali_1 - Copy\", \"dayNUM\"}}),",
+                "    #\"Extracted Last Characters\" = Table.TransformColumns(#\"Renamed Columns\", {{\"dayNUM\", each Text.End(_, 2), type text}}),",
+                "    #\"Duplicated Column1\" = Table.DuplicateColumn(#\"Extracted Last Characters\", \"Miladi\", \"Miladi - Copy\"),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Duplicated Column1\",{{\"Miladi\", type date}, {\"date_search\", Int64.Type}}),",
+                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Changed Type\",{{\"Miladi - Copy\", \"Miladi - text\"}})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Renamed Columns1\""
               ]
-            }
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>let",
+                  "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                  "    bi_DimDate = Source{[Schema=\"bi\",Item=\"DimDate\"]}[Data],",
+                  "    #\"Removed Columns\" = Table.RemoveColumns(bi_DimDate,{\"Jalali_2\", \"Jalali_3\", \"Miladi (#1)\", \"mmonthN\", \"mmonthT\", \"mnime\", \"MquarterN\", \"MWeekDay\", \"MWeekNum\"}),",
+                  "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"jmonthT\", \"jnime\", \"JQuarterT\", \"JWeekDay\"}),",
+                  "    #\"Duplicated Column\" = Table.DuplicateColumn(#\"Replaced Value\", \"Jalali_1\", \"Jalali_1 - Copy\"),",
+                  "    #\"Renamed Columns\" = Table.RenameColumns(#\"Duplicated Column\",{{\"Jalali_1 - Copy\", \"dayNUM\"}}),",
+                  "    #\"Extracted Last Characters\" = Table.TransformColumns(#\"Renamed Columns\", {{\"dayNUM\", each Text.End(_, 2), type text}}),",
+                  "    #\"Duplicated Column1\" = Table.DuplicateColumn(#\"Extracted Last Characters\", \"Miladi\", \"Miladi - Copy\"),",
+                  "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Duplicated Column1\",{{\"Miladi\", type date}, {\"date_search\", Int64.Type}}),",
+                  "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Changed Type\",{{\"Miladi - Copy\", \"Miladi - text\"}}),",
+                  "    #\"Filtered Rows\" = Table.SelectRows(#\"Renamed Columns1\", each [Miladi] >= #date(2022, 12, 1))",
+                  "in",
+                  "    #\"Filtered Rows\"</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
           }
         ]
       },
       {
         "name": "rah cash_detail",
+        "description": "موجودی نقد جزئیات  راهکران",
         "columns": [
           {
             "name": "description",
             "dataType": "string",
-            "sourceColumn": "description"
+            "sourceColumn": "description",
+            "sortByColumn": "id"
           },
           {
             "name": "amount",
             "dataType": "double",
-            "sourceColumn": "amount"
+            "sourceColumn": "amount",
+            "formatString": "#,#"
           },
           {
             "name": "date",
@@ -198,67 +213,41 @@
               ]
             }
           }
-        ]
-      },
-      {
-        "name": "bi last_refresh_time_knime",
-        "columns": [
-          {
-            "name": "Time",
-            "dataType": "string",
-            "sourceColumn": "Time"
-          },
-          {
-            "name": "Date",
-            "dataType": "string",
-            "sourceColumn": "Date"
-          },
-          {
-            "name": "Miladi_report_date",
-            "dataType": "string",
-            "sourceColumn": "Miladi_report_date"
-          },
-          {
-            "name": "report_date",
-            "dataType": "string",
-            "sourceColumn": "report_date"
-          },
-          {
-            "name": "today_index_no",
-            "dataType": "int64",
-            "sourceColumn": "today_index_no"
-          }
         ],
-        "partitions": [
+        "measures": [
           {
-            "name": "Partition",
-            "dataView": "full",
-            "source": {
-              "type": "m",
-              "expression": [
-                "let",
-                "    Source = Sql.Databases(\"192.168.26.26\"),",
-                "    OPARK_BI = Source{[Name=\"OPARK_BI\"]}[Data],",
-                "    bi_last_refresh_time_knime = OPARK_BI{[Schema=\"bi\",Item=\"last_refresh_time_knime\"]}[Data]",
-                "in",
-                "    bi_last_refresh_time_knime"
-              ]
-            }
+            "name": "001_total_amount_trend",
+            "expression": " CALCULATE(SUM('rah cash_detail'[amount]),FILTER('rah cash_detail','rah cash_detail'[type_description] = 1))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_total_obligation_trend",
+            "expression": " CALCULATE(SUM('rah cash_detail'[amount]),FILTER('rah cash_detail',ISBLANK('rah cash_detail'[type_description])))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_available_amount_trend",
+            "expression": " 'rah cash_detail'[001_total_amount_trend] - 'rah cash_detail'[002_total_obligation_trend]",
+            "formatString": "#,#"
           }
         ]
       },
       {
         "name": "rah cash_balance",
+        "description": "تراز موجودی نقد راه کاران",
         "columns": [
           {
             "name": "Title_DL",
             "dataType": "string",
+            "description": "عنوان تفصیلی",
             "sourceColumn": "Title_DL"
           },
           {
             "name": "cash_rah",
             "dataType": "double",
-            "sourceColumn": "cash_rah"
+            "description": "مانده راهکاران",
+            "sourceColumn": "cash_rah",
+            "formatString": "#,#"
           },
           {
             "name": "account number",
@@ -288,7 +277,9 @@
           {
             "name": "cash_excel",
             "dataType": "int64",
-            "sourceColumn": "cash_excel"
+            "description": "مانده اکسل",
+            "sourceColumn": "cash_excel",
+            "formatString": "#,#"
           },
           {
             "name": "date",
@@ -299,6 +290,24 @@
             "name": "max_indicator",
             "dataType": "string",
             "sourceColumn": "max_indicator"
+          },
+          {
+            "name": "Debit",
+            "dataType": "double",
+            "description": "گردش بدهکار",
+            "sourceColumn": "Debit"
+          },
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "description": "گردش بستانکار",
+            "sourceColumn": "Credit"
+          },
+          {
+            "name": "Code",
+            "dataType": "string",
+            "description": "کد تفصیلی",
+            "sourceColumn": "Code"
           }
         ],
         "partitions": [
@@ -322,7 +331,4828 @@
         "measures": [
           {
             "name": "001_total_amount",
-            "expression": " CALCULATE(SUM('rah cash_balance'[cash_excel]),FILTER('rah cash_balance','rah cash_balance'[max_indicator] = \"1\" ))"
+            "expression": " CALCULATE(SUM('rah cash_balance'[cash_excel]),FILTER('rah cash_balance','rah cash_balance'[max_indicator] = \"1\" ))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_total_obligation",
+            "expression": " CALCULATE(SUM('rah cash_detail'[amount]),FILTER('rah cash_detail',ISBLANK('rah cash_detail'[type_description])),FILTER('rah cash_detail','rah cash_detail'[max_indicator] = \"1\"))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_available_amount",
+            "expression": " 'rah cash_balance'[001_total_amount] - 'rah cash_balance'[002_total_obligation]",
+            "formatString": "#,#"
+          }
+        ]
+      },
+      {
+        "name": "report Ticket_Type",
+        "description": "این جدول ساختار درختی قراردادها را در 10 سطح پیاده سازی می کند",
+        "columns": [
+          {
+            "name": "TicketTypeID",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID"
+          },
+          {
+            "name": "TicketTypeGroupName",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName"
+          },
+          {
+            "name": "TicketTypeID (#1)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#1)"
+          },
+          {
+            "name": "TicketTypeGroupName (#1)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#1)"
+          },
+          {
+            "name": "TicketTypeID (#2)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#2)"
+          },
+          {
+            "name": "TicketTypeGroupName (#2)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#2)"
+          },
+          {
+            "name": "TicketTypeID (#3)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#3)"
+          },
+          {
+            "name": "TicketTypeGroupName (#3)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#3)"
+          },
+          {
+            "name": "TicketTypeID (#4)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#4)"
+          },
+          {
+            "name": "TicketTypeGroupName (#4)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#4)"
+          },
+          {
+            "name": "TicketTypeID (#5)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#5)"
+          },
+          {
+            "name": "TicketTypeGroupName (#5)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#5)"
+          },
+          {
+            "name": "TicketTypeID (#6)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#6)"
+          },
+          {
+            "name": "TicketTypeGroupName (#6)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#6)"
+          },
+          {
+            "name": "TicketTypeID (#7)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#7)"
+          },
+          {
+            "name": "TicketTypeGroupName (#7)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#7)"
+          },
+          {
+            "name": "TicketTypeID (#8)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#8)"
+          },
+          {
+            "name": "TicketTypeGroupName (#8)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#8)"
+          },
+          {
+            "name": "TicketTypeID (#9)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (#9)"
+          },
+          {
+            "name": "TicketTypeGroupName (#9)",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeGroupName (#9)"
+          },
+          {
+            "name": "TicketTypeID (right)",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID (right)"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Ticket_Type = Source{[Schema=\"report\",Item=\"Ticket_Type\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Ticket_Type,\"ي\",\"ی\",Replacer.ReplaceText,{\"TicketTypeGroupName\", \"TicketTypeGroupName (#1)\", \"TicketTypeGroupName (#2)\", \"TicketTypeGroupName (#3)\", \"TicketTypeGroupName (#4)\", \"TicketTypeGroupName (#5)\", \"TicketTypeGroupName (#6)\", \"TicketTypeGroupName (#7)\", \"TicketTypeGroupName (#8)\", \"TicketTypeGroupName (#9)\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "report Station_Reception",
+        "description": "جدول لاگ فروش محصولات به مشتریان",
+        "columns": [
+          {
+            "name": "StationID",
+            "dataType": "int64",
+            "sourceColumn": "StationID"
+          },
+          {
+            "name": "ProductName",
+            "dataType": "string",
+            "sourceColumn": "ProductName"
+          },
+          {
+            "name": "ProductCount",
+            "dataType": "int64",
+            "sourceColumn": "ProductCount"
+          },
+          {
+            "name": "StationName",
+            "dataType": "string",
+            "sourceColumn": "StationName"
+          },
+          {
+            "name": "today_index",
+            "dataType": "string",
+            "sourceColumn": "today_index"
+          },
+          {
+            "name": "uniccode_Station_Reception",
+            "dataType": "string",
+            "sourceColumn": "uniccode_Station_Reception"
+          },
+          {
+            "name": "SumProductPrice",
+            "dataType": "int64",
+            "sourceColumn": "SumProductPrice"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "partition",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Station_Reception = Source{[Schema=\"report\",Item=\"Station_Reception\"]}[Data],",
+                "    #\"Removed Columns\" = Table.RemoveColumns(report_Station_Reception,{\"ReceptionID\", \"StationInvoiceNum\"}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"ProductName\", \"StationName\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"uniccode_Station_Reception\", type text}})",
+                "in",
+                "    #\"Changed Type\""
+              ]
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>let",
+                  "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                  "    report_Station_Reception = Source{[Schema=\"report\",Item=\"Station_Reception\"]}[Data],",
+                  "    #\"Removed Columns\" = Table.RemoveColumns(report_Station_Reception,{\"ReceptionID\", \"StationInvoiceNum\"}),",
+                  "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"ProductName\", \"StationName\"}),",
+                  "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"uniccode_Station_Reception\", type text}})",
+                  "in",
+                  "    #\"Changed Type\"</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "measures": [
+          {
+            "name": "022_number_products_sold_each_station",
+            "description": "تعداد محصول فروش رفته در هر ایستگاه",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'report Station_Reception'[ProductCount] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        NOT ( ISBLANK ( 'report Reception_Log'[StationName] ) )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "023_Sum_Product_Price_each_station",
+            "description": "جمع مبلغ فروش محصولات در هر ایستگاه",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'report Station_Reception'[SumProductPrice] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        NOT ( ISBLANK ( 'report Reception_Log'[StationName] ) )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          }
+        ]
+      },
+      {
+        "name": "report sales_contract",
+        "description": "جدول قراردادهای فروش",
+        "columns": [
+          {
+            "name": "TicketCardMainID",
+            "dataType": "string",
+            "description": "شماره قرارداد ها که برای قراردادهای سازمانی توسط یاسن تولید می شود و در مورد گیشه های گروهی همان شماره گروهی می باشد که در هر با مراجعه برای گروه افرادی که با هم وارد می شود یک شماره مشترک ایجاد میشود.",
+            "sourceColumn": "TicketCardMainID"
+          },
+          {
+            "name": "TicketName",
+            "dataType": "string",
+            "sourceColumn": "TicketName"
+          },
+          {
+            "name": "TicketCardMainName",
+            "dataType": "string",
+            "sourceColumn": "TicketCardMainName"
+          },
+          {
+            "name": "TicketTypeCaption",
+            "dataType": "string",
+            "sourceColumn": "TicketTypeCaption"
+          },
+          {
+            "name": "ContributionPercent",
+            "dataType": "double",
+            "sourceColumn": "ContributionPercent"
+          },
+          {
+            "name": "ContributionAmount",
+            "dataType": "int64",
+            "sourceColumn": "ContributionAmount"
+          },
+          {
+            "name": "InsertDate",
+            "dataType": "string",
+            "sourceColumn": "InsertDate"
+          },
+          {
+            "name": "CardCount",
+            "dataType": "int64",
+            "sourceColumn": "CardCount"
+          },
+          {
+            "name": "SessionCount",
+            "dataType": "int64",
+            "sourceColumn": "SessionCount"
+          },
+          {
+            "name": "total_session_count",
+            "dataType": "int64",
+            "sourceColumn": "total_session_count"
+          },
+          {
+            "name": "IsDeactive",
+            "dataType": "boolean",
+            "sourceColumn": "IsDeactive"
+          },
+          {
+            "name": "ExpireDate",
+            "dataType": "dateTime",
+            "sourceColumn": "ExpireDate"
+          },
+          {
+            "name": "TicketTypeID",
+            "dataType": "int64",
+            "sourceColumn": "TicketTypeID"
+          },
+          {
+            "name": "admin_sales_user_fullname",
+            "dataType": "string",
+            "sourceColumn": "admin_sales_user_fullname"
+          },
+          {
+            "name": "sales_user_fullname",
+            "dataType": "string",
+            "sourceColumn": "sales_user_fullname"
+          },
+          {
+            "name": "Number_sessions_used",
+            "dataType": "int64",
+            "sourceColumn": "Number_sessions_used"
+          },
+          {
+            "name": "Number_full_cards_used",
+            "dataType": "int64",
+            "sourceColumn": "Number_full_cards_used"
+          },
+          {
+            "name": "number_cards_not_used_any_sessions",
+            "dataType": "int64",
+            "sourceColumn": "number_cards_not_used_any_sessions"
+          },
+          {
+            "name": "Number_full_cards_used_or_unused",
+            "dataType": "int64",
+            "sourceColumn": "Number_full_cards_used_or_unused"
+          },
+          {
+            "name": "Number_cards_issued",
+            "dataType": "int64",
+            "sourceColumn": "Number_cards_issued"
+          },
+          {
+            "name": "Number_sessions_used_female",
+            "dataType": "double",
+            "sourceColumn": "Number_sessions_used_female"
+          },
+          {
+            "name": "Number_sessions_used_male",
+            "dataType": "double",
+            "sourceColumn": "Number_sessions_used_male"
+          },
+          {
+            "name": "Number_cards_not_finish_with_use",
+            "dataType": "int64",
+            "sourceColumn": "Number_cards_not_finish_with_use"
+          },
+          {
+            "name": "Number_remaining_sessions",
+            "dataType": "int64",
+            "sourceColumn": "Number_remaining_sessions"
+          },
+          {
+            "name": "no_deleted_session",
+            "dataType": "int64",
+            "sourceColumn": "no_deleted_session"
+          },
+          {
+            "name": "number_cards_not_issued",
+            "dataType": "int64",
+            "sourceColumn": "number_cards_not_issued"
+          },
+          {
+            "name": "age_category",
+            "dataType": "string",
+            "sourceColumn": "age_category"
+          },
+          {
+            "name": "TicketCardMain_Category",
+            "dataType": "string",
+            "sourceColumn": "TicketCardMain_Category"
+          },
+          {
+            "name": "sales_user_ID",
+            "dataType": "int64",
+            "sourceColumn": "sales_user_ID"
+          },
+          {
+            "name": "unic_code_target",
+            "dataType": "string",
+            "sourceColumn": "unic_code_target"
+          },
+          {
+            "name": "TicketCardMain_Category_filter_maker",
+            "dataType": "string",
+            "sourceColumn": "TicketCardMain_Category_filter_maker"
+          },
+          {
+            "name": "InsertDate_persian",
+            "dataType": "string",
+            "sourceColumn": "InsertDate_persian"
+          },
+          {
+            "name": "ExpireDate_persian",
+            "dataType": "string",
+            "sourceColumn": "ExpireDate_persian"
+          },
+          {
+            "name": "Mean(CalendarTicketPrice)",
+            "dataType": "double",
+            "description": "متوسط قیمت بلیط در هر قرارداد",
+            "sourceColumn": "Mean(CalendarTicketPrice)"
+          },
+          {
+            "name": "sales_forecast",
+            "dataType": "double",
+            "description": "پیش بینی درامد فروش هر قرارداد",
+            "sourceColumn": "sales_forecast"
+          },
+          {
+            "name": "TicketCardMainFinancialTypeTitle",
+            "dataType": "string",
+            "sourceColumn": "TicketCardMainFinancialTypeTitle"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_sales_contract = Source{[Schema=\"report\",Item=\"sales_contract\"]}[Data],",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(report_sales_contract,{{\"TicketCardMainID\", type text}}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"TicketName\", \"TicketCardMainName\", \"TicketTypeCaption\", \"admin_sales_user_fullname\", \"sales_user_fullname\", \"age_category\"}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"TicketCardMain_Category\"}),",
+                "    #\"Replaced Value2\" = Table.ReplaceValue(#\"Replaced Value1\",\"ي\",\"ی\",Replacer.ReplaceText,{\"TicketCardMainFinancialTypeTitle\"})",
+                "in",
+                "    #\"Replaced Value2\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_number_cards_issued",
+            "description": "تعداد بلیط صادر شده",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    IF (",
+              "        ISBLANK ( SUM ( 'report sales_contract'[Number_cards_issued] ) ),",
+              "        0,",
+              "        SUM ( 'report sales_contract'[Number_cards_issued] )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_total_income_in_contract",
+            "description": "مجموع کل درآمد به ازای هر قرارداد",
+            "expression": [
+              "",
+              "VAR TIIC =",
+              "    CALCULATE (",
+              "        'in select_table_date_now'[019_Total_income_with_today],",
+              "        USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              "    )",
+              "RETURN",
+              "    IF (",
+              "        CALCULATE (",
+              "            DISTINCTCOUNT ( 'in permission'[username] ),",
+              "            FILTER ( 'in permission', 'in permission'[permission] = \"Sales_admin\" )",
+              "        ) = 1,",
+              "        0,",
+              "        TIIC",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_total_Number_of_entries_in_contract",
+            "description": "تعداد کل نفرات به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[001_Number_of_entries_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "004_total_Amount_of_charging_in_contract",
+            "description": "مبلغ کل شارژ به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "VAR TAC = CALCULATE (",
+              "    'in select_table_date_now'[006_Amount_of_charging_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")",
+              "",
+              "RETURN",
+              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 , TAC)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "005_total_amount_of_charge_used_in_contract",
+            "description": "مبلغ کل شارژ مصرف شده به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "VAR TACU = CALCULATE (",
+              "    'in select_table_date_now'[009_The_amount_of_charge_used_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")",
+              "",
+              "RETURN",
+              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TACU)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "006_total_Amount_of_RefundCharge_in_contract",
+            "description": "مبلغ کل شارژ  استرداد داده شده به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "VAR TARF = CALCULATE (",
+              "    'in select_table_date_now'[008_Amount_of_RefundCharge_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")",
+              "RETURN",
+              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TARF)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "007_total_amount_of_charge_used_at_the_stations_in_contract",
+            "description": "مبلغ کل شارژ مصرف شده در ایستگاه ها",
+            "expression": [
+              " ",
+              "VAR TACYS = CALCULATE (",
+              "    'in select_table_date_now'[003_The_amount_of_charge_used_at_the_stations_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")",
+              "RETURN",
+              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TACYS)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "008_number_of_contract",
+            "description": "تعداد قراردادها",
+            "expression": [
+              " CALCULATE(COUNT('report sales_contract'[TicketCardMainID]),USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "009_total_amount_of_charge_remaining_in_contract",
+            "description": "مقدار شارژ باقی مانده در بلیط ها براساس نوع قرارداد",
+            "expression": [
+              " ",
+              "VAR TARF = CALCULATE (",
+              "    'in select_table_date_now'[007_The_amount_of_charge_remaining_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")",
+              "RETURN",
+              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TARF)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "010_total_Number_of_entries_WOMAN_in_contract",
+            "description": "تعداد زن وارد شده به پارک  براساس نوع قرارداد",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    'in select_table_date_now'[011_Number_of_entries_WOMAN_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "011_total_Number_of_entries_MAN_in_contract",
+            "description": "تعداد مرد وارد شده به پارک  براساس نوع قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[010_Number_of_entries_MAN_wuth_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "012_total_Number_of_exits_in_contract",
+            "description": "تعداد میهمان خارج شده از پارک به تفکیک نوع قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[004_Number_of_exits_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "013_total_number_of_guests_in_the_park_in_contract",
+            "description": "تعداد میهمانان حاضر در پارک به تفکیک نوع قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[005_The_number_of_guests_in_the_park_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "014_total_Duration_time_in_contract",
+            "description": "مدت زمان حضور در پارک به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[016_Duration_time_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "015_total_ratio_attendance_to_ session_in_contract",
+            "description": "نسبت مدت زمان حضور به طول سانس",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[017_ratio_attendance_to_ session_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "0.00%;-0.00%;0.00%"
+          },
+          {
+            "name": "016_total_Average_ticket_price_in_contract",
+            "description": "متوسط قیمت روزانه بلیط به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[018_Average_ticket_price_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "017_Amount_of_charging_per_capita_in_contract",
+            "description": "سرانه میزان شارژ به تفکیک نوع قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[020_Amount_of_charging_per_capita_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "018_amount_of_charge_used_per_capita_in_contract",
+            "description": "سرانه میزان مصرف شارز به تفکیک نوع قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[021_amount_of_charge_used_per_capit_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "019_Amount_of_charging_in_contract",
+            "description": [
+              "مبلغ شارژ با احتساب مبلغ گیشه سازمانی",
+              "در بعضی از موارد به این دلیل که نفرات و پرسنل پارک دارای دسبندهایی هستند که قبلا صادر شده است و از آن برای خرید استفاده می کنند این مورد به صورت جداگانه محاسبه می شود.",
+              "به تفکیک قرارداد"
+            ],
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[006_02_Amount_of_charging_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "020_total_SumTicketPrice_in_contract",
+            "description": [
+              "مبلغ دریافت شده در گیشه",
+              "به تفکیک قرارداد"
+            ],
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[012_SumTicketPrice_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "021_total_SumTicketContributionAmount_in_contract",
+            "description": "پیش دریافت شارژ به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[013_SumTicketContributionAmount_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "022_total_Number_of_entrances_to_the_station_in_contract",
+            "description": "تعداد نفر وارد شده به هر ایستگاه به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[002_Number_of_entrances_to_the_station_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "023_total_amount_of_charge_used_at_the_stations_in_contract",
+            "description": "مقدار شارژ استفاده شده در ایستگاه ها به تفکیک قرارداد",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[003_The_amount_of_charge_used_at_the_stations_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")"
+            ],
+            "formatString": "#,#."
+          },
+          {
+            "name": "024_capitationl_amount_of_charge_used_at_the_stations_in_contract",
+            "description": "سرانه مصرف شارژ در ایستگاه ها",
+            "expression": [
+              " ",
+              "DIVIDE('report sales_contract'[023_total_amount_of_charge_used_at_the_stations_in_contract],'report sales_contract'[022_total_Number_of_entrances_to_the_station_in_contract])"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "025_number_of_working_days",
+            "description": "تعداد روزهای کاری انتخاب شده",
+            "expression": [
+              " ",
+              "",
+              "",
+              "    VAR today_date =1",
+              "    VAR last_week = 1",
+              "    VAR all_day = DISTINCTCOUNT('report Reception_Log'[date_search])",
+              " ",
+              "    RETURN",
+              "    IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"امروز\"",
+              "    ,today_date",
+              "    ,IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"هفته گذشته\"",
+              "    ,last_week",
+              "    ,all_day))",
+              ""
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "026_Average_Number_of_entries_in_contract",
+            "description": "متوسط تعداد نفرات حاضر در پارک در هر روز",
+            "expression": [
+              "",
+              "DIVIDE('report sales_contract'[003_total_Number_of_entries_in_contract],'report sales_contract'[025_number_of_working_days])"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "027_Average_total_income_in_contract",
+            "description": "متوسط روزانه درآمد پارک در بازه انتخابی",
+            "expression": [
+              "",
+              "DIVIDE('report sales_contract'[002_total_income_in_contract],'report sales_contract'[025_number_of_working_days])"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "028_total_session_count",
+            "description": "جمع تعداد جلسات",
+            "expression": "CALCULATE(SUM('report sales_contract'[total_session_count]))"
+          },
+          {
+            "name": "029_Target percentage",
+            "description": "درصد تحقق تارگت",
+            "expression": "DIVIDE('report sales_contract'[028_total_session_count],'report sales_target'[001_sum_sales_target])*100",
+            "formatString": "0.00"
+          },
+          {
+            "name": "030_total_Numbe_ expired_sessions",
+            "description": "تعداد کل جلسات باطل شده",
+            "expression": "SUM('report sales_contract'[no_deleted_session])",
+            "formatString": "#,#"
+          },
+          {
+            "name": "031_total_session_count_net",
+            "description": "تعداد کل جلسات منهای جلسات ابطال شده",
+            "expression": "'report sales_contract'[028_total_session_count]-'report sales_contract'[030_total_Numbe_ expired_sessions]",
+            "formatString": "#,#"
+          },
+          {
+            "name": "032_sum_sales_forecast",
+            "description": "جمع مبلغ پیش بینی شده برای هر قرارداد",
+            "expression": " CALCULATE(SUM('report sales_contract'[sales_forecast]))",
+            "formatString": "#,#"
+          }
+        ]
+      },
+      {
+        "name": "bi last_refresh_time_knime",
+        "description": "جدول کنترل تاریخ و زمان به روز رسانی ها",
+        "columns": [
+          {
+            "name": "Time",
+            "dataType": "string",
+            "description": "زمان به روز رسانی",
+            "sourceColumn": "Time"
+          },
+          {
+            "name": "Date",
+            "dataType": "string",
+            "description": "تاریخ شمسی به روزرسانی گزارش",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Miladi_report_date",
+            "dataType": "dateTime",
+            "description": "تاریخ میلادی تاریخ به گزارش",
+            "sourceColumn": "Miladi_report_date"
+          },
+          {
+            "name": "report_date",
+            "dataType": "string",
+            "description": "تاریخ شمسی تاریخ گزارش",
+            "sourceColumn": "report_date"
+          },
+          {
+            "name": "today_index_no",
+            "dataType": "int64",
+            "description": "مشخص کننده روز جاری",
+            "isHidden": true,
+            "sourceColumn": "today_index_no"
+          },
+          {
+            "name": "last_week_date",
+            "dataType": "dateTime",
+            "description": "تاریخ میلادی هفته گذشته تاریخ روز جاری ",
+            "sourceColumn": "last_week_date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_last_refresh_time_knime = Source{[Schema=\"bi\",Item=\"last_refresh_time_knime\"]}[Data],",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(bi_last_refresh_time_knime,{{\"Miladi_report_date\", type date}, {\"last_week_date\", type date}})",
+                "in",
+                "    #\"Changed Type\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_filtered_date",
+            "description": "تغییر تاریخ گزارش با توجه به فیلترهای زمانی که انتخاب می شود",
+            "expression": [
+              " ",
+              "",
+              "    VAR today_date = CALCULATE(MAX('bi last_refresh_time_knime'[report_date]))",
+              "    VAR last_week = LOOKUPVALUE('bi DimDate'[Jalali_1],'bi DimDate'[Miladi],MAX('bi last_refresh_time_knime'         [last_week_date]))",
+              "    VAR all_day = LOOKUPVALUE('bi DimDate'[Jalali_1],'bi DimDate'[Miladi],MAX('report Reception_Log'[today_index]))",
+              " ",
+              "    RETURN",
+              "    IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"امروز\"",
+              "    ,today_date",
+              "    ,IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"هفته گذشته\"",
+              "    ,last_week",
+              "    ,all_day))"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "report Reception_Log",
+        "description": "جدول لاگ مربوط به عملکرد افراد در پارک",
+        "columns": [
+          {
+            "name": "ShiftType",
+            "dataType": "string",
+            "sourceColumn": "ShiftType"
+          },
+          {
+            "name": "ReceptionID",
+            "dataType": "int64",
+            "description": "شماره یونیک میهمان",
+            "sourceColumn": "ReceptionID"
+          },
+          {
+            "name": "TicketCardMainID",
+            "dataType": "string",
+            "description": "شماره قرارداد ها که برای قراردادهای سازمانی توسط یاسن تولید می شود و در مورد گیشه های گروهی همان شماره گروهی می باشد که در هر با مراجعه برای گروه افرادی که با هم وارد می شود یک شماره مشترک ایجاد میشود.",
+            "sourceColumn": "TicketCardMainID"
+          },
+          {
+            "name": "TicketCardDetailID",
+            "dataType": "int64",
+            "sourceColumn": "TicketCardDetailID"
+          },
+          {
+            "name": "TicketCardNumber",
+            "dataType": "string",
+            "sourceColumn": "TicketCardNumber"
+          },
+          {
+            "name": "CurrentChargeAmount",
+            "dataType": "int64",
+            "sourceColumn": "CurrentChargeAmount"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "description": "جنسیت",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "ReceptionLogID",
+            "dataType": "int64",
+            "sourceColumn": "ReceptionLogID"
+          },
+          {
+            "name": "ActionDescription",
+            "dataType": "string",
+            "sourceColumn": "ActionDescription"
+          },
+          {
+            "name": "UsageAmount",
+            "dataType": "double",
+            "sourceColumn": "UsageAmount"
+          },
+          {
+            "name": "IsNewWristBand",
+            "dataType": "string",
+            "sourceColumn": "IsNewWristBand"
+          },
+          {
+            "name": "IsCharge",
+            "dataType": "boolean",
+            "description": "نشان می دهد که در این ردیف از جدول شارژ انجام شده است یا نه",
+            "sourceColumn": "IsCharge"
+          },
+          {
+            "name": "IsRefundCharge",
+            "dataType": "boolean",
+            "description": "نشان می دهد که این ردیف مربوط به استرداد شارژ هست",
+            "sourceColumn": "IsRefundCharge"
+          },
+          {
+            "name": "IsPromotion",
+            "dataType": "boolean",
+            "sourceColumn": "IsPromotion"
+          },
+          {
+            "name": "StationID",
+            "dataType": "int64",
+            "description": "شماره ایستگاه F&B",
+            "sourceColumn": "StationID"
+          },
+          {
+            "name": "IsStationLog",
+            "dataType": "boolean",
+            "description": "نشان می دهد که این ردیف از لاگ مربوط به ایستگاه های می باشد",
+            "sourceColumn": "IsStationLog"
+          },
+          {
+            "name": "RefundedAmount",
+            "dataType": "int64",
+            "sourceColumn": "RefundedAmount"
+          },
+          {
+            "name": "today_index",
+            "dataType": "dateTime",
+            "description": "با توجه به اینکه تا ساعت 9 صبح هر روز اطلاعات هر گزارش مربوط به تاریخ دیروز می باشد بنابراین لازم بود که یک فیلد تاریخ جدید ساخته شود تا از ان برای فیلتر کردن تاریخ امروز استفاده شود.",
+            "sourceColumn": "today_index"
+          },
+          {
+            "name": "TicketName",
+            "dataType": "string",
+            "description": "نوع بلیط",
+            "sourceColumn": "TicketName"
+          },
+          {
+            "name": "TicketNameGroup",
+            "dataType": "string",
+            "description": "گروه بندی نوع بلیط",
+            "sourceColumn": "TicketNameGroup"
+          },
+          {
+            "name": "StationName",
+            "dataType": "string",
+            "description": "نام ایستگاه F&B",
+            "sourceColumn": "StationName"
+          },
+          {
+            "name": "Date",
+            "dataType": "string",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Time",
+            "dataType": "string",
+            "description": "زمان ثبت لاگ",
+            "sourceColumn": "Time"
+          },
+          {
+            "name": "ReceptionID_index",
+            "dataType": "string",
+            "sourceColumn": "ReceptionID_index"
+          },
+          {
+            "name": "wristbands_index",
+            "dataType": "string",
+            "description": "مشخص می کند که آیا لاگی که برای آن فعالیت اتفاق افتاده است با استفاده از یک دستبند اتفاق افتاده است یا نه",
+            "sourceColumn": "wristbands_index"
+          },
+          {
+            "name": "SumTicketPrice",
+            "dataType": "double",
+            "description": "مبلغ دریافتی در گیشه",
+            "sourceColumn": "SumTicketPrice"
+          },
+          {
+            "name": "SumTicketContributionAmount",
+            "dataType": "double",
+            "description": "پیش دریافت شارژ",
+            "sourceColumn": "SumTicketContributionAmount"
+          },
+          {
+            "name": "Duration_time",
+            "dataType": "int64",
+            "description": "مدت زمان حضور",
+            "sourceColumn": "Duration_time"
+          },
+          {
+            "name": "ratio_attendance_to_ session",
+            "dataType": "double",
+            "description": "نسبت زمان حضور به کل مدت شیفت",
+            "sourceColumn": "ratio_attendance_to_ session"
+          },
+          {
+            "name": "date_search",
+            "dataType": "int64",
+            "sourceColumn": "date_search",
+            "formatString": "0"
+          },
+          {
+            "name": "uniccode_Station_Reception",
+            "dataType": "string",
+            "sourceColumn": "uniccode_Station_Reception"
+          },
+          {
+            "name": "today_index_no",
+            "dataType": "int64",
+            "description": "مشخص می کند که در جدول اصلی ایا این بخش مربوط به تاریخ گزارش امروز است تا از آن برای فیلتر کردن داده های امروز استفاده شود",
+            "sourceColumn": "today_index_no"
+          },
+          {
+            "name": "Default_charge_index",
+            "dataType": "int64",
+            "sourceColumn": "Default_charge_index"
+          },
+          {
+            "name": "TicketCardMainID (right)",
+            "dataType": "string",
+            "sourceColumn": "TicketCardMainID (right)"
+          },
+          {
+            "name": "Reception_CustomerMobile",
+            "dataType": "string",
+            "sourceColumn": "Reception_CustomerMobile"
+          },
+          {
+            "name": "Reception_CustomerName",
+            "dataType": "string",
+            "sourceColumn": "Reception_CustomerName"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "after_2022_12_01",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"today_index\", type date}, {\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ]
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>let",
+                  "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                  "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
+                  "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
+                  "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"today_index\", type date}, {\"uniccode_Station_Reception\", type text}}),",
+                  "    #\"Removed Duplicates\" = Table.Distinct(#\"Changed Type\", {\"uniccode_Station_Reception\"}),",
+                  "    #\"Removed Columns\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"InsertDate\", \"StationInvoiceNum\"}),",
+                  "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}})",
+                  "in",
+                  "    #\"Changed Type1\"</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_Number_of_entries",
+            "description": "تعداد میهمانان ورودی به پارک",
+            "expression": [
+              " ",
+              "var EN_no = CALCULATE (",
+              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[IsNewWristBand] = \"ورود\"",
+              "    )",
+              ")",
+              "",
+              "RETURN ",
+              "IF(ISBLANK(EN_no), 0 , EN_no)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_Number_of_entrances_to_the_station",
+            "description": "تعداد میهمانان ورودی به ایستگاه ها",
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsStationLog] = TRUE )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_01_The_amount_of_charge_used_at_the_stations",
+            "description": [
+              "مقدار شارژ مصرف شده در ایستگاه ها به غیر از ایستگاه ",
+              "O Lounge"
+            ],
+            "expression": [
+              " ",
+              "(",
+              "    CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsStationLog] = TRUE ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[wristbands_index] = \"1\"",
+              "        ),",
+              "        FILTER( 'report Reception_Log', 'report Reception_Log'[StationName] <> \"O Lounge\")",
+              ") * ( -1 )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_The_amount_of_charge_used_at_the_stations",
+            "description": "مبلغ شارژ مصرف شده در ایستگاه ها",
+            "expression": [
+              " ",
+              "( -1 )",
+              "    * CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsStationLog] = TRUE )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "004_Number_of_exits",
+            "description": "تعداد خروجی پارک",
+            "expression": [
+              " ",
+              "VAR EX_no = CALCULATE (",
+              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[IsNewWristBand] = \"خروجی\"",
+              "    )",
+              ")",
+              "RETURN",
+              "IF(ISBLANK(EX_no), 0 , EX_no)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "005_The_number_of_guests_in_the_park",
+            "description": "تعداد افراد حاضر در پارک",
+            "expression": [
+              " ",
+              "'report Reception_Log'[001_Number_of_entries] - 'report Reception_Log'[004_Number_of_exits]"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "006_02_Amount_of_charging",
+            "description": [
+              "مبلغ شارژ با احتساب مبلغ گیشه سازمانی",
+              "در بعضی از موارد به این دلیل که نفرات و پرسنل پارک دارای دسبندهایی هستند که قبلا صادر شده است و از آن برای خرید استفاده می کنند این مورد به صورت جداگانه محاسبه می شود."
+            ],
+            "expression": [
+              " ",
+              "VAR",
+              "AM_CH = CALCULATE (",
+              "    SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsCharge] = TRUE )",
+              ")",
+              "",
+              "",
+              "RETURN",
+              "IF(ISBLANK(AM_CH),0,AM_CH)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "006_Amount_of_charging",
+            "description": "مقدار شارژ انجام شده",
+            "expression": [
+              " ",
+              "VAR",
+              "AM_CH = CALCULATE (",
+              "    SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsCharge] = TRUE ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[wristbands_index] = \"1\"",
+              "    )",
+              ")",
+              "RETURN",
+              "IF(ISBLANK(AM_CH),0,AM_CH)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "007_The_amount_of_charge_remaining",
+            "description": "مقدار شارژ باقی مانده در مچ بندها",
+            "expression": [
+              " ",
+              "VAR",
+              "AM_CH_RE = CALCULATE (",
+              "    SUM ( 'report Reception_Log'[CurrentChargeAmount] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[ReceptionID_index] = \"1\"",
+              "    ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[wristbands_index] = \"1\"",
+              "    )",
+              ")",
+              "RETURN",
+              "IF(ISBLANK(AM_CH_RE),0,AM_CH_RE)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "008_Amount_of_RefundCharge",
+            "description": "مبلغ استرداد داده شده",
+            "expression": [
+              " ",
+              "VAR",
+              "AM_CH_RE = ( -1 )",
+              "    * CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsRefundCharge] = TRUE ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[wristbands_index] = \"1\"",
+              "        )",
+              "    )",
+              "RETURN",
+              "IF(ISBLANK(AM_CH_RE), 0, AM_CH_RE)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "009_The_amount_of_charge_used",
+            "description": "مقدار شارژ مصرف شده",
+            "expression": [
+              " ",
+              "VAR ",
+              "AM_CH_USE = ('report Reception_Log'[006_Amount_of_charging] - ",
+              "'report Reception_Log'[007_The_amount_of_charge_remaining] -",
+              " 'report Reception_Log'[008_Amount_of_RefundCharge])",
+              " RETURN",
+              "IF(ISBLANK(AM_CH_USE),0,AM_CH_USE)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "010_Number_of_entries_MAN",
+            "description": "تعداد میهمانان مرد",
+            "expression": [
+              " ",
+              "VAR NEM = CALCULATE (",
+              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[IsNewWristBand] = \"ورود\"",
+              "    ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[Gender] = \"مرد\"",
+              "    ))",
+              "RETURN",
+              "",
+              "IF(ISBLANK(NEM),0,NEM)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "011_Number_of_entries_WOMAN",
+            "description": "تعداد میهمانان زن",
+            "expression": [
+              " ",
+              "VAR NEW = CALCULATE (",
+              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[IsNewWristBand] = \"ورود\"",
+              "    ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[Gender] = \"زن\"",
+              "    )",
+              ")",
+              "",
+              "RETURN",
+              "",
+              "IF(ISBLANK(NEW),0,NEW)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "012_SumTicketPrice",
+            "description": "مبلغ دریافت شده در گیشه",
+            "expression": [
+              " CALCULATE (",
+              "    SUM ( 'report Reception_Log'[SumTicketPrice]),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[ReceptionID_index] = \"1\"",
+              "    )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "013_SumTicketContributionAmount",
+            "description": "پیش دریافت شارژ",
+            "expression": [
+              " CALCULATE (",
+              "    SUM ( 'report Reception_Log'[SumTicketContributionAmount]),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[ReceptionID_index] = \"1\"",
+              "    )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "014_sum_promotion_charge",
+            "description": "جمع مبلغ پروموشن",
+            "expression": [
+              " ",
+              "VAR",
+              "AM_CH = CALCULATE (",
+              "    SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsPromotion] = TRUE ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[wristbands_index] = \"1\"",
+              "    )",
+              ")",
+              "RETURN",
+              "IF(ISBLANK(AM_CH),0,AM_CH)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "015_0sales_O Lounge",
+            "description": [
+              "فروش نقدی در اولانچ",
+              "تنها موردی است که درآمد حاصل از آن در درآمد اپارک محاسبه نمی شود و به صورت نقدی دریافت می گردد."
+            ],
+            "expression": [
+              "",
+              "( -1 )",
+              "    * CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[StationName] = \"O Lounge\"",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "016_Duration_time",
+            "description": "طول مدت حضور در پارک",
+            "expression": [
+              "",
+              "VAR D_T =",
+              "    CALCULATE (",
+              "        AVERAGE ( 'report Reception_Log'[Duration_time] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[Duration_time] > 60 )",
+              "    )",
+              "RETURN",
+              "    IF ( ISBLANK ( D_T ), \"فردی خارج نشده است\", D_T )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "017_ratio_attendance_to_ session",
+            "description": "نسبت مدت حضور به طول مدت سانس",
+            "expression": [
+              "",
+              "VAR R_A_T_S =",
+              "    CALCULATE (",
+              "        AVERAGE ( 'report Reception_Log'[ratio_attendance_to_ session] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[Duration_time] > 60 )",
+              "    )",
+              "RETURN",
+              "    IF ( ISBLANK ( R_A_T_S ), \"فردی خارج نشده است\", R_A_T_S )",
+              ""
+            ],
+            "formatString": "0.00%;-0.00%;0.00%"
+          },
+          {
+            "name": "018_Average_ticket_price",
+            "description": "متوسط قیمت بلیط",
+            "expression": [
+              "",
+              "VAR ATP =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[012_SumTicketPrice] + 'report Reception_Log'[013_SumTicketContributionAmount]",
+              "    ) / 'report Reception_Log'[001_Number_of_entries]",
+              "RETURN",
+              "    IF ( ISBLANK ( ATP ), \"فردی وارد پارک نشده است\", ATP )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "019_Total_income",
+            "description": "مجموع درآمد روزانه پارک که از جمع مبلغ کل پیش پرداخت و گیشه و مقدار هزینه شده در ایستگاه های بدست می آید.",
+            "expression": [
+              "",
+              "VAR TI =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[012_SumTicketPrice] + 'report Reception_Log'[013_SumTicketContributionAmount] + 'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations]",
+              "    )",
+              "RETURN",
+              "    IF ( ISBLANK ( TI ), 0, TI )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "020_Amount_of_charging_per_capita",
+            "description": "سرانه میزان شارژ",
+            "expression": [
+              " ",
+              "",
+              "",
+              "VAR TI=  DIVIDE('report Reception_Log'[006_Amount_of_charging],'report Reception_Log'[001_Number_of_entries],BLANK())",
+              "RETURN",
+              "IF(ISBLANK(TI) , 0 , TI)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "021_amount_of_charge_used_per_capita",
+            "description": "سرانه مصرف شارژ",
+            "expression": [
+              " ",
+              "",
+              "",
+              "VAR TI=  DIVIDE('report Reception_Log'[009_The_amount_of_charge_used],'report Reception_Log'[001_Number_of_entries],BLANK())",
+              "RETURN",
+              "IF(ISBLANK(TI) , 0 , TI)"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "022_Default_charge",
+            "description": "شارژ پیشفرض موجود در کارت بلیط ها",
+            "expression": " CALCULATE(SUM('report Reception_Log'[UsageAmount]),FILTER('report Reception_Log','report Reception_Log'[Default_charge_index] = 1 ))",
+            "formatString": "#,#."
+          }
+        ]
+      },
+      {
+        "name": "in permission",
+        "description": "جدول تعریف دسترسی های افراد به صفحات و موضوعات",
+        "columns": [
+          {
+            "name": "username",
+            "dataType": "string",
+            "sourceColumn": "username"
+          },
+          {
+            "name": "permission",
+            "dataType": "string",
+            "sourceColumn": "permission"
+          },
+          {
+            "name": "page",
+            "dataType": "string",
+            "sourceColumn": "page"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    in_permission = Source{[Schema=\"in\",Item=\"permission\"]}[Data]",
+                "in",
+                "    in_permission"
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_page_date_now",
+            "description": "تغییر رفتار دکمه های مربوط به تحلیل روزانه براساس یوزری که لاگین کرده است",
+            "expression": [
+              "",
+              "VAR row_table =",
+              "    CALCULATE ( DISTINCTCOUNT ( 'in permission'[username] ) )",
+              "RETURN",
+              "    IF ( row_table = 1, \"\", \"date_now\" )"
+            ]
+          },
+          {
+            "name": "002_page_contract_sales",
+            "description": "تغییر رفتار دکمه های مربوط به تحلیل فروش براساس یوزری که لاگین کرده است",
+            "expression": [
+              " ",
+              "VAR row_table = CALCULATE(DISTINCTCOUNT('in permission'[username]))",
+              "",
+              "RETURN",
+              "IF(row_table = 1 , \"contract_sales\" , \"contract_sales\")"
+            ]
+          },
+          {
+            "name": "003_phone_number_permissio",
+            "expression": [
+              " IF(USERNAME() = \"OPARK\\aliakbari.m\" ||",
+              "\t\t\tUSERNAME() = \"OPARK\\a.dashti\" ||",
+              "\t\t\tUSERNAME() = \"OPARK\\E.Gholami\" ||",
+              "\t\t\tUSERNAME() = \"OPARK\\R.Naeimipour\" ||",
+              "\t\t\tUSERNAME() = \"OPARK\\A.Hosseinzadeh\",\"mobile_phone\",\"1\")"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "in select_table",
+        "description": "جدول انتخاب موضوعات",
+        "columns": [
+          {
+            "name": "select subject",
+            "dataType": "string",
+            "sourceColumn": "select subject"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    in_select_table = Source{[Schema=\"in\",Item=\"select_table\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(in_select_table,\"ي\",\"ی\",Replacer.ReplaceText,{\"select subject\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001",
+            "expression": [
+              "",
+              "IF (",
+              "    SELECTEDVALUE ( 'in select_table'[select subject] ) = \"تعداد میهمانان ورودی به پارک\",",
+              "    'report Reception_Log'[001_Number_of_entries],",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table'[select subject] ) = \"تعداد میهمانان ورودی به ایستگاه ها\",",
+              "        'report Reception_Log'[002_Number_of_entrances_to_the_station],",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table'[select subject] ) = \"مبلغ شارژ مصرف شده در ایستگاه ها\",",
+              "            'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations],",
+              "            IF (",
+              "                SELECTEDVALUE ( 'in select_table'[select subject] ) = \"مبلغ شارژ با احتساب مبلغ گیشه سازمانی\",",
+              "                'report Reception_Log'[006_02_Amount_of_charging],",
+              "                IF (",
+              "                    SELECTEDVALUE ( 'in select_table'[select subject] ) = \"مقدار شارژ انجام شده\",",
+              "                    'report Reception_Log'[006_Amount_of_charging],",
+              "                    IF (",
+              "                        SELECTEDVALUE ( 'in select_table'[select subject] ) = \"مبلغ استرداد داده شده\",",
+              "                        'report Reception_Log'[008_Amount_of_RefundCharge],",
+              "                        IF (",
+              "                            SELECTEDVALUE ( 'in select_table'[select subject] ) = \"مقدار شارژ مصرف شده\",",
+              "                            'report Reception_Log'[009_The_amount_of_charge_used],",
+              "                            IF (",
+              "                                SELECTEDVALUE ( 'in select_table'[select subject] ) = \"مبلغ دریافت شده در گیشه\",",
+              "                                'report Reception_Log'[012_SumTicketPrice],",
+              "                                IF (",
+              "                                    SELECTEDVALUE ( 'in select_table'[select subject] ) = \"پیش دریافت شارژ\",",
+              "                                    'report Reception_Log'[013_SumTicketContributionAmount],",
+              "                                    IF (",
+              "                                        SELECTEDVALUE ( 'in select_table'[select subject] ) = \"جمع مبلغ پروموشن\",",
+              "                                        'report Reception_Log'[014_sum_promotion_charge],",
+              "                                        IF (",
+              "                                            SELECTEDVALUE ( 'in select_table'[select subject] ) = \"فروش نقدی در اولانچ\",",
+              "                                            'report Reception_Log'[015_0sales_O Lounge],",
+              "                                            IF (",
+              "                                                SELECTEDVALUE ( 'in select_table'[select subject] ) = \"طول مدت حضور در پارک\",",
+              "                                                'report Reception_Log'[016_Duration_time],",
+              "                                                IF (",
+              "                                                    SELECTEDVALUE ( 'in select_table'[select subject] ) = \"نسبت مدت حضور به طول مدت سانس\",",
+              "                                                    'report Reception_Log'[017_ratio_attendance_to_ session],",
+              "                                                    IF (",
+              "                                                        SELECTEDVALUE ( 'in select_table'[select subject] ) = \"متوسط قیمت بلیط\",",
+              "                                                        'report Reception_Log'[018_Average_ticket_price],",
+              "                                                        1",
+              "                                                    )",
+              "                                                )",
+              "                                            )",
+              "                                        )",
+              "                                    )",
+              "                                )",
+              "                            )",
+              "                        )",
+              "                    )",
+              "                )",
+              "            )",
+              "        )",
+              "    )",
+              ")"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "in select_table_date_now",
+        "description": "جدول مروبط به انتخاب ایتم ها در گزارش صفحه امروز",
+        "columns": [
+          {
+            "name": "select subject",
+            "dataType": "string",
+            "sourceColumn": "select subject"
+          },
+          {
+            "name": "persian select subject",
+            "dataType": "string",
+            "sourceColumn": "persian select subject"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    in_select_table_date_now = Source{[Schema=\"in\",Item=\"select_table_date_now\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(in_select_table_date_now,\"ي\",\"ی\",Replacer.ReplaceText,{\"persian select subject\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_Number_of_entries_with_today",
+            "description": [
+              "تعداد میهمانان ورودی به پارک",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[001_Number_of_entries],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[001_Number_of_entries],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[001_Number_of_entries] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_Number_of_entrances_to_the_station_with_today",
+            "description": [
+              "تعداد میهمانان ورودی به ایستگاه ها",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[002_Number_of_entrances_to_the_station],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[002_Number_of_entrances_to_the_station],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[002_Number_of_entrances_to_the_station] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_01_The_amount_of_charge_used_at_the_stations_with_today",
+            "description": [
+              "مقدار شارژ مصرف شده در ایستگاه ها به غیر از ایستگاه ",
+              "O Lounge",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[003_01_The_amount_of_charge_used_at_the_stations],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[003_01_The_amount_of_charge_used_at_the_stations],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[003_01_The_amount_of_charge_used_at_the_stations]",
+              "    )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_The_amount_of_charge_used_at_the_stations_with_today",
+            "description": [
+              "مبلغ شارژ مصرف شده در ایستگاه ها",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations]",
+              "    )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "004_Number_of_exits_with_today",
+            "description": [
+              "تعداد خروجی پارک",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[004_Number_of_exits],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[004_Number_of_exits],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[004_Number_of_exits] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )",
+              ""
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "005_The_number_of_guests_in_the_park_with_today",
+            "description": [
+              "تعداد افراد حاضر در پارک",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[005_The_number_of_guests_in_the_park],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[005_The_number_of_guests_in_the_park],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[005_The_number_of_guests_in_the_park] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "006_02_Amount_of_charging_with_today",
+            "description": [
+              "مبلغ شارژ با احتساب مبلغ گیشه سازمانی",
+              "در بعضی از موارد به این دلیل که نفرات و پرسنل پارک دارای دسبندهایی هستند که قبلا صادر شده است و از آن برای خرید استفاده می کنند این مورد به صورت جداگانه محاسبه می شود.",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[006_02_Amount_of_charging],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[006_02_Amount_of_charging],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[006_02_Amount_of_charging] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "006_Amount_of_charging_with_today",
+            "description": [
+              "مقدار شارژ انجام شده",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[006_Amount_of_charging],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[006_Amount_of_charging],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[006_Amount_of_charging] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "007_The_amount_of_charge_remaining_with_today",
+            "description": [
+              "مقدار شارژ باقی مانده در مچ بندها",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[007_The_amount_of_charge_remaining],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[007_The_amount_of_charge_remaining],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[007_The_amount_of_charge_remaining] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "008_Amount_of_RefundCharge_with_today",
+            "description": [
+              "مبلغ استرداد داده شده",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[008_Amount_of_RefundCharge],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[008_Amount_of_RefundCharge],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[008_Amount_of_RefundCharge] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "009_The_amount_of_charge_used_with_today",
+            "description": [
+              "مقدار شارژ مصرف شده",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[009_The_amount_of_charge_used],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[009_The_amount_of_charge_used],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[009_The_amount_of_charge_used] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "010_Number_of_entries_MAN_wuth_today",
+            "description": [
+              "تعداد میهمانان مرد",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[010_Number_of_entries_MAN],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[010_Number_of_entries_MAN],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[010_Number_of_entries_MAN] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "011_Number_of_entries_WOMAN_with_today",
+            "description": [
+              "تعداد میهمانان زن",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[011_Number_of_entries_WOMAN],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[011_Number_of_entries_WOMAN],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[011_Number_of_entries_WOMAN] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "012_SumTicketPrice_with_today",
+            "description": [
+              "مبلغ دریافت شده در گیشه",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[012_SumTicketPrice],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[012_SumTicketPrice],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[012_SumTicketPrice] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "013_SumTicketContributionAmount_with_today",
+            "description": [
+              "پیش دریافت شارژ",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[013_SumTicketContributionAmount],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[013_SumTicketContributionAmount],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[013_SumTicketContributionAmount] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "014_sum_promotion_charge_with_today",
+            "description": "جمع مبلغ پروموشن با فیلتر امروز",
+            "expression": [
+              " ",
+              "",
+              "    VAR today_date = CALCULATE('report Reception_Log'[014_sum_promotion_charge],FILTER('report Reception_Log','report Reception_Log'[today_index_no] = 1))",
+              "    VAR last_week = CALCULATE('report Reception_Log'[014_sum_promotion_charge],FILTER('report Reception_Log','report Reception_Log'[today_index_no] = 2))",
+              "    VAR all_day = CALCULATE('report Reception_Log'[014_sum_promotion_charge])",
+              " ",
+              "    RETURN",
+              "    IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"امروز\"",
+              "    ,today_date",
+              "    ,IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"هفته گذشته\"",
+              "    ,last_week",
+              "    ,all_day))"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "015_0sales_O Lounge_with_today",
+            "description": [
+              "فروش نقدی در اولانچ",
+              "تنها موردی است که درآمد حاصل از آن در درآمد اپارک محاسبه نمی شود و به صورت نقدی دریافت می گردد.",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[015_0sales_O Lounge],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[015_0sales_O Lounge],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[015_0sales_O Lounge] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "016_Duration_time_with_today",
+            "description": [
+              "طول مدت حضور در پارک",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[016_Duration_time],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[016_Duration_time],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[016_Duration_time] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "017_ratio_attendance_to_ session_with_today",
+            "description": [
+              "نسبت مدت حضور به طول مدت سانس",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[017_ratio_attendance_to_ session],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[017_ratio_attendance_to_ session],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[017_ratio_attendance_to_ session] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "0.00%;-0.00%;0.00%"
+          },
+          {
+            "name": "018_Average_ticket_price_with_today",
+            "description": [
+              "متوسط قیمت بلیط",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[018_Average_ticket_price],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[018_Average_ticket_price],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[018_Average_ticket_price] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "019_Total_income_with_today",
+            "description": [
+              "مجموع درآمد روزانه پارک که از جمع مبلغ کل پیش پرداخت و گیشه و مقدار هزینه شده در ایستگاه های بدست می آید.",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[019_Total_income],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[019_Total_income],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[019_Total_income] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "020_Amount_of_charging_per_capita_with_today",
+            "description": [
+              "سرانه میزان شارژ",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[020_Amount_of_charging_per_capita],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[020_Amount_of_charging_per_capita],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[020_Amount_of_charging_per_capita] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "021_amount_of_charge_used_per_capit_with_today",
+            "description": [
+              "سرانه مصرف شارژ",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[021_amount_of_charge_used_per_capita],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[021_amount_of_charge_used_per_capita],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[021_amount_of_charge_used_per_capita] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "022_number_products_sold_each_station_with_today",
+            "description": [
+              "تعداد محصول فروش رفته در هر ایستگاه",
+              "با فیلتر امروز"
+            ],
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Station_Reception'[022_number_products_sold_each_station],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Station_Reception'[022_number_products_sold_each_station],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Station_Reception'[022_number_products_sold_each_station] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "023_Sum_Product_Price_each_station_with_today",
+            "description": "مبلغ محصولات فروش رفته در هر ایستگاه با فیلتر امروز",
+            "expression": [
+              "",
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Station_Reception'[023_Sum_Product_Price_each_station],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Station_Reception'[023_Sum_Product_Price_each_station],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Station_Reception'[023_Sum_Product_Price_each_station])",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )"
+            ],
+            "formatString": "#,#."
+          }
+        ]
+      },
+      {
+        "name": "report Station",
+        "columns": [
+          {
+            "name": "StationID",
+            "dataType": "int64",
+            "sourceColumn": "StationID"
+          },
+          {
+            "name": "StationName",
+            "dataType": "string",
+            "sourceColumn": "StationName"
+          },
+          {
+            "name": "type",
+            "dataType": "string",
+            "sourceColumn": "type"
+          },
+          {
+            "name": "payment type",
+            "dataType": "string",
+            "sourceColumn": "payment type"
+          },
+          {
+            "name": "Location",
+            "dataType": "string",
+            "sourceColumn": "Location"
+          },
+          {
+            "name": "Activity status",
+            "dataType": "string",
+            "sourceColumn": "Activity status"
+          },
+          {
+            "name": "ownership",
+            "dataType": "string",
+            "sourceColumn": "ownership"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Station = Source{[Schema=\"report\",Item=\"Station\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Station,\"ي\",\"ی\",Replacer.ReplaceText,{\"StationName\", \"type\", \"payment type\", \"Location\", \"Activity status\", \"ownership\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah payable_documents",
+        "description": "حسابها و اسناد پرداختنی تجاری",
+        "columns": [
+          {
+            "name": "Title_DL",
+            "dataType": "string",
+            "description": "عنوان تفصیلی",
+            "sourceColumn": "Title_DL"
+          },
+          {
+            "name": "change_amount",
+            "dataType": "double",
+            "description": "مانده",
+            "sourceColumn": "change_amount",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Debit",
+            "dataType": "double",
+            "description": "گردش بدهکار",
+            "sourceColumn": "Debit",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "description": "گردش بستانکار",
+            "sourceColumn": "Credit",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Code",
+            "dataType": "string",
+            "description": "کد تفصیلی",
+            "sourceColumn": "Code"
+          },
+          {
+            "name": "organization_unit",
+            "dataType": "string",
+            "sourceColumn": "organization_unit"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_payable_documents = Source{[Schema=\"rah\",Item=\"payable_documents\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_payable_documents,\"ي\",\"ی\",Replacer.ReplaceText,{\"Title_DL\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah Inventory_VoucherItem",
+        "description": "جدول سند های انبار ثبت شده در راهکاران",
+        "columns": [
+          {
+            "name": "InventoryVoucherID",
+            "dataType": "int64",
+            "description": "شماره یونیک جدول رسید انبار",
+            "sourceColumn": "InventoryVoucherID"
+          },
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "description": "تاریخ سند انبار",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Number",
+            "dataType": "string",
+            "description": "شماره سند انبار",
+            "sourceColumn": "Number"
+          },
+          {
+            "name": "CounterpartDLCode",
+            "dataType": "string",
+            "sourceColumn": "CounterpartDLCode"
+          },
+          {
+            "name": "Store_Name",
+            "dataType": "string",
+            "description": "نام فروشگاه",
+            "sourceColumn": "Store_Name"
+          },
+          {
+            "name": "InventoryVoucherItemID",
+            "dataType": "int64",
+            "description": "شماره یونیک ایتم های جدول سند انبار",
+            "sourceColumn": "InventoryVoucherItemID"
+          },
+          {
+            "name": "RowNumber",
+            "dataType": "int64",
+            "description": "ردیف رسید انبار",
+            "sourceColumn": "RowNumber"
+          },
+          {
+            "name": "Quantity",
+            "dataType": "double",
+            "description": "تعداد خریداری شده",
+            "sourceColumn": "Quantity",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Part_Code",
+            "dataType": "string",
+            "description": "کد محصول",
+            "sourceColumn": "Part_Code"
+          },
+          {
+            "name": "Part_Name",
+            "dataType": "string",
+            "description": "نام محصول",
+            "sourceColumn": "Part_Name"
+          },
+          {
+            "name": "PartUnit_Name",
+            "dataType": "string",
+            "description": "نام واحد اندازه گیری کالا",
+            "sourceColumn": "PartUnit_Name"
+          },
+          {
+            "name": "Fee",
+            "dataType": "double",
+            "description": "قیمت واحد به همراه مالیات آن",
+            "sourceColumn": "Fee",
+            "formatString": "#,#"
+          },
+          {
+            "name": "NetFee",
+            "dataType": "double",
+            "description": "قیمت واحد بدون مالیات",
+            "sourceColumn": "NetFee",
+            "formatString": "#,#"
+          },
+          {
+            "name": "NetPrice",
+            "dataType": "double",
+            "description": "قمیت قابل پرداخت بدون مالیات",
+            "sourceColumn": "NetPrice",
+            "formatString": "#,#"
+          },
+          {
+            "name": "organization_unit",
+            "dataType": "string",
+            "description": "نام واحد F&B که برای فیلتر در گزارش اصلی استفاده می شود",
+            "sourceColumn": "organization_unit"
+          },
+          {
+            "name": "CounterpartEntityText",
+            "dataType": "string",
+            "sourceColumn": "CounterpartEntityText"
+          },
+          {
+            "name": "TAX",
+            "dataType": "double",
+            "description": "مالیات قابل پرداخت",
+            "sourceColumn": "TAX",
+            "formatString": "#,#"
+          },
+          {
+            "name": "price",
+            "dataType": "double",
+            "description": "بهای قابل پرداخت همراه با مالیات",
+            "sourceColumn": "price",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Min(Fee_L_60_D)",
+            "dataType": "double",
+            "description": "حداقل فی در طی 60 روز گذشته",
+            "sourceColumn": "Min(Fee_L_60_D)",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Max(Fee_L_60_D)",
+            "dataType": "double",
+            "description": "حداکثر فی در طی 60 روز گذشته",
+            "sourceColumn": "Max(Fee_L_60_D)",
+            "formatString": "#,#"
+          },
+          {
+            "name": "AVG_Fee_L60_D",
+            "dataType": "int64",
+            "description": "متوسط فی در طی 60 روز آخر",
+            "sourceColumn": "AVG_Fee_L60_D",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Max(Fee_L_10_V)",
+            "dataType": "double",
+            "description": "حداکثر فی در طی ده سند قبلی",
+            "sourceColumn": "Max(Fee_L_10_V)",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Min(Fee_L_10_V)",
+            "dataType": "double",
+            "description": "حداقل فی در طی 10 سند گذشته",
+            "sourceColumn": "Min(Fee_L_10_V)",
+            "formatString": "#,#"
+          },
+          {
+            "name": "AVG_Fee_L10_V",
+            "dataType": "int64",
+            "description": "متوسط فی در ده سند آخر",
+            "sourceColumn": "AVG_Fee_L10_V",
+            "formatString": "#,#"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_Inventory_VoucherItem = Source{[Schema=\"rah\",Item=\"Inventory_VoucherItem\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_Inventory_VoucherItem,\"ي\",\"ی\",Replacer.ReplaceText,{\"CounterpartEntityText\", \"Store_Name\", \"Part_Name\", \"PartUnit_Name\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah payable_documents_detail",
+        "columns": [
+          {
+            "name": "Debit",
+            "dataType": "double",
+            "sourceColumn": "Debit",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "sourceColumn": "Credit",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Code",
+            "dataType": "string",
+            "sourceColumn": "Code"
+          },
+          {
+            "name": "Title_DL",
+            "dataType": "string",
+            "sourceColumn": "Title_DL"
+          },
+          {
+            "name": "change_amount",
+            "dataType": "double",
+            "sourceColumn": "change_amount",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Description",
+            "dataType": "string",
+            "sourceColumn": "Description"
+          },
+          {
+            "name": "Date_miladi",
+            "dataType": "string",
+            "sourceColumn": "Date_miladi"
+          },
+          {
+            "name": "VoucherItemID",
+            "dataType": "int64",
+            "sourceColumn": "VoucherItemID"
+          },
+          {
+            "name": "VoucherRef",
+            "dataType": "int64",
+            "sourceColumn": "VoucherRef"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_payable_documents_detail = Source{[Schema=\"rah\",Item=\"payable_documents_detail\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_payable_documents_detail,\"ي\",\"ی\",Replacer.ReplaceText,{\"Description\", \"Title_DL\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "crm main",
+        "description": [
+          "جدول CRM",
+          "در این جدول اطلاعات مربوط به رضایتمندی و انتقادات میمانان اپارک جمع اوری می گردد.",
+          "اطلاعات این جدول شامل مواردیکه در آنها برای هر ایتم نمره در نظر گرفته می شود نمی باشد "
+        ],
+        "columns": [
+          {
+            "name": "Full_name",
+            "dataType": "string",
+            "description": "نام کامل میهمان",
+            "sourceColumn": "Full_name"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "description": "جنسیت",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "Date_birth",
+            "dataType": "string",
+            "description": "تاریخ تولد",
+            "sourceColumn": "Date_birth"
+          },
+          {
+            "name": "Phone_number",
+            "dataType": "string",
+            "sourceColumn": "Phone_number"
+          },
+          {
+            "name": "Education",
+            "dataType": "string",
+            "description": "تحصیلات",
+            "sourceColumn": "Education"
+          },
+          {
+            "name": "Job",
+            "dataType": "string",
+            "description": "شغل میهمان",
+            "sourceColumn": "Job"
+          },
+          {
+            "name": "Area",
+            "dataType": "string",
+            "description": "منطقه سکونت",
+            "sourceColumn": "Area"
+          },
+          {
+            "name": "City",
+            "dataType": "string",
+            "description": "شهر محل سکونت",
+            "sourceColumn": "City"
+          },
+          {
+            "name": "Time",
+            "dataType": "dateTime",
+            "sourceColumn": "Time"
+          },
+          {
+            "name": "ID",
+            "dataType": "string",
+            "description": "شماره یونیک تولید شده برای هر رکورد ثبت شده در سیستم ارتباط با مشتریان که جهت اتصال با جدول جزئیات عددی مورد استفاده قرار می گیرد",
+            "sourceColumn": "ID"
+          },
+          {
+            "name": "Jalali_1",
+            "dataType": "string",
+            "description": "تاریخ شمسی مراجعه",
+            "sourceColumn": "Jalali_1"
+          },
+          {
+            "name": "jyear",
+            "dataType": "string",
+            "description": "سال شمسی مراجعه",
+            "sourceColumn": "jyear"
+          },
+          {
+            "name": "jmonthN",
+            "dataType": "int64",
+            "description": "شماره ماه شمسی مراجعه",
+            "sourceColumn": "jmonthN"
+          },
+          {
+            "name": "jmonthT",
+            "dataType": "string",
+            "description": "نام ماه شمسی مراجعه",
+            "sourceColumn": "jmonthT"
+          },
+          {
+            "name": "JWeekDay",
+            "dataType": "string",
+            "description": "روز هفته مراجعه",
+            "sourceColumn": "JWeekDay"
+          },
+          {
+            "name": "date_search",
+            "dataType": "string",
+            "description": "تاریخ مراجعه",
+            "sourceColumn": "date_search"
+          },
+          {
+            "name": "day",
+            "dataType": "double",
+            "description": "روز",
+            "sourceColumn": "day"
+          },
+          {
+            "name": "Decade_NO",
+            "dataType": "string",
+            "description": "شماره دهه",
+            "sourceColumn": "Decade_NO"
+          },
+          {
+            "name": "Decade_Name",
+            "dataType": "string",
+            "description": "نام دهه",
+            "sourceColumn": "Decade_Name"
+          },
+          {
+            "name": "Decade_Title",
+            "dataType": "string",
+            "description": "عنوان دهه",
+            "sourceColumn": "Decade_Title"
+          },
+          {
+            "name": "first_time",
+            "dataType": "string",
+            "description": "تعیین اینکه ایا اولین دفعه استفاده از پارک می باشد",
+            "sourceColumn": "first_time"
+          },
+          {
+            "name": "use_ food_section",
+            "dataType": "string",
+            "sourceColumn": "use_ food_section"
+          },
+          {
+            "name": "findout_re-opening_Opark",
+            "dataType": "string",
+            "description": "طریقه اطلاع از بازگشایی پارک",
+            "sourceColumn": "findout_re-opening_Opark"
+          },
+          {
+            "name": "How_get_know_Opark",
+            "dataType": "string",
+            "description": "چطور با اپارک آشنا شدید",
+            "sourceColumn": "How_get_know_Opark"
+          },
+          {
+            "name": "use_Opark_again",
+            "dataType": "string",
+            "sourceColumn": "use_Opark_again"
+          },
+          {
+            "name": "introduce_Opark_to_friends",
+            "dataType": "string",
+            "description": "تعیین اینکه اپارک را به دوستانتان معرفی می کنید",
+            "sourceColumn": "introduce_Opark_to_friends"
+          },
+          {
+            "name": "How_many_friends_come",
+            "dataType": "string",
+            "description": "تعداد نفراتی که با شما مراجعه کرده اند",
+            "sourceColumn": "How_many_friends_come"
+          },
+          {
+            "name": "member_Opark_customer_club",
+            "dataType": "string",
+            "sourceColumn": "member_Opark_customer_club"
+          },
+          {
+            "name": "comments_suggestions",
+            "dataType": "string",
+            "description": "انتقادات و پیشنهادات",
+            "sourceColumn": "comments_suggestions"
+          },
+          {
+            "name": "what_parts_ improved",
+            "dataType": "string",
+            "sourceColumn": "what_parts_ improved"
+          },
+          {
+            "name": "excel_file_name",
+            "dataType": "string",
+            "description": "نام فایل اکسل که اطلاعات از آن استخراج شده است",
+            "sourceColumn": "excel_file_name"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    crm_main = Source{[Schema=\"crm\",Item=\"main\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(crm_main,\"ي\",\"ی\",Replacer.ReplaceText,{\"Full_name\", \"Gender\", \"Education\", \"Job\", \"Area\", \"City\", \"jmonthT\", \"JWeekDay\", \"Decade_Name\", \"Decade_Title\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "report sales_target",
+        "description": "جدول تارگت های فروشندگان",
+        "columns": [
+          {
+            "name": "sales_user_ID",
+            "dataType": "int64",
+            "description": "id فروشنده",
+            "sourceColumn": "sales_user_ID"
+          },
+          {
+            "name": "sales_user_fullname",
+            "dataType": "string",
+            "description": "نام فروشنده",
+            "sourceColumn": "sales_user_fullname"
+          },
+          {
+            "name": "year",
+            "dataType": "string",
+            "description": "سال تارگت",
+            "sourceColumn": "year"
+          },
+          {
+            "name": "month",
+            "dataType": "string",
+            "description": "ماه تارگت",
+            "sourceColumn": "month"
+          },
+          {
+            "name": "sales_user_target",
+            "dataType": "int64",
+            "description": "تارگت فروشندگان",
+            "sourceColumn": "sales_user_target"
+          },
+          {
+            "name": "unic_code_target",
+            "dataType": "string",
+            "sourceColumn": "unic_code_target"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_sales_target = Source{[Schema=\"report\",Item=\"sales_target\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_sales_target,\"ي\",\"ی\",Replacer.ReplaceText,{\"sales_user_fullname\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_sum_sales_target",
+            "expression": "SUM('report sales_target'[sales_user_target])"
+          }
+        ]
+      },
+      {
+        "name": "report Ticket_Calendar",
+        "description": "با توجه به اینکه در قراردادهای مختلف مبلغی که برای بلیط در نظر گرفته شده است با مبلغ پایه بلیط متفاوت است بنابراین برای اضافه کردن مبلغ پایه بلیط به جدول لاگ از این جدول استفاده می کنیم.",
+        "columns": [
+          {
+            "name": "CalendarTicketPrice",
+            "dataType": "int64",
+            "sourceColumn": "CalendarTicketPrice"
+          },
+          {
+            "name": "TicketBasePrice",
+            "dataType": "int64",
+            "sourceColumn": "TicketBasePrice"
+          },
+          {
+            "name": "TicketCardMainID",
+            "dataType": "string",
+            "sourceColumn": "TicketCardMainID"
+          },
+          {
+            "name": "Calendar_Group_Title",
+            "dataType": "string",
+            "sourceColumn": "Calendar_Group_Title"
+          },
+          {
+            "name": "Discounts _per_session",
+            "dataType": "double",
+            "sourceColumn": "Discounts _per_session"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Ticket_Calendar = Source{[Schema=\"report\",Item=\"Ticket_Calendar\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Ticket_Calendar,\"ي\",\"ی\",Replacer.ReplaceText,{\"Calendar_Group_Title\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_average_CalendarTicketPrice",
+            "description": "متوسط حسابی مبلغ فروش بلیط در قراردادهای سازمانی",
+            "expression": " CALCULATE(AVERAGE('report Ticket_Calendar'[CalendarTicketPrice]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_average_TicketBasePrice",
+            "description": "متوسط حسابی مبلغ پایه بلیط در قراردادهای سازمانی",
+            "expression": " CALCULATE(AVERAGE('report Ticket_Calendar'[TicketBasePrice]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_sum_Discounts _per_session",
+            "description": "جمع مبلغ تخفیف داده شده در قراردادهای سازمانی",
+            "expression": "CALCULATE(SUM('report Ticket_Calendar'[Discounts _per_session]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "004_Percent_Discounts _per_session",
+            "description": "درصد تخفیف داده شده در قراردادها",
+            "expression": " DIVIDE(AVERAGE('report Ticket_Calendar'[Discounts _per_session]),'report Ticket_Calendar'[002_average_TicketBasePrice],0)",
+            "formatString": "0.00%;-0.00%;0.00%"
+          }
+        ]
+      },
+      {
+        "name": "crm detail_score",
+        "columns": [
+          {
+            "name": "topic",
+            "dataType": "string",
+            "sourceColumn": "topic"
+          },
+          {
+            "name": "Score",
+            "dataType": "int64",
+            "sourceColumn": "Score"
+          },
+          {
+            "name": "Phone_number",
+            "dataType": "string",
+            "sourceColumn": "Phone_number"
+          },
+          {
+            "name": "ID",
+            "dataType": "string",
+            "sourceColumn": "ID"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    crm_detail_score = Source{[Schema=\"crm\",Item=\"detail_score\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(crm_detail_score,\"ي\",\"ی\",Replacer.ReplaceText,{\"topic\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "3212cdd7-1c34-4c4d-894a-cec669bdd66f",
+        "fromTable": "rah cash_balance",
+        "fromColumn": "date",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
+      },
+      {
+        "name": "858d3a9c-0ba2-4c74-9424-1c3ee9760f6d",
+        "fromTable": "rah cash_detail",
+        "fromColumn": "date",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
+      },
+      {
+        "name": "b923cb1e-f57e-4942-bcb4-ffc23256c887",
+        "fromTable": "report sales_contract",
+        "fromColumn": "TicketTypeID",
+        "toTable": "report Ticket_Type",
+        "toColumn": "TicketTypeID (right)"
+      },
+      {
+        "name": "82d13c20-e188-4c8f-a4a4-53f9c6261d87",
+        "fromTable": "report Reception_Log",
+        "fromColumn": "today_index",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi"
+      },
+      {
+        "name": "d6692146-09ce-42d9-a4d4-410864b83466",
+        "fromTable": "report Reception_Log",
+        "fromColumn": "StationID",
+        "toTable": "report Station",
+        "toColumn": "StationID"
+      },
+      {
+        "name": "0bf1bb63-0c95-4d05-a2d1-82589a85e3c7",
+        "fromTable": "rah payable_documents_detail",
+        "fromColumn": "Code",
+        "toTable": "rah payable_documents",
+        "toColumn": "Code"
+      },
+      {
+        "name": "641119c4-64a7-4c1c-89e3-d65bd0b95779",
+        "fromTable": "rah payable_documents_detail",
+        "fromColumn": "Date_miladi",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi - text"
+      },
+      {
+        "name": "c412c2c3-278b-4a5f-8707-aaf672748bb3",
+        "fromTable": "rah Inventory_VoucherItem",
+        "fromColumn": "Date",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi"
+      },
+      {
+        "name": "73416d20-e008-4c20-93b8-8c0d57495b02",
+        "fromTable": "report Station_Reception",
+        "fromColumn": "uniccode_Station_Reception",
+        "toTable": "report Reception_Log",
+        "toColumn": "uniccode_Station_Reception",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "e2190814-ff91-4304-819f-31c3c9c4e907",
+        "fromTable": "report Reception_Log",
+        "fromColumn": "TicketCardMainID",
+        "toTable": "report sales_contract",
+        "toColumn": "TicketCardMainID",
+        "isActive": false,
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "0678435c-ce95-4822-9435-19560266c364",
+        "fromTable": "report sales_contract",
+        "fromColumn": "unic_code_target",
+        "toTable": "report sales_target",
+        "toColumn": "unic_code_target"
+      },
+      {
+        "name": "507cafb1-e336-4b2e-80e6-2a3c5f696c95",
+        "fromTable": "report Ticket_Calendar",
+        "fromColumn": "TicketCardMainID",
+        "toTable": "report sales_contract",
+        "toColumn": "TicketCardMainID"
+      },
+      {
+        "name": "c6050ab1-dd2c-4567-bdcd-9a676893ba5d",
+        "fromTable": "crm detail_score",
+        "fromColumn": "ID",
+        "toTable": "crm main",
+        "toColumn": "ID"
+      },
+      {
+        "name": "b8f13a4d-725e-4dfc-9e45-446cecd59e50",
+        "fromTable": "report sales_contract",
+        "fromColumn": "InsertDate",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi - text"
+      }
+    ],
+    "roles": [
+      {
+        "name": "Job Runner",
+        "modelPermission": "readRefresh",
+        "members": [
+          {
+            "memberName": "NT SERVICE\\SQLSERVERAGENT",
+            "memberId": "S-1-5-80-344959196-2060754871-2302487193-2804545603-1466107430"
+          }
+        ]
+      },
+      {
+        "name": "full_view",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_Admin_Access",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2723"
+          },
+          {
+            "memberName": "OPARK\\BI_General_View",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2727"
+          },
+          {
+            "memberName": "OPARK\\a.dashti",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2706"
+          }
+        ]
+      },
+      {
+        "name": "Sales_admin",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\a.keshmiri",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-1530"
+          },
+          {
+            "memberName": "OPARK\\sh.armandi",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2662"
+          },
+          {
+            "memberName": "OPARK\\e.karimi",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2661"
+          },
+          {
+            "memberName": "OPARK\\BI_Sales_FullView",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2734"
+          },
+          {
+            "memberName": "OPARK\\BI_Financial_BankView",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2733"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "in permission",
+            "filterExpression": "[username] = USERPRINCIPALNAME()"
+          }
+        ]
+      },
+      {
+        "name": "f_b_view",
+        "description": "OPARK\\Bi_f&b_view",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_F&B_View",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2730"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah Inventory_VoucherItem",
+            "filterExpression": "'rah Inventory_VoucherItem'[organization_unit] =\"F_B\""
+          }
+        ]
+      },
+      {
+        "name": "finacial_view",
+        "description": "OPARK\\BI_Financial_BankView",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_Financial_BankView",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2733"
+          }
+        ]
+      },
+      {
+        "name": "CRM_Aftersales",
+        "description": "OPARK\\BI_CRM_Aftersales_FullView",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_CRM_Aftersales_FullView",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2741"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "bi DimDate",
+            "columnPermissions": [
+              {
+                "name": "Miladi"
+              },
+              {
+                "name": "Jalali_1"
+              },
+              {
+                "name": "jyear"
+              },
+              {
+                "name": "jmonthN"
+              },
+              {
+                "name": "jmonthT"
+              },
+              {
+                "name": "jnime"
+              },
+              {
+                "name": "JquarterN"
+              },
+              {
+                "name": "JQuarterT"
+              },
+              {
+                "name": "JWeekDay"
+              },
+              {
+                "name": "JWeekNum"
+              },
+              {
+                "name": "date_search"
+              },
+              {
+                "name": "dayNUM"
+              },
+              {
+                "name": "Miladi - text"
+              },
+              {
+                "name": "Counter"
+              }
+            ]
+          },
+          {
+            "name": "rah cash_detail",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "rah cash_balance",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "report Ticket_Type",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "report Station_Reception",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "report Ticket_Calendar",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "report sales_target",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "rah payable_documents_detail",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "rah Inventory_VoucherItem",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "rah payable_documents",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "report Station",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "in select_table_date_now",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "in select_table",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "in permission",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "report Reception_Log",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "bi last_refresh_time_knime",
+            "columnPermissions": [
+              {
+                "name": "Time"
+              },
+              {
+                "name": "Date"
+              },
+              {
+                "name": "Miladi_report_date"
+              },
+              {
+                "name": "report_date"
+              },
+              {
+                "name": "today_index_no"
+              },
+              {
+                "name": "last_week_date"
+              }
+            ]
+          },
+          {
+            "name": "report sales_contract",
+            "metadataPermission": "none"
+          },
+          {
+            "name": "crm main",
+            "columnPermissions": [
+              {
+                "name": "Full_name"
+              },
+              {
+                "name": "Gender"
+              },
+              {
+                "name": "Date_birth"
+              },
+              {
+                "name": "Phone_number"
+              },
+              {
+                "name": "Education"
+              },
+              {
+                "name": "Job"
+              },
+              {
+                "name": "Area"
+              },
+              {
+                "name": "City"
+              },
+              {
+                "name": "Time"
+              },
+              {
+                "name": "ID"
+              },
+              {
+                "name": "Jalali_1"
+              },
+              {
+                "name": "jyear"
+              },
+              {
+                "name": "jmonthN"
+              },
+              {
+                "name": "jmonthT"
+              },
+              {
+                "name": "JWeekDay"
+              },
+              {
+                "name": "date_search"
+              },
+              {
+                "name": "day"
+              },
+              {
+                "name": "Decade_NO"
+              },
+              {
+                "name": "Decade_Name"
+              },
+              {
+                "name": "Decade_Title"
+              },
+              {
+                "name": "first_time"
+              },
+              {
+                "name": "use_ food_section"
+              },
+              {
+                "name": "findout_re-opening_Opark"
+              },
+              {
+                "name": "How_get_know_Opark"
+              },
+              {
+                "name": "use_Opark_again"
+              },
+              {
+                "name": "introduce_Opark_to_friends"
+              },
+              {
+                "name": "How_many_friends_come"
+              },
+              {
+                "name": "member_Opark_customer_club"
+              },
+              {
+                "name": "comments_suggestions"
+              },
+              {
+                "name": "what_parts_ improved"
+              },
+              {
+                "name": "excel_file_name"
+              }
+            ]
+          },
+          {
+            "name": "crm detail_score",
+            "columnPermissions": [
+              {
+                "name": "topic"
+              },
+              {
+                "name": "Score"
+              },
+              {
+                "name": "Phone_number"
+              },
+              {
+                "name": "ID"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CRM_Aftersales_PhoneNumber",
+        "description": "OPARK\\BI_CRM_Aftersales_PhoneNumbers",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_CRM_Aftersales_PhoneNumbers",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2742"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "crm main",
+            "columnPermissions": [
+              {
+                "name": "Full_name",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Gender",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Date_birth",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Phone_number",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Education",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Job",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Area",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "City",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Time",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Jalali_1",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "jyear",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "jmonthN",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "jmonthT",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "JWeekDay",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "date_search",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "day",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Decade_NO",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Decade_Name",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Decade_Title",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "first_time",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "use_ food_section",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "findout_re-opening_Opark",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "How_get_know_Opark",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "use_Opark_again",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "introduce_Opark_to_friends",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "How_many_friends_come",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "member_Opark_customer_club",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "comments_suggestions",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "what_parts_ improved",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "excel_file_name",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "crm detail_score",
+            "columnPermissions": [
+              {
+                "name": "topic",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Score",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Phone_number",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ID",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "bi DimDate",
+            "columnPermissions": [
+              {
+                "name": "Miladi",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Jalali_1",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "jyear",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "jmonthN",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "jmonthT",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "jnime",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "JquarterN",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "JQuarterT",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "JWeekDay",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "JWeekNum",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "date_search",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "dayNUM",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Miladi - text",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Counter",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "rah cash_detail",
+            "columnPermissions": [
+              {
+                "name": "description",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "amount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "date",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "max_indicator",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "id",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "type_description",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "rah cash_balance",
+            "columnPermissions": [
+              {
+                "name": "Title_DL",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "cash_rah",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "account number",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "bank",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "type_account",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "branch",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "branch_code",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "cash_excel",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "date",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "max_indicator",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Debit",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Credit",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Code",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "report Ticket_Type",
+            "columnPermissions": [
+              {
+                "name": "TicketTypeID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#1)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#1)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#2)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#2)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#3)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#3)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#4)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#4)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#5)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#5)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#6)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#6)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#7)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#7)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#8)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#8)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (#9)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeGroupName (#9)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID (right)",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "report Station_Reception",
+            "columnPermissions": [
+              {
+                "name": "StationID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ProductName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ProductCount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "StationName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "today_index",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "uniccode_Station_Reception",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "SumProductPrice",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "report sales_contract",
+            "columnPermissions": [
+              {
+                "name": "TicketCardMainID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardMainName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeCaption",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ContributionPercent",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ContributionAmount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "InsertDate",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "CardCount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "SessionCount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "total_session_count",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "IsDeactive",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ExpireDate",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketTypeID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "admin_sales_user_fullname",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "sales_user_fullname",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_sessions_used",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_full_cards_used",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "number_cards_not_used_any_sessions",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_full_cards_used_or_unused",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_cards_issued",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_sessions_used_female",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_sessions_used_male",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_cards_not_finish_with_use",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number_remaining_sessions",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "no_deleted_session",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "number_cards_not_issued",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "age_category",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardMain_Category",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "sales_user_ID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "unic_code_target",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardMain_Category_filter_maker",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "InsertDate_persian",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ExpireDate_persian",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Mean(CalendarTicketPrice)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "sales_forecast",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardMainFinancialTypeTitle",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "report Ticket_Calendar",
+            "columnPermissions": [
+              {
+                "name": "CalendarTicketPrice",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketBasePrice",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardMainID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Calendar_Group_Title",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Discounts _per_session",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "report sales_target",
+            "columnPermissions": [
+              {
+                "name": "sales_user_ID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "sales_user_fullname",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "year",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "month",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "sales_user_target",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "unic_code_target",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "rah payable_documents_detail",
+            "columnPermissions": [
+              {
+                "name": "Debit",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Credit",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Code",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Title_DL",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "change_amount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Description",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Date_miladi",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "VoucherItemID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "VoucherRef",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "rah Inventory_VoucherItem",
+            "columnPermissions": [
+              {
+                "name": "InventoryVoucherID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Date",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Number",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "CounterpartDLCode",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Store_Name",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "InventoryVoucherItemID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "RowNumber",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Quantity",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Part_Code",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Part_Name",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "PartUnit_Name",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Fee",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "NetFee",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "NetPrice",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "organization_unit",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "CounterpartEntityText",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TAX",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "price",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Min(Fee_L_60_D)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Max(Fee_L_60_D)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "AVG_Fee_L60_D",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Max(Fee_L_10_V)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Min(Fee_L_10_V)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "AVG_Fee_L10_V",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "rah payable_documents",
+            "columnPermissions": [
+              {
+                "name": "Title_DL",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "change_amount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Debit",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Credit",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Code",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "organization_unit",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "report Station",
+            "columnPermissions": [
+              {
+                "name": "StationID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "StationName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "type",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "payment type",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Location",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Activity status",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ownership",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "in select_table_date_now",
+            "columnPermissions": [
+              {
+                "name": "select subject",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "persian select subject",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "in select_table",
+            "columnPermissions": [
+              {
+                "name": "select subject",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "in permission",
+            "columnPermissions": [
+              {
+                "name": "username",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "permission",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "page",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "report Reception_Log",
+            "columnPermissions": [
+              {
+                "name": "ShiftType",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ReceptionID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardMainID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardDetailID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardNumber",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "CurrentChargeAmount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Gender",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ReceptionLogID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ActionDescription",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "UsageAmount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "IsNewWristBand",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "IsCharge",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "IsRefundCharge",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "IsPromotion",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "StationID",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "IsStationLog",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "RefundedAmount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "today_index",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketNameGroup",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "StationName",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Date",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Time",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ReceptionID_index",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "wristbands_index",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "SumTicketPrice",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "SumTicketContributionAmount",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Duration_time",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "ratio_attendance_to_ session",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "date_search",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "uniccode_Station_Reception",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "today_index_no",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Default_charge_index",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "TicketCardMainID (right)",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Reception_CustomerMobile",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Reception_CustomerName",
+                "metadataPermission": "none"
+              }
+            ]
+          },
+          {
+            "name": "bi last_refresh_time_knime",
+            "columnPermissions": [
+              {
+                "name": "Time",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Date",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "Miladi_report_date",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "report_date",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "today_index_no",
+                "metadataPermission": "none"
+              },
+              {
+                "name": "last_week_date",
+                "metadataPermission": "none"
+              }
+            ]
           }
         ]
       }
