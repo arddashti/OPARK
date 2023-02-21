@@ -1168,7 +1168,22 @@
           {
             "name": "032_sum_sales_forecast",
             "description": "جمع مبلغ پیش بینی شده برای هر قرارداد",
-            "expression": " CALCULATE(SUM('report sales_contract'[sales_forecast]))",
+            "expression": " IF(ISBLANK( CALCULATE(SUM('report sales_contract'[sales_forecast]))),0, CALCULATE(SUM('report sales_contract'[sales_forecast])))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "033_total_SumTicketPrice_in_contract",
+            "description": [
+              "مبلغ دریافت شده در گیشه",
+              "به تفکیک قرارداد  ",
+              "مربوط به میهمانان گروهی"
+            ],
+            "expression": [
+              " ",
+              "CALCULATE (",
+              "    'in select_table_date_now'[012_SumTicketPrice_with_today],",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] ),FILTER('report Reception_Log','report Reception_Log'[TicketName] = \"گیشه گروهی\"))"
+            ],
             "formatString": "#,#"
           }
         ]
@@ -1944,12 +1959,20 @@
           {
             "name": "003_phone_number_permissio",
             "expression": [
-              " IF(USERNAME() = \"OPARK\\aliakbari.m\" ||",
-              "\t\t\tUSERNAME() = \"OPARK\\a.dashti\" ||",
-              "\t\t\tUSERNAME() = \"OPARK\\E.Gholami\" ||",
-              "\t\t\tUSERNAME() = \"OPARK\\R.Naeimipour\" ||",
-              "\t\t\tUSERNAME() = \"OPARK\\A.Hosseinzadeh\",\"mobile_phone\",\"1\")"
+              " IF(USERPRINCIPALNAME() = \"aliakbari.m@Opark.Local\" ||",
+              "\t\t\tUSERPRINCIPALNAME() = \"a.dashti@Opark.Local\" ||",
+              "\t\t\tUSERPRINCIPALNAME() = \"E.Gholami@Opark.Local\" ||",
+              "\t\t\tUSERPRINCIPALNAME() = \"R.Naeimipour@Opark.Local\" ||",
+              "\t\t\tUSERPRINCIPALNAME() = \"A.Hosseinzadeh@Opark.Local\",\"mobile_phone\",\"1\")"
             ]
+          },
+          {
+            "name": "004_USERNAME",
+            "expression": "USERNAME()"
+          },
+          {
+            "name": "005_USERPRINCIPALNAME",
+            "expression": "USERPRINCIPALNAME()"
           }
         ]
       },
@@ -3475,7 +3498,7 @@
         "columns": [
           {
             "name": "sales_user_ID",
-            "dataType": "int64",
+            "dataType": "string",
             "description": "id فروشنده",
             "sourceColumn": "sales_user_ID"
           },
@@ -3493,7 +3516,7 @@
           },
           {
             "name": "month",
-            "dataType": "string",
+            "dataType": "int64",
             "description": "ماه تارگت",
             "sourceColumn": "month"
           },
@@ -3519,9 +3542,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    report_sales_target = Source{[Schema=\"report\",Item=\"sales_target\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(report_sales_target,\"ي\",\"ی\",Replacer.ReplaceText,{\"sales_user_fullname\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_sales_target,\"ي\",\"ی\",Replacer.ReplaceText,{\"sales_user_fullname\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"month\", Int64.Type}})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Changed Type\""
               ]
             }
           }
@@ -3751,6 +3775,15 @@
         "fromColumn": "InsertDate",
         "toTable": "bi DimDate",
         "toColumn": "Miladi - text"
+      },
+      {
+        "name": "dd10b1c3-9bb0-478b-92bd-c8a1d8c26863",
+        "toCardinality": "many",
+        "fromTable": "bi DimDate",
+        "fromColumn": "jmonthN",
+        "toTable": "report sales_target",
+        "toColumn": "month",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
