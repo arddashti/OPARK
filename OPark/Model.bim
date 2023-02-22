@@ -111,6 +111,7 @@
           {
             "name": "Counter",
             "dataType": "int64",
+            "description": "شماره یونیک جدول تاریخ که برای محاسباتی روز روز ها از آن استفاده می شود",
             "sourceColumn": "Counter"
           }
         ],
@@ -252,26 +253,31 @@
           {
             "name": "account number",
             "dataType": "string",
+            "description": "شماره حساب",
             "sourceColumn": "account number"
           },
           {
             "name": "bank",
             "dataType": "string",
+            "description": "نام بانک",
             "sourceColumn": "bank"
           },
           {
             "name": "type_account",
             "dataType": "string",
+            "description": "نوع حساب",
             "sourceColumn": "type_account"
           },
           {
             "name": "branch",
             "dataType": "string",
+            "description": "نام شعبه",
             "sourceColumn": "branch"
           },
           {
             "name": "branch_code",
             "dataType": "string",
+            "description": "کد شعبه",
             "sourceColumn": "branch_code"
           },
           {
@@ -284,11 +290,13 @@
           {
             "name": "date",
             "dataType": "string",
+            "description": "تاریخ",
             "sourceColumn": "date"
           },
           {
             "name": "max_indicator",
             "dataType": "string",
+            "description": "مشخص کننده تاریخ ماکزیمم تا بتوان از ان برای نمایش آخرین موجودی نقد و بانک در گزارش نقد و بانک استفاده کرد",
             "sourceColumn": "max_indicator"
           },
           {
@@ -331,6 +339,7 @@
         "measures": [
           {
             "name": "001_total_amount",
+            "description": "آخرین موجودی نقد حساب بانکی",
             "expression": " CALCULATE(SUM('rah cash_balance'[cash_excel]),FILTER('rah cash_balance','rah cash_balance'[max_indicator] = \"1\" ))",
             "formatString": "#,#"
           },
@@ -481,36 +490,43 @@
           {
             "name": "StationID",
             "dataType": "int64",
+            "description": "شماره یونیک ایستگاه",
             "sourceColumn": "StationID"
           },
           {
             "name": "ProductName",
             "dataType": "string",
+            "description": "نام محصول فروش رفته",
             "sourceColumn": "ProductName"
           },
           {
             "name": "ProductCount",
             "dataType": "int64",
+            "description": "تعداد محصول فروش رفته",
             "sourceColumn": "ProductCount"
           },
           {
             "name": "StationName",
             "dataType": "string",
+            "description": "نام ایستگاه",
             "sourceColumn": "StationName"
           },
           {
             "name": "today_index",
             "dataType": "string",
+            "description": "تاریخ گزارش",
             "sourceColumn": "today_index"
           },
           {
             "name": "uniccode_Station_Reception",
             "dataType": "string",
+            "description": "شماره یونیک این جدول که از اتصال شماره ایستگاه،شماره مشتری ، تاریخ خرید و شماره فاکتور خرید ساخته می شود",
             "sourceColumn": "uniccode_Station_Reception"
           },
           {
             "name": "SumProductPrice",
             "dataType": "int64",
+            "description": "جمع قیمت پرداختی که از ضرب تعداد در قیمت پایه محاسبه می شود",
             "sourceColumn": "SumProductPrice"
           }
         ],
@@ -1958,6 +1974,7 @@
           },
           {
             "name": "003_phone_number_permissio",
+            "description": "تعیین کننده اینکه چه کسی به صفحه مشخصات و شماره تلفن مشتریان در صفحه CRM دسترسی داشته باشد",
             "expression": [
               " IF(USERPRINCIPALNAME() = \"aliakbari.m@Opark.Local\" ||",
               "\t\t\tUSERPRINCIPALNAME() = \"a.dashti@Opark.Local\" ||",
@@ -1968,10 +1985,12 @@
           },
           {
             "name": "004_USERNAME",
+            "description": "نشان دهنده یوزر نیم فردی است که به سیستم لاگین کرده است",
             "expression": "USERNAME()"
           },
           {
             "name": "005_USERPRINCIPALNAME",
+            "description": "مشخص کننده یوزر دامینی فردی است که به سیستم لاگین کرده است.",
             "expression": "USERPRINCIPALNAME()"
           }
         ]
@@ -1983,6 +2002,7 @@
           {
             "name": "select subject",
             "dataType": "string",
+            "description": "این جدول برای نمایش محتوای میجر هایی که تا به حال در دکس نوشته شده است و نمایش ترند آنها استفاده شده است.",
             "sourceColumn": "select subject"
           }
         ],
@@ -2005,7 +2025,8 @@
         ],
         "measures": [
           {
-            "name": "001",
+            "name": "001_in select_table",
+            "description": "این مجر براسا انتخاب موضوع مورد نظر در اسلایسر موضوعات مقدار خواسته شده را در هر نموداری نمایش می دهد",
             "expression": [
               "",
               "IF (",
@@ -2076,11 +2097,13 @@
           {
             "name": "select subject",
             "dataType": "string",
+            "description": "عنوان انگلیسی برای انتخاب دوره های زمانی نمایش اطلاعات در گزارش های روزانه و تحلیل روزانه",
             "sourceColumn": "select subject"
           },
           {
             "name": "persian select subject",
             "dataType": "string",
+            "description": "عنوان فارسی برای انتخاب دوره های زمانی نمایش اطلاعات در گزارش های روزانه و تحلیل روزانه",
             "sourceColumn": "persian select subject"
           }
         ],
@@ -2922,40 +2945,48 @@
       },
       {
         "name": "report Station",
+        "description": "جدول مشخصات ایستگاه های موجود در پارک که از طریق یک فایل اکسل که توسط آقای نعیمی پور تکمیل گردید به دیتابیس اضافه گردید",
         "columns": [
           {
             "name": "StationID",
             "dataType": "int64",
+            "description": "شماره یونیک ایستگاه ها",
             "sourceColumn": "StationID"
           },
           {
             "name": "StationName",
             "dataType": "string",
+            "description": "نام ایستگاه",
             "sourceColumn": "StationName"
           },
           {
             "name": "type",
             "dataType": "string",
+            "description": "نوع ایستگاه شامل خدماتی غذایی یا فروش",
             "sourceColumn": "type"
           },
           {
             "name": "payment type",
             "dataType": "string",
+            "description": "نوع پرداخت نقدی یا مچ بند",
             "sourceColumn": "payment type"
           },
           {
             "name": "Location",
             "dataType": "string",
+            "description": "محل قرارگیری ایستگاه در خارج یا داخل محوطه پارک",
             "sourceColumn": "Location"
           },
           {
             "name": "Activity status",
             "dataType": "string",
+            "description": "وضعیت فعال بودن ایستگاه",
             "sourceColumn": "Activity status"
           },
           {
             "name": "ownership",
             "dataType": "string",
+            "description": "مالکیت ایستگاه",
             "sourceColumn": "ownership"
           }
         ],
@@ -3314,6 +3345,7 @@
           {
             "name": "Phone_number",
             "dataType": "string",
+            "description": "شماره موبایل مشتری",
             "sourceColumn": "Phone_number"
           },
           {
@@ -3343,6 +3375,7 @@
           {
             "name": "Time",
             "dataType": "dateTime",
+            "description": "زمان تکمیل و ارسال فرم نظر سنجی",
             "sourceColumn": "Time"
           },
           {
@@ -3420,6 +3453,7 @@
           {
             "name": "use_ food_section",
             "dataType": "string",
+            "description": "مشخص کردن اینکه ایا مشتری از بخش مربوط به خوراکی استفاده کرده است یا نه",
             "sourceColumn": "use_ food_section"
           },
           {
@@ -3437,6 +3471,7 @@
           {
             "name": "use_Opark_again",
             "dataType": "string",
+            "description": "مشخص کردن اینکه ایا مشتری تمایل به استفاده مجدد از خدمات پارک را دارد یا نه",
             "sourceColumn": "use_Opark_again"
           },
           {
@@ -3454,6 +3489,7 @@
           {
             "name": "member_Opark_customer_club",
             "dataType": "string",
+            "description": "مشخص کننده اینکه ایا مشتری جزو باشگاه مشتریان پارک می باشد یا نه",
             "sourceColumn": "member_Opark_customer_club"
           },
           {
@@ -3465,6 +3501,7 @@
           {
             "name": "what_parts_ improved",
             "dataType": "string",
+            "description": "پیشنهاد مستری در خصوص بهبود هایی که می تواند در بخش های مختلف پارک اتفاق بیفتد",
             "sourceColumn": "what_parts_ improved"
           },
           {
@@ -3529,6 +3566,7 @@
           {
             "name": "unic_code_target",
             "dataType": "string",
+            "description": "کد یونیک که مقدار تارگت هر فروشنده را در هر ماه یک سال مشخص تعیین می کند",
             "sourceColumn": "unic_code_target"
           }
         ],
@@ -3553,6 +3591,7 @@
         "measures": [
           {
             "name": "001_sum_sales_target",
+            "description": "جمع تارگت فروشندگان",
             "expression": "SUM('report sales_target'[sales_user_target])"
           }
         ]
@@ -3564,26 +3603,31 @@
           {
             "name": "CalendarTicketPrice",
             "dataType": "int64",
+            "description": "مبلغ فروش بلیط در قراردادهای سازمانی",
             "sourceColumn": "CalendarTicketPrice"
           },
           {
             "name": "TicketBasePrice",
             "dataType": "int64",
+            "description": "مبلغ پایه بلیط در قراردادهای سازمانی",
             "sourceColumn": "TicketBasePrice"
           },
           {
             "name": "TicketCardMainID",
             "dataType": "string",
+            "description": "شماره یونیک قرارداد",
             "sourceColumn": "TicketCardMainID"
           },
           {
             "name": "Calendar_Group_Title",
             "dataType": "string",
+            "description": "عنوان نوع زمان مصرف بلیط مانند همه روز یا فقط روز  های تعطیل",
             "sourceColumn": "Calendar_Group_Title"
           },
           {
             "name": "Discounts _per_session",
             "dataType": "double",
+            "description": "مبلغ تخفیف داده شده در هر جلسه",
             "sourceColumn": "Discounts _per_session"
           }
         ],
@@ -3633,25 +3677,34 @@
       },
       {
         "name": "crm detail_score",
+        "description": [
+          "جدول CRM",
+          "در این جدول جزئیات اطلاعات مربوط به رضایتمندی و انتقادات میمانان اپارک جمع اوری می گردد.",
+          "اطلاعات این جدول شامل مواردیکه در آنها برای هر ایتم نمره در نظر گرفته می شود می باشد "
+        ],
         "columns": [
           {
             "name": "topic",
             "dataType": "string",
+            "description": "موضوع سوال پرسیده شده در فرم نظر سنجی مشتریان",
             "sourceColumn": "topic"
           },
           {
             "name": "Score",
             "dataType": "int64",
+            "description": "امتیاز داده شده برای سوالات موجود در فرم نظرسنجی",
             "sourceColumn": "Score"
           },
           {
             "name": "Phone_number",
             "dataType": "string",
+            "description": "شماره تلفن میهمانان",
             "sourceColumn": "Phone_number"
           },
           {
             "name": "ID",
             "dataType": "string",
+            "description": "شماره یونیک جدول جزئیات ارتباط با مشتری_این کد در دیتابیس و جداول پای مورد استفاده وجود ندارد و به صورت اتوماتیک در فرایند پردازش داده ها تولید می شود",
             "sourceColumn": "ID"
           }
         ],
