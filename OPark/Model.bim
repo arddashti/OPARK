@@ -1112,7 +1112,7 @@
           },
           {
             "name": "024_capitationl_amount_of_charge_used_at_the_stations_in_contract",
-            "description": "سرانه مصرف شارژ در ایستگاه ها",
+            "description": "سرانه مصرف شارژ در ایستگاه ها برای افراد وارد شده به ایستگاه ها",
             "expression": [
               " ",
               "DIVIDE('report sales_contract'[023_total_amount_of_charge_used_at_the_stations_in_contract],'report sales_contract'[022_total_Number_of_entrances_to_the_station_in_contract])"
@@ -1499,9 +1499,11 @@
                 "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"today_index\", type date}, {\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"})",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"}),",
+                "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"})",
                 "in",
-                "    #\"Removed Columns\""
+                "    #\"Removed Duplicates\""
               ]
             },
             "annotations": [
@@ -1526,7 +1528,7 @@
         "measures": [
           {
             "name": "001_Number_of_entries",
-            "description": "تعداد میهمانان ورودی به پارک",
+            "description": "تعداد میهمانان ورودی به پارک دقیق برای ثبت نفرات",
             "expression": [
               " ",
               "var EN_no = CALCULATE (",
@@ -1910,6 +1912,28 @@
             "description": "شارژ پیشفرض موجود در کارت بلیط ها",
             "expression": " CALCULATE(SUM('report Reception_Log'[UsageAmount]),FILTER('report Reception_Log','report Reception_Log'[Default_charge_index] = 1 ))",
             "formatString": "#,#."
+          },
+          {
+            "name": "023_Per_capita_charge_consumption_at_stations_owned_park",
+            "description": [
+              "سرانه مصرف شارژ در ایستگاه ها برای افراد وارد شده به ایستگاه ها",
+              "در ایستگاه های مربوط به پارک"
+            ],
+            "expression": " (DIVIDE('report Reception_Log'[003_02_The_amount_of_charge_used_at_the_stations],'report Reception_Log'[001_Number_of_entries]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_02_The_amount_of_charge_used_at_the_stations",
+            "description": "مبلغ شارژ مصرف شده در ایستگاه ها تحت مالکیت پارک",
+            "expression": [
+              " ",
+              "( -1 )",
+              "    * CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER ( 'report Station','report Station'[ownership] = \"پارک\" )",
+              "    )"
+            ],
+            "formatString": "#,#"
           }
         ]
       },
