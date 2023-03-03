@@ -1204,6 +1204,7 @@
           },
           {
             "name": "034_Target percentage_box_office",
+            "description": "درصد تحقق تارگت در گیشه آزاد",
             "expression": [
               "",
               "VAR Number_of_entries_in_boxoffice = CALCULATE('report Reception_Log'[001_Number_of_entries],FILTER('report Reception_Log','report Reception_Log'[TicketName] = \"گیشه آزاد\"))",
@@ -1214,10 +1215,12 @@
           },
           {
             "name": "035_Number_of_entries_in_boxoffice",
+            "description": "جمع نفرات در گیشه آزاد",
             "expression": [
               " CALCULATE('report Reception_Log'[001_Number_of_entries],FILTER('report Reception_Log','report Reception_Log'[TicketName] = \"گیشه آزاد\"))",
               ""
-            ]
+            ],
+            "formatString": "#,#"
           }
         ]
       },
@@ -3600,7 +3603,7 @@
           },
           {
             "name": "sales_user_target",
-            "dataType": "int64",
+            "dataType": "double",
             "description": "تارگت فروشندگان",
             "sourceColumn": "sales_user_target"
           },
@@ -3609,6 +3612,11 @@
             "dataType": "string",
             "description": "کد یونیک که مقدار تارگت هر فروشنده را در هر ماه یک سال مشخص تعیین می کند",
             "sourceColumn": "unic_code_target"
+          },
+          {
+            "name": "date_target",
+            "dataType": "string",
+            "sourceColumn": "date_target"
           }
         ],
         "partitions": [
