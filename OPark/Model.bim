@@ -3652,7 +3652,7 @@
           {
             "name": "002_sum_Sold_at_boxoffice",
             "description": "جمع تارگت تعداد نفرات در گیشه آزاد",
-            "expression": "CALCULATE(SUM('report sales_target'[sales_user_target]),FILTER('report sales_target','report sales_target'[sales_user_ID]= \"G\"))",
+            "expression": "CALCULATE(SUM('report sales_target'[sales_user_target]), USERELATIONSHIP('bi DimDate'[Jalali_1],'report sales_target'[date_target]),FILTER('report sales_target','report sales_target'[sales_user_ID]= \"G\"))",
             "formatString": "#,#"
           }
         ]
@@ -3891,7 +3891,17 @@
         "toColumn": "Miladi - text"
       },
       {
-        "name": "dd10b1c3-9bb0-478b-92bd-c8a1d8c26863",
+        "name": "9a972256-b1e4-48f7-b368-07eeb8b734ec",
+        "toCardinality": "many",
+        "fromTable": "report sales_target",
+        "fromColumn": "date_target",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1",
+        "isActive": false,
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "a0e3d095-3f89-4467-b339-dc983e8456f6",
         "toCardinality": "many",
         "fromTable": "bi DimDate",
         "fromColumn": "jmonthN",
