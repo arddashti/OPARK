@@ -58,7 +58,8 @@
             "name": "jmonthT",
             "dataType": "string",
             "description": "عنوان ماه تاریخ شمسی",
-            "sourceColumn": "jmonthT"
+            "sourceColumn": "jmonthT",
+            "sortByColumn": "jmonthN"
           },
           {
             "name": "jnime",
