@@ -3544,12 +3544,6 @@
             "sourceColumn": "comments_suggestions"
           },
           {
-            "name": "what_parts_ improved",
-            "dataType": "string",
-            "description": "پیشنهاد مستری در خصوص بهبود هایی که می تواند در بخش های مختلف پارک اتفاق بیفتد",
-            "sourceColumn": "what_parts_ improved"
-          },
-          {
             "name": "excel_file_name",
             "dataType": "string",
             "description": "نام فایل اکسل که اطلاعات از آن استخراج شده است",
@@ -3787,6 +3781,41 @@
             }
           }
         ]
+      },
+      {
+        "name": "crm detail_parts_ improved",
+        "description": "جدول بخش هایی که با ارتقا میزان رضایتمندی افزایش می باشد",
+        "columns": [
+          {
+            "name": "what_parts_ improved",
+            "dataType": "string",
+            "description": "عنوان بخش پیشنهادی برای ارتقا",
+            "sourceColumn": "what_parts_ improved"
+          },
+          {
+            "name": "ID",
+            "dataType": "string",
+            "description": "شماره یونیک تولید شده برای هر رکورد ثبت شده در سیستم ارتباط با مشتریان که جهت اتصال با جدول جزئیات عددی مورد استفاده قرار می گیرد",
+            "sourceColumn": "ID"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    #\"crm_detail_parts_ improved\" = Source{[Schema=\"crm\",Item=\"detail_parts_ improved\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"crm_detail_parts_ improved\",\"ي\",\"ی\",Replacer.ReplaceText,{\"what_parts_ improved\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -3909,6 +3938,13 @@
         "toTable": "report sales_target",
         "toColumn": "month",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "a8921030-97ce-4e59-a432-4af3926a07cb",
+        "fromTable": "crm detail_parts_ improved",
+        "fromColumn": "ID",
+        "toTable": "crm main",
+        "toColumn": "ID"
       }
     ],
     "roles": [
@@ -4232,9 +4268,6 @@
                 "name": "comments_suggestions"
               },
               {
-                "name": "what_parts_ improved"
-              },
-              {
                 "name": "excel_file_name"
               }
             ]
@@ -4386,10 +4419,6 @@
               },
               {
                 "name": "comments_suggestions",
-                "metadataPermission": "none"
-              },
-              {
-                "name": "what_parts_ improved",
                 "metadataPermission": "none"
               },
               {
