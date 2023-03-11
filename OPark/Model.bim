@@ -3816,6 +3816,89 @@
             }
           }
         ]
+      },
+      {
+        "name": "rah financial_balance_report",
+        "description": "تراز نامه و مرور حساب ها",
+        "columns": [
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Code_SL",
+            "dataType": "string",
+            "sourceColumn": "Code_SL"
+          },
+          {
+            "name": "Title_SL",
+            "dataType": "string",
+            "sourceColumn": "Title_SL"
+          },
+          {
+            "name": "Code_GL",
+            "dataType": "string",
+            "sourceColumn": "Code_GL"
+          },
+          {
+            "name": "Title_GL",
+            "dataType": "string",
+            "sourceColumn": "Title_GL"
+          },
+          {
+            "name": "Code_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Code_AccountGroup"
+          },
+          {
+            "name": "Title_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Title_AccountGroup"
+          },
+          {
+            "name": "Code",
+            "dataType": "string",
+            "sourceColumn": "Code"
+          },
+          {
+            "name": "Title_DL",
+            "dataType": "string",
+            "sourceColumn": "Title_DL"
+          },
+          {
+            "name": "change_amount",
+            "dataType": "double",
+            "sourceColumn": "change_amount"
+          },
+          {
+            "name": "Debit",
+            "dataType": "double",
+            "sourceColumn": "Debit"
+          },
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "sourceColumn": "Credit"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_Financial_balance_report = Source{[Schema=\"rah\",Item=\"Financial_balance_report\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_Financial_balance_report,\"ي\",\"ی\",Replacer.ReplaceText,{\"Title_SL\", \"Title_GL\", \"Title_AccountGroup\", \"Title_DL\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
