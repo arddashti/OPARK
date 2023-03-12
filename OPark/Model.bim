@@ -3824,16 +3824,19 @@
           {
             "name": "Date",
             "dataType": "dateTime",
+            "description": "تاریخ سند",
             "sourceColumn": "Date"
           },
           {
             "name": "Code_SL",
             "dataType": "string",
+            "description": "کد مرور حساب",
             "sourceColumn": "Code_SL"
           },
           {
             "name": "Title_SL",
             "dataType": "string",
+            "description": "عنوان مرور حساب",
             "sourceColumn": "Title_SL"
           },
           {
@@ -3869,16 +3872,19 @@
           {
             "name": "change_amount",
             "dataType": "double",
+            "description": "مانده بدهکار و یا بستانکار",
             "sourceColumn": "change_amount"
           },
           {
             "name": "Debit",
             "dataType": "double",
+            "description": "بدهکار",
             "sourceColumn": "Debit"
           },
           {
             "name": "Credit",
             "dataType": "double",
+            "description": "بستانکار",
             "sourceColumn": "Credit"
           }
         ],
@@ -3897,6 +3903,26 @@
                 "    #\"Replaced Value\""
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_Debit",
+            "description": "گردش بدهکار",
+            "expression": "CALCULATE(SUM('rah financial_balance_report'[Debit]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_Credit",
+            "description": "گردش بستانکار",
+            "expression": "CALCULATE(SUM('rah financial_balance_report'[Credit]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_change_amount",
+            "description": "مانده بدهکار و یا بستانکار",
+            "expression": "CALCULATE(SUM('rah financial_balance_report'[change_amount]))",
+            "formatString": "#,#"
           }
         ]
       }
@@ -4028,6 +4054,13 @@
         "fromColumn": "ID",
         "toTable": "crm main",
         "toColumn": "ID"
+      },
+      {
+        "name": "1622bd65-5d39-4c1e-9966-4f1459a4e58e",
+        "fromTable": "rah financial_balance_report",
+        "fromColumn": "Date",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi"
       }
     ],
     "roles": [
