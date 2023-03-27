@@ -219,17 +219,38 @@
         "measures": [
           {
             "name": "001_total_amount_trend",
-            "expression": " CALCULATE(SUM('rah cash_detail'[amount]),FILTER('rah cash_detail','rah cash_detail'[type_description] = 1))",
+            "description": "موجودی نقد حساب بانکی جهت ترند",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'rah cash_detail'[amount] ),",
+              "    FILTER ( 'rah cash_detail', 'rah cash_detail'[type_description] = 1 )",
+              ")",
+              "--موجودی نقد حساب بانکی جهت ترند"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "002_total_obligation_trend",
-            "expression": " CALCULATE(SUM('rah cash_detail'[amount]),FILTER('rah cash_detail',ISBLANK('rah cash_detail'[type_description])))",
+            "description": "تعهد کل جهت ترند",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'rah cash_detail'[amount] ),",
+              "    FILTER ( 'rah cash_detail', ISBLANK ( 'rah cash_detail'[type_description] ) )",
+              ")",
+              "--تعهد کل جهت ترند"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "003_available_amount_trend",
-            "expression": " 'rah cash_detail'[001_total_amount_trend] - 'rah cash_detail'[002_total_obligation_trend]",
+            "description": "موجودی در دسترس جهت ترند",
+            "expression": [
+              "",
+              "'rah cash_detail'[001_total_amount_trend] - 'rah cash_detail'[002_total_obligation_trend]",
+              "--موجودی در دسترس جهت ترند"
+            ],
             "formatString": "#,#"
           }
         ]
@@ -341,17 +362,38 @@
           {
             "name": "001_total_amount",
             "description": "آخرین موجودی نقد حساب بانکی",
-            "expression": " CALCULATE(SUM('rah cash_balance'[cash_excel]),FILTER('rah cash_balance','rah cash_balance'[max_indicator] = \"1\" ))",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'rah cash_balance'[cash_excel] ),",
+              "    FILTER ( 'rah cash_balance', 'rah cash_balance'[max_indicator] = \"1\" )",
+              ")",
+              "--آخرین موجودی نقد حساب بانکی"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "002_total_obligation",
-            "expression": " CALCULATE(SUM('rah cash_detail'[amount]),FILTER('rah cash_detail',ISBLANK('rah cash_detail'[type_description])),FILTER('rah cash_detail','rah cash_detail'[max_indicator] = \"1\"))",
+            "description": "تعهد کل",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'rah cash_detail'[amount] ),",
+              "    FILTER ( 'rah cash_detail', ISBLANK ( 'rah cash_detail'[type_description] ) ),",
+              "    FILTER ( 'rah cash_detail', 'rah cash_detail'[max_indicator] = \"1\" )",
+              ")",
+              "--تعهد کل"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "003_available_amount",
-            "expression": " 'rah cash_balance'[001_total_amount] - 'rah cash_balance'[002_total_obligation]",
+            "description": "موجودی در دسترس",
+            "expression": [
+              "",
+              "'rah cash_balance'[001_total_amount] - 'rah cash_balance'[002_total_obligation]",
+              "--موجودی در دسترس"
+            ],
             "formatString": "#,#"
           }
         ]
@@ -817,7 +859,8 @@
               "        0,",
               "        SUM ( 'report sales_contract'[Number_cards_issued] )",
               "    )",
-              ")"
+              ")",
+              "--تعداد بلیط صادر شده"
             ],
             "formatString": "#,#"
           },
@@ -839,7 +882,8 @@
               "        ) = 1,",
               "        0,",
               "        TIIC",
-              "    )"
+              "    )",
+              "--مجموع کل درآمد به ازای هر قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -847,11 +891,12 @@
             "name": "003_total_Number_of_entries_in_contract",
             "description": "تعداد کل نفرات به تفکیک قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[001_Number_of_entries_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--تعداد کل نفرات به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -859,14 +904,22 @@
             "name": "004_total_Amount_of_charging_in_contract",
             "description": "مبلغ کل شارژ به تفکیک قرارداد",
             "expression": [
-              " ",
-              "VAR TAC = CALCULATE (",
-              "    'in select_table_date_now'[006_Amount_of_charging_with_today],",
-              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")",
               "",
+              "VAR TAC =",
+              "    CALCULATE (",
+              "        'in select_table_date_now'[006_Amount_of_charging_with_today],",
+              "        USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              "    )",
               "RETURN",
-              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 , TAC)"
+              "    IF (",
+              "        CALCULATE (",
+              "            DISTINCTCOUNT ( 'in permission'[username] ),",
+              "            FILTER ( 'in permission', 'in permission'[permission] = \"Sales_admin\" )",
+              "        ) = 1,",
+              "        0,",
+              "        TAC",
+              "    )",
+              "--مبلغ کل شارژ به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -874,14 +927,22 @@
             "name": "005_total_amount_of_charge_used_in_contract",
             "description": "مبلغ کل شارژ مصرف شده به تفکیک قرارداد",
             "expression": [
-              " ",
-              "VAR TACU = CALCULATE (",
-              "    'in select_table_date_now'[009_The_amount_of_charge_used_with_today],",
-              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")",
               "",
+              "VAR TACU =",
+              "    CALCULATE (",
+              "        'in select_table_date_now'[009_The_amount_of_charge_used_with_today],",
+              "        USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              "    )",
               "RETURN",
-              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TACU)"
+              "    IF (",
+              "        CALCULATE (",
+              "            DISTINCTCOUNT ( 'in permission'[username] ),",
+              "            FILTER ( 'in permission', 'in permission'[permission] = \"Sales_admin\" )",
+              "        ) = 1,",
+              "        0,",
+              "        TACU",
+              "    )",
+              "--مبلغ کل شارژ مصرف شده به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -889,13 +950,22 @@
             "name": "006_total_Amount_of_RefundCharge_in_contract",
             "description": "مبلغ کل شارژ  استرداد داده شده به تفکیک قرارداد",
             "expression": [
-              " ",
-              "VAR TARF = CALCULATE (",
-              "    'in select_table_date_now'[008_Amount_of_RefundCharge_with_today],",
-              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")",
+              "",
+              "VAR TARF =",
+              "    CALCULATE (",
+              "        'in select_table_date_now'[008_Amount_of_RefundCharge_with_today],",
+              "        USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              "    )",
               "RETURN",
-              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TARF)"
+              "    IF (",
+              "        CALCULATE (",
+              "            DISTINCTCOUNT ( 'in permission'[username] ),",
+              "            FILTER ( 'in permission', 'in permission'[permission] = \"Sales_admin\" )",
+              "        ) = 1,",
+              "        0,",
+              "        TARF",
+              "    )",
+              "--مبلغ کل شارژ  استرداد داده شده به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -903,13 +973,22 @@
             "name": "007_total_amount_of_charge_used_at_the_stations_in_contract",
             "description": "مبلغ کل شارژ مصرف شده در ایستگاه ها",
             "expression": [
-              " ",
-              "VAR TACYS = CALCULATE (",
-              "    'in select_table_date_now'[003_The_amount_of_charge_used_at_the_stations_with_today],",
-              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")",
+              "",
+              "VAR TACYS =",
+              "    CALCULATE (",
+              "        'in select_table_date_now'[003_The_amount_of_charge_used_at_the_stations_with_today],",
+              "        USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              "    )",
               "RETURN",
-              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TACYS)"
+              "    IF (",
+              "        CALCULATE (",
+              "            DISTINCTCOUNT ( 'in permission'[username] ),",
+              "            FILTER ( 'in permission', 'in permission'[permission] = \"Sales_admin\" )",
+              "        ) = 1,",
+              "        0,",
+              "        TACYS",
+              "    )",
+              "--مبلغ کل شارژ مصرف شده در ایستگاه ها"
             ],
             "formatString": "#,#"
           },
@@ -917,8 +996,12 @@
             "name": "008_number_of_contract",
             "description": "تعداد قراردادها",
             "expression": [
-              " CALCULATE(COUNT('report sales_contract'[TicketCardMainID]),USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              "",
+              "CALCULATE (",
+              "    COUNT ( 'report sales_contract'[TicketCardMainID] ),",
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              ")",
+              "--تعداد قراردادها"
             ],
             "formatString": "#,#"
           },
@@ -926,13 +1009,22 @@
             "name": "009_total_amount_of_charge_remaining_in_contract",
             "description": "مقدار شارژ باقی مانده در بلیط ها براساس نوع قرارداد",
             "expression": [
-              " ",
-              "VAR TARF = CALCULATE (",
-              "    'in select_table_date_now'[007_The_amount_of_charge_remaining_with_today],",
-              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")",
+              "",
+              "VAR TARF =",
+              "    CALCULATE (",
+              "        'in select_table_date_now'[007_The_amount_of_charge_remaining_with_today],",
+              "        USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
+              "    )",
               "RETURN",
-              "IF(CALCULATE(DISTINCTCOUNT('in permission'[username]),FILTER('in permission','in permission'[permission] = \"Sales_admin\"))= 1 , 0 ,TARF)"
+              "    IF (",
+              "        CALCULATE (",
+              "            DISTINCTCOUNT ( 'in permission'[username] ),",
+              "            FILTER ( 'in permission', 'in permission'[permission] = \"Sales_admin\" )",
+              "        ) = 1,",
+              "        0,",
+              "        TARF",
+              "    )",
+              "--مقدار شارژ باقی مانده در بلیط ها براساس نوع قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -944,7 +1036,8 @@
               "CALCULATE (",
               "    'in select_table_date_now'[011_Number_of_entries_WOMAN_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--تعداد زن وارد شده به پارک  براساس نوع قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -952,11 +1045,12 @@
             "name": "011_total_Number_of_entries_MAN_in_contract",
             "description": "تعداد مرد وارد شده به پارک  براساس نوع قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[010_Number_of_entries_MAN_wuth_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--تعداد مرد وارد شده به پارک  براساس نوع قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -964,11 +1058,12 @@
             "name": "012_total_Number_of_exits_in_contract",
             "description": "تعداد میهمان خارج شده از پارک به تفکیک نوع قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[004_Number_of_exits_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--تعداد میهمان خارج شده از پارک به تفکیک نوع قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -976,11 +1071,12 @@
             "name": "013_total_number_of_guests_in_the_park_in_contract",
             "description": "تعداد میهمانان حاضر در پارک به تفکیک نوع قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[005_The_number_of_guests_in_the_park_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--تعداد میهمانان حاضر در پارک به تفکیک نوع قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -988,11 +1084,12 @@
             "name": "014_total_Duration_time_in_contract",
             "description": "مدت زمان حضور در پارک به تفکیک قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[016_Duration_time_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--مدت زمان حضور در پارک به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1000,11 +1097,12 @@
             "name": "015_total_ratio_attendance_to_ session_in_contract",
             "description": "نسبت مدت زمان حضور به طول سانس",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[017_ratio_attendance_to_ session_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--نسبت مدت زمان حضور به طول سانس"
             ],
             "formatString": "0.00%;-0.00%;0.00%"
           },
@@ -1012,11 +1110,12 @@
             "name": "016_total_Average_ticket_price_in_contract",
             "description": "متوسط قیمت روزانه بلیط به تفکیک قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[018_Average_ticket_price_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--متوسط قیمت روزانه بلیط به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1024,11 +1123,12 @@
             "name": "017_Amount_of_charging_per_capita_in_contract",
             "description": "سرانه میزان شارژ به تفکیک نوع قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[020_Amount_of_charging_per_capita_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--سرانه میزان شارژ به تفکیک نوع قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1036,11 +1136,12 @@
             "name": "018_amount_of_charge_used_per_capita_in_contract",
             "description": "سرانه میزان مصرف شارز به تفکیک نوع قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[021_amount_of_charge_used_per_capit_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--سرانه میزان مصرف شارز به تفکیک نوع قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1052,11 +1153,12 @@
               "به تفکیک قرارداد"
             ],
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[006_02_Amount_of_charging_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--مبلغ شارژ با احتساب مبلغ گیشه سازمانی در بعضی از موارد به این دلیل که نفرات و پرسنل پارک دارای دسبندهایی هستند که قبلا صادر شده است و از آن برای خرید استفاده می کنند این مورد به صورت جداگانه محاسبه می شود. به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1067,11 +1169,12 @@
               "به تفکیک قرارداد"
             ],
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[012_SumTicketPrice_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--مبلغ دریافت شده در گیشه به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1079,11 +1182,12 @@
             "name": "021_total_SumTicketContributionAmount_in_contract",
             "description": "پیش دریافت شارژ به تفکیک قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[013_SumTicketContributionAmount_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--پیش دریافت شارژ به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1091,11 +1195,12 @@
             "name": "022_total_Number_of_entrances_to_the_station_in_contract",
             "description": "تعداد نفر وارد شده به هر ایستگاه به تفکیک قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[002_Number_of_entrances_to_the_station_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--تعداد نفر وارد شده به هر ایستگاه به تفکیک قرارداد"
             ],
             "formatString": "#,#"
           },
@@ -1103,11 +1208,12 @@
             "name": "023_total_amount_of_charge_used_at_the_stations_in_contract",
             "description": "مقدار شارژ استفاده شده در ایستگاه ها به تفکیک قرارداد",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[003_The_amount_of_charge_used_at_the_stations_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] )",
-              ")"
+              ")",
+              "--مقدار شارژ استفاده شده در ایستگاه ها به تفکیک قرارداد"
             ],
             "formatString": "#,#."
           },
@@ -1115,8 +1221,12 @@
             "name": "024_capitationl_amount_of_charge_used_at_the_stations_in_contract",
             "description": "سرانه مصرف شارژ در ایستگاه ها برای افراد وارد شده به ایستگاه ها",
             "expression": [
-              " ",
-              "DIVIDE('report sales_contract'[023_total_amount_of_charge_used_at_the_stations_in_contract],'report sales_contract'[022_total_Number_of_entrances_to_the_station_in_contract])"
+              "",
+              "DIVIDE (",
+              "    'report sales_contract'[023_total_amount_of_charge_used_at_the_stations_in_contract],",
+              "    'report sales_contract'[022_total_Number_of_entrances_to_the_station_in_contract]",
+              ")",
+              "--سرانه مصرف شارژ در ایستگاه ها برای افراد وارد شده به ایستگاه ها"
             ],
             "formatString": "#,#"
           },
@@ -1124,20 +1234,22 @@
             "name": "025_number_of_working_days",
             "description": "تعداد روزهای کاری انتخاب شده",
             "expression": [
-              " ",
               "",
-              "",
-              "    VAR today_date =1",
-              "    VAR last_week = 1",
-              "    VAR all_day = DISTINCTCOUNT('report Reception_Log'[date_search])",
-              " ",
-              "    RETURN",
-              "    IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"امروز\"",
-              "    ,today_date",
-              "    ,IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"هفته گذشته\"",
-              "    ,last_week",
-              "    ,all_day))",
-              ""
+              "VAR today_date = 1",
+              "VAR last_week = 1",
+              "VAR all_day =",
+              "    DISTINCTCOUNT ( 'report Reception_Log'[date_search] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )",
+              "--تعداد روزهای کاری انتخاب شده"
             ],
             "formatString": "#,#"
           },
@@ -1146,7 +1258,11 @@
             "description": "متوسط تعداد نفرات حاضر در پارک در هر روز",
             "expression": [
               "",
-              "DIVIDE('report sales_contract'[003_total_Number_of_entries_in_contract],'report sales_contract'[025_number_of_working_days])"
+              "DIVIDE (",
+              "    'report sales_contract'[003_total_Number_of_entries_in_contract],",
+              "    'report sales_contract'[025_number_of_working_days]",
+              ")",
+              "--متوسط تعداد نفرات حاضر در پارک در هر روز"
             ],
             "formatString": "#,#"
           },
@@ -1155,37 +1271,68 @@
             "description": "متوسط روزانه درآمد پارک در بازه انتخابی",
             "expression": [
               "",
-              "DIVIDE('report sales_contract'[002_total_income_in_contract],'report sales_contract'[025_number_of_working_days])"
+              "DIVIDE (",
+              "    'report sales_contract'[002_total_income_in_contract],",
+              "    'report sales_contract'[025_number_of_working_days]",
+              ")",
+              "--متوسط روزانه درآمد پارک در بازه انتخابی"
             ],
             "formatString": "#,#"
           },
           {
             "name": "028_total_session_count",
             "description": "جمع تعداد جلسات",
-            "expression": "CALCULATE(SUM('report sales_contract'[total_session_count]))"
+            "expression": [
+              "",
+              "CALCULATE ( SUM ( 'report sales_contract'[total_session_count] ) )",
+              "--جمع تعداد جلسات"
+            ]
           },
           {
             "name": "029_Target percentage",
             "description": "درصد تحقق تارگت",
-            "expression": "DIVIDE('report sales_contract'[028_total_session_count],'report sales_target'[001_sum_sales_target])*100",
+            "expression": [
+              "",
+              "DIVIDE (",
+              "    'report sales_contract'[028_total_session_count],",
+              "    'report sales_target'[001_sum_sales_target]",
+              ") * 100",
+              "--درصد تحقق تارگت"
+            ],
             "formatString": "0.00"
           },
           {
             "name": "030_total_Numbe_ expired_sessions",
             "description": "تعداد کل جلسات باطل شده",
-            "expression": "SUM('report sales_contract'[no_deleted_session])",
+            "expression": [
+              "",
+              "SUM ( 'report sales_contract'[no_deleted_session] )",
+              "--تعداد کل جلسات باطل شده"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "031_total_session_count_net",
             "description": "تعداد کل جلسات منهای جلسات ابطال شده",
-            "expression": "'report sales_contract'[028_total_session_count]-'report sales_contract'[030_total_Numbe_ expired_sessions]",
+            "expression": [
+              "",
+              "'report sales_contract'[028_total_session_count] - 'report sales_contract'[030_total_Numbe_ expired_sessions]",
+              "--تعداد کل جلسات منهای جلسات ابطال شده"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "032_sum_sales_forecast",
             "description": "جمع مبلغ پیش بینی شده برای هر قرارداد",
-            "expression": " IF(ISBLANK( CALCULATE(SUM('report sales_contract'[sales_forecast]))),0, CALCULATE(SUM('report sales_contract'[sales_forecast])))",
+            "expression": [
+              "",
+              "IF (",
+              "    ISBLANK ( CALCULATE ( SUM ( 'report sales_contract'[sales_forecast] ) ) ),",
+              "    0,",
+              "    CALCULATE ( SUM ( 'report sales_contract'[sales_forecast] ) )",
+              ")",
+              "--جمع مبلغ پیش بینی شده برای هر قرارداد"
+            ],
             "formatString": "#,#"
           },
           {
@@ -1196,10 +1343,16 @@
               "مربوط به میهمانان گروهی"
             ],
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    'in select_table_date_now'[012_SumTicketPrice_with_today],",
-              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] ),FILTER('report Reception_Log','report Reception_Log'[TicketName] = \"گیشه گروهی\"))"
+              "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[TicketName] = \"گیشه گروهی\"",
+              "    )",
+              ")",
+              "--مبلغ دریافت شده در گیشه به تفکیک قرارداد مربوط به میهمانان گروهی"
             ],
             "formatString": "#,#"
           },
@@ -1208,9 +1361,20 @@
             "description": "درصد تحقق تارگت در گیشه آزاد",
             "expression": [
               "",
-              "VAR Number_of_entries_in_boxoffice = CALCULATE('report Reception_Log'[001_Number_of_entries],FILTER('report Reception_Log','report Reception_Log'[TicketName] = \"گیشه آزاد\"))",
-              "Return",
-              "DIVIDE(Number_of_entries_in_boxoffice,'report sales_target'[002_sum_Sold_at_boxoffice])*100"
+              "VAR Number_of_entries_in_boxoffice =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[001_Number_of_entries],",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[TicketName] = \"گیشه آزاد\"",
+              "        )",
+              "    )",
+              "RETURN",
+              "    DIVIDE (",
+              "        Number_of_entries_in_boxoffice,",
+              "        'report sales_target'[002_sum_Sold_at_boxoffice]",
+              "    ) * 100",
+              "--درصد تحقق تارگت در گیشه آزاد"
             ],
             "formatString": "#,#"
           },
@@ -1218,8 +1382,15 @@
             "name": "035_Number_of_entries_in_boxoffice",
             "description": "جمع نفرات در گیشه آزاد",
             "expression": [
-              " CALCULATE('report Reception_Log'[001_Number_of_entries],FILTER('report Reception_Log','report Reception_Log'[TicketName] = \"گیشه آزاد\"))",
-              ""
+              "",
+              "CALCULATE (",
+              "    'report Reception_Log'[001_Number_of_entries],",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[TicketName] = \"گیشه آزاد\"",
+              "    )",
+              ")",
+              "--جمع نفرات در گیشه آزاد"
             ],
             "formatString": "#,#"
           }
@@ -1289,18 +1460,30 @@
             "name": "001_filtered_date",
             "description": "تغییر تاریخ گزارش با توجه به فیلترهای زمانی که انتخاب می شود",
             "expression": [
-              " ",
               "",
-              "    VAR today_date = CALCULATE(MAX('bi last_refresh_time_knime'[report_date]))",
-              "    VAR last_week = LOOKUPVALUE('bi DimDate'[Jalali_1],'bi DimDate'[Miladi],MAX('bi last_refresh_time_knime'         [last_week_date]))",
-              "    VAR all_day = LOOKUPVALUE('bi DimDate'[Jalali_1],'bi DimDate'[Miladi],MAX('report Reception_Log'[today_index]))",
-              " ",
-              "    RETURN",
-              "    IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"امروز\"",
-              "    ,today_date",
-              "    ,IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"هفته گذشته\"",
-              "    ,last_week",
-              "    ,all_day))"
+              "VAR today_date =",
+              "    CALCULATE ( MAX ( 'bi last_refresh_time_knime'[report_date] ) )",
+              "VAR last_week =",
+              "    LOOKUPVALUE (",
+              "        'bi DimDate'[Jalali_1],",
+              "        'bi DimDate'[Miladi], MAX ( 'bi last_refresh_time_knime'[last_week_date] )",
+              "    )",
+              "VAR all_day =",
+              "    LOOKUPVALUE (",
+              "        'bi DimDate'[Jalali_1],",
+              "        'bi DimDate'[Miladi], MAX ( 'report Reception_Log'[today_index] )",
+              "    )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )",
+              "--تغییر تاریخ گزارش با توجه به فیلترهای زمانی که انتخاب می شود"
             ]
           }
         ]
@@ -1551,17 +1734,18 @@
             "name": "001_Number_of_entries",
             "description": "تعداد میهمانان ورودی به پارک دقیق برای ثبت نفرات",
             "expression": [
-              " ",
-              "var EN_no = CALCULATE (",
-              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[IsNewWristBand] = \"ورود\"",
-              "    )",
-              ")",
               "",
-              "RETURN ",
-              "IF(ISBLANK(EN_no), 0 , EN_no)"
+              "VAR EN_no =",
+              "    CALCULATE (",
+              "        DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[IsNewWristBand] = \"ورود\"",
+              "        )",
+              "    )",
+              "RETURN",
+              "    IF ( ISBLANK ( EN_no ), 0, EN_no )",
+              "--تعداد میهمانان ورودی به پارک دقیق برای ثبت نفرات"
             ],
             "formatString": "#,#"
           },
@@ -1569,11 +1753,12 @@
             "name": "002_Number_of_entrances_to_the_station",
             "description": "تعداد میهمانان ورودی به ایستگاه ها",
             "expression": [
-              " ",
+              "",
               "CALCULATE (",
               "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
               "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsStationLog] = TRUE )",
-              ")"
+              ")",
+              "--تعداد میهمانان ورودی به ایستگاه ها"
             ],
             "formatString": "#,#"
           },
@@ -1584,7 +1769,7 @@
               "O Lounge"
             ],
             "expression": [
-              " ",
+              "",
               "(",
               "    CALCULATE (",
               "        SUM ( 'report Reception_Log'[UsageAmount] ),",
@@ -1593,9 +1778,13 @@
               "            'report Reception_Log',",
               "            'report Reception_Log'[wristbands_index] = \"1\"",
               "        ),",
-              "        FILTER( 'report Reception_Log', 'report Reception_Log'[StationName] <> \"O Lounge\")",
-              ") * ( -1 )",
-              ")"
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[StationName] <> \"O Lounge\"",
+              "        )",
+              "    ) * ( -1 )",
+              ")",
+              "--مقدار شارژ مصرف شده در ایستگاه ها به غیر از ایستگاه O Lounge"
             ],
             "formatString": "#,#"
           },
@@ -1603,12 +1792,13 @@
             "name": "003_The_amount_of_charge_used_at_the_stations",
             "description": "مبلغ شارژ مصرف شده در ایستگاه ها",
             "expression": [
-              " ",
+              "",
               "( -1 )",
               "    * CALCULATE (",
               "        SUM ( 'report Reception_Log'[UsageAmount] ),",
               "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsStationLog] = TRUE )",
-              "    )"
+              "    )",
+              "--مبلغ شارژ مصرف شده در ایستگاه ها"
             ],
             "formatString": "#,#"
           },
@@ -1616,16 +1806,18 @@
             "name": "004_Number_of_exits",
             "description": "تعداد خروجی پارک",
             "expression": [
-              " ",
-              "VAR EX_no = CALCULATE (",
-              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[IsNewWristBand] = \"خروجی\"",
+              "",
+              "VAR EX_no =",
+              "    CALCULATE (",
+              "        DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[IsNewWristBand] = \"خروجی\"",
+              "        )",
               "    )",
-              ")",
               "RETURN",
-              "IF(ISBLANK(EX_no), 0 , EX_no)"
+              "    IF ( ISBLANK ( EX_no ), 0, EX_no )",
+              "--تعداد خروجی پارک"
             ],
             "formatString": "#,#"
           },
@@ -1633,8 +1825,9 @@
             "name": "005_The_number_of_guests_in_the_park",
             "description": "تعداد افراد حاضر در پارک",
             "expression": [
-              " ",
-              "'report Reception_Log'[001_Number_of_entries] - 'report Reception_Log'[004_Number_of_exits]"
+              "",
+              "'report Reception_Log'[001_Number_of_entries] - 'report Reception_Log'[004_Number_of_exits]",
+              "--تعداد افراد حاضر در پارک"
             ],
             "formatString": "#,#"
           },
@@ -1645,16 +1838,15 @@
               "در بعضی از موارد به این دلیل که نفرات و پرسنل پارک دارای دسبندهایی هستند که قبلا صادر شده است و از آن برای خرید استفاده می کنند این مورد به صورت جداگانه محاسبه می شود."
             ],
             "expression": [
-              " ",
-              "VAR",
-              "AM_CH = CALCULATE (",
-              "    SUM ( 'report Reception_Log'[UsageAmount] ),",
-              "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsCharge] = TRUE )",
-              ")",
               "",
-              "",
+              "VAR AM_CH =",
+              "    CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsCharge] = TRUE )",
+              "    )",
               "RETURN",
-              "IF(ISBLANK(AM_CH),0,AM_CH)"
+              "    IF ( ISBLANK ( AM_CH ), 0, AM_CH )",
+              "--مبلغ شارژ با احتساب مبلغ گیشه سازمانی در بعضی از موارد به این دلیل که نفرات و پرسنل پارک دارای دسبندهایی هستند که قبلا صادر شده است و از آن برای خرید استفاده می کنند این مورد به صورت جداگانه محاسبه می شود."
             ],
             "formatString": "#,#"
           },
@@ -1662,18 +1854,19 @@
             "name": "006_Amount_of_charging",
             "description": "مقدار شارژ انجام شده",
             "expression": [
-              " ",
-              "VAR",
-              "AM_CH = CALCULATE (",
-              "    SUM ( 'report Reception_Log'[UsageAmount] ),",
-              "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsCharge] = TRUE ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[wristbands_index] = \"1\"",
+              "",
+              "VAR AM_CH =",
+              "    CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsCharge] = TRUE ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[wristbands_index] = \"1\"",
+              "        )",
               "    )",
-              ")",
               "RETURN",
-              "IF(ISBLANK(AM_CH),0,AM_CH)"
+              "    IF ( ISBLANK ( AM_CH ), 0, AM_CH )",
+              "--مقدار شارژ انجام شده"
             ],
             "formatString": "#,#"
           },
@@ -1681,21 +1874,22 @@
             "name": "007_The_amount_of_charge_remaining",
             "description": "مقدار شارژ باقی مانده در مچ بندها",
             "expression": [
-              " ",
-              "VAR",
-              "AM_CH_RE = CALCULATE (",
-              "    SUM ( 'report Reception_Log'[CurrentChargeAmount] ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[ReceptionID_index] = \"1\"",
-              "    ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[wristbands_index] = \"1\"",
+              "",
+              "VAR AM_CH_RE =",
+              "    CALCULATE (",
+              "        SUM ( 'report Reception_Log'[CurrentChargeAmount] ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[ReceptionID_index] = \"1\"",
+              "        ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[wristbands_index] = \"1\"",
+              "        )",
               "    )",
-              ")",
               "RETURN",
-              "IF(ISBLANK(AM_CH_RE),0,AM_CH_RE)"
+              "    IF ( ISBLANK ( AM_CH_RE ), 0, AM_CH_RE )",
+              "--مقدار شارژ باقی مانده در مچ بندها"
             ],
             "formatString": "#,#"
           },
@@ -1703,19 +1897,20 @@
             "name": "008_Amount_of_RefundCharge",
             "description": "مبلغ استرداد داده شده",
             "expression": [
-              " ",
-              "VAR",
-              "AM_CH_RE = ( -1 )",
-              "    * CALCULATE (",
-              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
-              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsRefundCharge] = TRUE ),",
-              "        FILTER (",
-              "            'report Reception_Log',",
-              "            'report Reception_Log'[wristbands_index] = \"1\"",
+              "",
+              "VAR AM_CH_RE =",
+              "    ( -1 )",
+              "        * CALCULATE (",
+              "            SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "            FILTER ( 'report Reception_Log', 'report Reception_Log'[IsRefundCharge] = TRUE ),",
+              "            FILTER (",
+              "                'report Reception_Log',",
+              "                'report Reception_Log'[wristbands_index] = \"1\"",
+              "            )",
               "        )",
-              "    )",
               "RETURN",
-              "IF(ISBLANK(AM_CH_RE), 0, AM_CH_RE)"
+              "    IF ( ISBLANK ( AM_CH_RE ), 0, AM_CH_RE )",
+              "--مبلغ استرداد داده شده"
             ],
             "formatString": "#,#"
           },
@@ -1723,13 +1918,11 @@
             "name": "009_The_amount_of_charge_used",
             "description": "مقدار شارژ مصرف شده",
             "expression": [
-              " ",
-              "VAR ",
-              "AM_CH_USE = ('report Reception_Log'[006_Amount_of_charging] - ",
-              "'report Reception_Log'[007_The_amount_of_charge_remaining] -",
-              " 'report Reception_Log'[008_Amount_of_RefundCharge])",
-              " RETURN",
-              "IF(ISBLANK(AM_CH_USE),0,AM_CH_USE)"
+              "",
+              "VAR AM_CH_USE = ( 'report Reception_Log'[006_Amount_of_charging] - 'report Reception_Log'[007_The_amount_of_charge_remaining] - 'report Reception_Log'[008_Amount_of_RefundCharge] )",
+              "RETURN",
+              "    IF ( ISBLANK ( AM_CH_USE ), 0, AM_CH_USE )",
+              "--مقدار شارژ مصرف شده"
             ],
             "formatString": "#,#"
           },
@@ -1737,20 +1930,19 @@
             "name": "010_Number_of_entries_MAN",
             "description": "تعداد میهمانان مرد",
             "expression": [
-              " ",
-              "VAR NEM = CALCULATE (",
-              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[IsNewWristBand] = \"ورود\"",
-              "    ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[Gender] = \"مرد\"",
-              "    ))",
-              "RETURN",
               "",
-              "IF(ISBLANK(NEM),0,NEM)"
+              "VAR NEM =",
+              "    CALCULATE (",
+              "        DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[IsNewWristBand] = \"ورود\"",
+              "        ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[Gender] = \"مرد\" )",
+              "    )",
+              "RETURN",
+              "    IF ( ISBLANK ( NEM ), 0, NEM )",
+              "--تعداد میهمانان مرد"
             ],
             "formatString": "#,#"
           },
@@ -1758,22 +1950,19 @@
             "name": "011_Number_of_entries_WOMAN",
             "description": "تعداد میهمانان زن",
             "expression": [
-              " ",
-              "VAR NEW = CALCULATE (",
-              "    DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[IsNewWristBand] = \"ورود\"",
-              "    ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[Gender] = \"زن\"",
+              "",
+              "VAR NEW =",
+              "    CALCULATE (",
+              "        DISTINCTCOUNT ( 'report Reception_Log'[ReceptionID] ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[IsNewWristBand] = \"ورود\"",
+              "        ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[Gender] = \"زن\" )",
               "    )",
-              ")",
-              "",
               "RETURN",
-              "",
-              "IF(ISBLANK(NEW),0,NEW)"
+              "    IF ( ISBLANK ( NEW ), 0, NEW )",
+              "--تعداد میهمانان زن"
             ],
             "formatString": "#,#"
           },
@@ -1781,13 +1970,15 @@
             "name": "012_SumTicketPrice",
             "description": "مبلغ دریافت شده در گیشه",
             "expression": [
-              " CALCULATE (",
-              "    SUM ( 'report Reception_Log'[SumTicketPrice]),",
+              "",
+              "CALCULATE (",
+              "    SUM ( 'report Reception_Log'[SumTicketPrice] ),",
               "    FILTER (",
               "        'report Reception_Log',",
               "        'report Reception_Log'[ReceptionID_index] = \"1\"",
               "    )",
-              "    )"
+              ")",
+              "--مبلغ دریافت شده در گیشه"
             ],
             "formatString": "#,#"
           },
@@ -1795,13 +1986,15 @@
             "name": "013_SumTicketContributionAmount",
             "description": "پیش دریافت شارژ",
             "expression": [
-              " CALCULATE (",
-              "    SUM ( 'report Reception_Log'[SumTicketContributionAmount]),",
+              "",
+              "CALCULATE (",
+              "    SUM ( 'report Reception_Log'[SumTicketContributionAmount] ),",
               "    FILTER (",
               "        'report Reception_Log',",
               "        'report Reception_Log'[ReceptionID_index] = \"1\"",
               "    )",
-              "    )"
+              ")",
+              "--پیش دریافت شارژ"
             ],
             "formatString": "#,#"
           },
@@ -1809,18 +2002,19 @@
             "name": "014_sum_promotion_charge",
             "description": "جمع مبلغ پروموشن",
             "expression": [
-              " ",
-              "VAR",
-              "AM_CH = CALCULATE (",
-              "    SUM ( 'report Reception_Log'[UsageAmount] ),",
-              "    FILTER ( 'report Reception_Log', 'report Reception_Log'[IsPromotion] = TRUE ),",
-              "    FILTER (",
-              "        'report Reception_Log',",
-              "        'report Reception_Log'[wristbands_index] = \"1\"",
+              "",
+              "VAR AM_CH =",
+              "    CALCULATE (",
+              "        SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[IsPromotion] = TRUE ),",
+              "        FILTER (",
+              "            'report Reception_Log',",
+              "            'report Reception_Log'[wristbands_index] = \"1\"",
+              "        )",
               "    )",
-              ")",
               "RETURN",
-              "IF(ISBLANK(AM_CH),0,AM_CH)"
+              "    IF ( ISBLANK ( AM_CH ), 0, AM_CH )",
+              "--جمع مبلغ پروموشن"
             ],
             "formatString": "#,#"
           },
@@ -1839,7 +2033,8 @@
               "            'report Reception_Log',",
               "            'report Reception_Log'[StationName] = \"O Lounge\"",
               "        )",
-              "    )"
+              "    )",
+              "--فروش نقدی در اولانچتنها موردی است که درآمد حاصل از آن در درآمد اپارک محاسبه نمی شود و به صورت نقدی دریافت می گردد"
             ],
             "formatString": "#,#"
           },
@@ -1854,7 +2049,8 @@
               "        FILTER ( 'report Reception_Log', 'report Reception_Log'[Duration_time] > 60 )",
               "    )",
               "RETURN",
-              "    IF ( ISBLANK ( D_T ), \"فردی خارج نشده است\", D_T )"
+              "    IF ( ISBLANK ( D_T ), \"فردی خارج نشده است\", D_T )",
+              "--طول مدت حضور در پارک"
             ],
             "formatString": "#,#"
           },
@@ -1870,7 +2066,7 @@
               "    )",
               "RETURN",
               "    IF ( ISBLANK ( R_A_T_S ), \"فردی خارج نشده است\", R_A_T_S )",
-              ""
+              "--نسبت مدت حضور به طول مدت سانس"
             ],
             "formatString": "0.00%;-0.00%;0.00%"
           },
@@ -1884,7 +2080,8 @@
               "        'report Reception_Log'[012_SumTicketPrice] + 'report Reception_Log'[013_SumTicketContributionAmount]",
               "    ) / 'report Reception_Log'[001_Number_of_entries]",
               "RETURN",
-              "    IF ( ISBLANK ( ATP ), \"فردی وارد پارک نشده است\", ATP )"
+              "    IF ( ISBLANK ( ATP ), \"فردی وارد پارک نشده است\", ATP )",
+              "--متوسط قیمت بلیط"
             ],
             "formatString": "#,#"
           },
@@ -1898,7 +2095,8 @@
               "        'report Reception_Log'[012_SumTicketPrice] + 'report Reception_Log'[013_SumTicketContributionAmount] + 'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations]",
               "    )",
               "RETURN",
-              "    IF ( ISBLANK ( TI ), 0, TI )"
+              "    IF ( ISBLANK ( TI ), 0, TI )",
+              "--مجموع درآمد روزانه پارک که از جمع مبلغ کل پیش پرداخت و گیشه و مقدار هزینه شده در ایستگاه های بدست می آید."
             ],
             "formatString": "#,#"
           },
@@ -1906,12 +2104,16 @@
             "name": "020_Amount_of_charging_per_capita",
             "description": "سرانه میزان شارژ",
             "expression": [
-              " ",
               "",
-              "",
-              "VAR TI=  DIVIDE('report Reception_Log'[006_Amount_of_charging],'report Reception_Log'[001_Number_of_entries],BLANK())",
+              "VAR TI =",
+              "    DIVIDE (",
+              "        'report Reception_Log'[006_Amount_of_charging],",
+              "        'report Reception_Log'[001_Number_of_entries],",
+              "        BLANK ()",
+              "    )",
               "RETURN",
-              "IF(ISBLANK(TI) , 0 , TI)"
+              "    IF ( ISBLANK ( TI ), 0, TI )",
+              "--سرانه میزان شارژ"
             ],
             "formatString": "#,#"
           },
@@ -1919,19 +2121,33 @@
             "name": "021_amount_of_charge_used_per_capita",
             "description": "سرانه مصرف شارژ",
             "expression": [
-              " ",
               "",
-              "",
-              "VAR TI=  DIVIDE('report Reception_Log'[009_The_amount_of_charge_used],'report Reception_Log'[001_Number_of_entries],BLANK())",
+              "VAR TI =",
+              "    DIVIDE (",
+              "        'report Reception_Log'[009_The_amount_of_charge_used],",
+              "        'report Reception_Log'[001_Number_of_entries],",
+              "        BLANK ()",
+              "    )",
               "RETURN",
-              "IF(ISBLANK(TI) , 0 , TI)"
+              "    IF ( ISBLANK ( TI ), 0, TI )",
+              "--سرانه مصرف شارژ"
             ],
             "formatString": "#,#"
           },
           {
             "name": "022_Default_charge",
             "description": "شارژ پیشفرض موجود در کارت بلیط ها",
-            "expression": " CALCULATE(SUM('report Reception_Log'[UsageAmount]),FILTER('report Reception_Log','report Reception_Log'[Default_charge_index] = 1 ))",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'report Reception_Log'[UsageAmount] ),",
+              "    FILTER (",
+              "        'report Reception_Log',",
+              "        'report Reception_Log'[Default_charge_index] = 1",
+              "    )",
+              ")",
+              "--شارژ پیشفرض موجود در کارت بلیط ها"
+            ],
             "formatString": "#,#."
           },
           {
@@ -1940,19 +2156,29 @@
               "سرانه مصرف شارژ در ایستگاه ها برای افراد وارد شده به ایستگاه ها",
               "در ایستگاه های مربوط به پارک"
             ],
-            "expression": " (DIVIDE('report Reception_Log'[003_02_The_amount_of_charge_used_at_the_stations],'report Reception_Log'[001_Number_of_entries]))",
+            "expression": [
+              "",
+              "(",
+              "    DIVIDE (",
+              "        'report Reception_Log'[003_02_The_amount_of_charge_used_at_the_stations],",
+              "        'report Reception_Log'[001_Number_of_entries]",
+              "    )",
+              ")",
+              "--سرانه مصرف شارژ در ایستگاه ها برای افراد وارد شده به ایستگاه هادر ایستگاه های مربوط به پارک"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "003_02_The_amount_of_charge_used_at_the_stations",
             "description": "مبلغ شارژ مصرف شده در ایستگاه ها تحت مالکیت پارک",
             "expression": [
-              " ",
+              "",
               "( -1 )",
               "    * CALCULATE (",
               "        SUM ( 'report Reception_Log'[UsageAmount] ),",
-              "        FILTER ( 'report Station','report Station'[ownership] = \"پارک\" )",
-              "    )"
+              "        FILTER ( 'report Station', 'report Station'[ownership] = \"پارک\" )",
+              "    )",
+              "--مبلغ شارژ مصرف شده در ایستگاه ها تحت مالکیت پارک"
             ],
             "formatString": "#,#"
           }
@@ -2003,40 +2229,56 @@
               "VAR row_table =",
               "    CALCULATE ( DISTINCTCOUNT ( 'in permission'[username] ) )",
               "RETURN",
-              "    IF ( row_table = 1, \"\", \"date_now\" )"
+              "    IF ( row_table = 1, \"\", \"date_now\" )",
+              "--تغییر رفتار دکمه های مربوط به تحلیل روزانه براساس یوزری که لاگین کرده است"
             ]
           },
           {
             "name": "002_page_contract_sales",
             "description": "تغییر رفتار دکمه های مربوط به تحلیل فروش براساس یوزری که لاگین کرده است",
             "expression": [
-              " ",
-              "VAR row_table = CALCULATE(DISTINCTCOUNT('in permission'[username]))",
               "",
+              "VAR row_table =",
+              "    CALCULATE ( DISTINCTCOUNT ( 'in permission'[username] ) )",
               "RETURN",
-              "IF(row_table = 1 , \"contract_sales\" , \"contract_sales\")"
+              "    IF ( row_table = 1, \"contract_sales\", \"contract_sales\" )",
+              "--تغییر رفتار دکمه های مربوط به تحلیل فروش براساس یوزری که لاگین کرده است"
             ]
           },
           {
             "name": "003_phone_number_permissio",
             "description": "تعیین کننده اینکه چه کسی به صفحه مشخصات و شماره تلفن مشتریان در صفحه CRM دسترسی داشته باشد",
             "expression": [
-              " IF(USERPRINCIPALNAME() = \"aliakbari.m@Opark.Local\" ||",
-              "\t\t\tUSERPRINCIPALNAME() = \"a.dashti@Opark.Local\" ||",
-              "\t\t\tUSERPRINCIPALNAME() = \"E.Gholami@Opark.Local\" ||",
-              "\t\t\tUSERPRINCIPALNAME() = \"R.Naeimipour@Opark.Local\" ||",
-              "\t\t\tUSERPRINCIPALNAME() = \"A.Hosseinzadeh@Opark.Local\",\"mobile_phone\",\"1\")"
+              "",
+              "IF (",
+              "    USERPRINCIPALNAME () = \"aliakbari.m@Opark.Local\"",
+              "        || USERPRINCIPALNAME () = \"a.dashti@Opark.Local\"",
+              "        || USERPRINCIPALNAME () = \"E.Gholami@Opark.Local\"",
+              "        || USERPRINCIPALNAME () = \"R.Naeimipour@Opark.Local\"",
+              "        || USERPRINCIPALNAME () = \"A.Hosseinzadeh@Opark.Local\",",
+              "    \"mobile_phone\",",
+              "    \"1\"",
+              ")",
+              "--تعیین کننده اینکه چه کسی به صفحه مشخصات و شماره تلفن مشتریان در صفحه CRM دسترسی داشته باشد"
             ]
           },
           {
             "name": "004_USERNAME",
             "description": "نشان دهنده یوزر نیم فردی است که به سیستم لاگین کرده است",
-            "expression": "USERNAME()"
+            "expression": [
+              "",
+              "USERNAME ()",
+              "--نشان دهنده یوزر نیم فردی است که به سیستم لاگین کرده است"
+            ]
           },
           {
             "name": "005_USERPRINCIPALNAME",
             "description": "مشخص کننده یوزر دامینی فردی است که به سیستم لاگین کرده است.",
-            "expression": "USERPRINCIPALNAME()"
+            "expression": [
+              "",
+              "USERPRINCIPALNAME ()",
+              "--مشخص کننده یوزر دامینی فردی است که به سیستم لاگین کرده است."
+            ]
           }
         ]
       },
@@ -2074,6 +2316,7 @@
             "description": "این مجر براسا انتخاب موضوع مورد نظر در اسلایسر موضوعات مقدار خواسته شده را در هر نموداری نمایش می دهد",
             "expression": [
               "",
+              "--این مجر براسا انتخاب موضوع مورد نظر در اسلایسر موضوعات مقدار خواسته شده را در هر نموداری نمایش می دهد",
               "IF (",
               "    SELECTEDVALUE ( 'in select_table'[select subject] ) = \"تعداد میهمانان ورودی به پارک\",",
               "    'report Reception_Log'[001_Number_of_entries],",
@@ -2199,7 +2442,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--تعداد میهمانان ورودی به پارک با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2232,7 +2476,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--تعداد میهمانان ورودی به ایستگاه ها با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2268,7 +2513,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مقدار شارژ مصرف شده در ایستگاه ها به غیر از ایستگاه O Lounge با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2303,7 +2549,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مبلغ شارژ مصرف شده در ایستگاه ها با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2337,7 +2584,7 @@
               "            all_day",
               "        )",
               "    )",
-              ""
+              "--تعداد خروجی پارک با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2370,7 +2617,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--تعداد افراد حاضر در پارک با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2404,7 +2652,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مبلغ شارژ با احتساب مبلغ گیشه سازمانی در بعضی از موارد به این دلیل که نفرات و پرسنل پارک دارای دسبندهایی هستند که قبلا صادر شده است و از آن برای خرید استفاده می کنند این مورد به صورت جداگانه محاسبه می شود. با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2437,7 +2686,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مقدار شارژ انجام شده با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2470,7 +2720,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مقدار شارژ باقی مانده در مچ بندها با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2503,7 +2754,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مبلغ استرداد داده شده با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2536,7 +2788,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مقدار شارژ مصرف شده با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2569,7 +2822,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--تعداد میهمانان مرد با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2602,7 +2856,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "---تعداد میهمانان زن با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2635,7 +2890,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مبلغ دریافت شده در گیشه با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2668,7 +2924,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--پیش دریافت شارژ با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2676,18 +2933,30 @@
             "name": "014_sum_promotion_charge_with_today",
             "description": "جمع مبلغ پروموشن با فیلتر امروز",
             "expression": [
-              " ",
               "",
-              "    VAR today_date = CALCULATE('report Reception_Log'[014_sum_promotion_charge],FILTER('report Reception_Log','report Reception_Log'[today_index_no] = 1))",
-              "    VAR last_week = CALCULATE('report Reception_Log'[014_sum_promotion_charge],FILTER('report Reception_Log','report Reception_Log'[today_index_no] = 2))",
-              "    VAR all_day = CALCULATE('report Reception_Log'[014_sum_promotion_charge])",
-              " ",
-              "    RETURN",
-              "    IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"امروز\"",
-              "    ,today_date",
-              "    ,IF(SELECTEDVALUE('in select_table_date_now'[persian select subject]) = \"هفته گذشته\"",
-              "    ,last_week",
-              "    ,all_day))"
+              "VAR today_date =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[014_sum_promotion_charge],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 1 )",
+              "    )",
+              "VAR last_week =",
+              "    CALCULATE (",
+              "        'report Reception_Log'[014_sum_promotion_charge],",
+              "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
+              "    )",
+              "VAR all_day =",
+              "    CALCULATE ( 'report Reception_Log'[014_sum_promotion_charge] )",
+              "RETURN",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
+              "        today_date,",
+              "        IF (",
+              "            SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"هفته گذشته\",",
+              "            last_week,",
+              "            all_day",
+              "        )",
+              "    )",
+              "--جمع مبلغ پروموشن با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2721,7 +2990,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--فروش نقدی در اولانچ تنها موردی است که درآمد حاصل از آن در درآمد اپارک محاسبه نمی شود و به صورت نقدی دریافت می گردد. با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2754,7 +3024,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--طول مدت حضور در پارک با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2787,7 +3058,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--نسبت مدت حضور به طول مدت سانس با فیلتر امروز"
             ],
             "formatString": "0.00%;-0.00%;0.00%"
           },
@@ -2820,7 +3092,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--متوسط قیمت بلیط با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2853,7 +3126,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مجموع درآمد روزانه پارک که از جمع مبلغ کل پیش پرداخت و گیشه و مقدار هزینه شده در ایستگاه های بدست می آید.با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2886,7 +3160,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--سرانه میزان شارژ با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2919,7 +3194,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--سرانه مصرف شارژ با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2952,7 +3228,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--تعداد محصول فروش رفته در هر ایستگاه با فیلتر امروز"
             ],
             "formatString": "#,#"
           },
@@ -2972,7 +3249,7 @@
               "        FILTER ( 'report Reception_Log', 'report Reception_Log'[today_index_no] = 2 )",
               "    )",
               "VAR all_day =",
-              "    CALCULATE ( 'report Station_Reception'[023_Sum_Product_Price_each_station])",
+              "    CALCULATE ( 'report Station_Reception'[023_Sum_Product_Price_each_station] )",
               "RETURN",
               "    IF (",
               "        SELECTEDVALUE ( 'in select_table_date_now'[persian select subject] ) = \"امروز\",",
@@ -2982,7 +3259,8 @@
               "            last_week,",
               "            all_day",
               "        )",
-              "    )"
+              "    )",
+              "--مبلغ محصولات فروش رفته در هر ایستگاه با فیلتر امروز"
             ],
             "formatString": "#,#."
           }
@@ -3641,13 +3919,28 @@
               "G",
               "درج شده که با فیلتر کردن این داده های عدد تارگت مربوط به قرارداد سازمانی استخراج می گردد."
             ],
-            "expression": "CALCULATE(SUM('report sales_target'[sales_user_target]),FILTER('report sales_target','report sales_target'[sales_user_ID]<> \"G\"))",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'report sales_target'[sales_user_target] ),",
+              "    FILTER ( 'report sales_target', 'report sales_target'[sales_user_ID] <> \"G\" )",
+              ")",
+              "--جمع تارگت فروشندگان با توجه به اینکه برای جلوگیری از اضافه شدن جدول برای تارگت های گیشه گروهی در قسمت ای دی یوزر ها برای مقادیر گیشه گروهی عبارت  G درج شده که با فیلتر کردن این داده های عدد تارگت مربوط به قرارداد سازمانی استخراج می گردد."
+            ],
             "formatString": "#,#"
           },
           {
             "name": "002_sum_Sold_at_boxoffice",
             "description": "جمع تارگت تعداد نفرات در گیشه آزاد",
-            "expression": "CALCULATE(SUM('report sales_target'[sales_user_target]), USERELATIONSHIP('bi DimDate'[Jalali_1],'report sales_target'[date_target]),FILTER('report sales_target','report sales_target'[sales_user_ID]= \"G\"))",
+            "expression": [
+              "",
+              "CALCULATE (",
+              "    SUM ( 'report sales_target'[sales_user_target] ),",
+              "    USERELATIONSHIP ( 'bi DimDate'[Jalali_1], 'report sales_target'[date_target] ),",
+              "    FILTER ( 'report sales_target', 'report sales_target'[sales_user_ID] = \"G\" )",
+              ")",
+              "--جمع تارگت تعداد نفرات در گیشه آزاد"
+            ],
             "formatString": "#,#"
           }
         ]
@@ -3708,25 +4001,45 @@
           {
             "name": "001_average_CalendarTicketPrice",
             "description": "متوسط حسابی مبلغ فروش بلیط در قراردادهای سازمانی",
-            "expression": " CALCULATE(AVERAGE('report Ticket_Calendar'[CalendarTicketPrice]))",
+            "expression": [
+              "",
+              "CALCULATE ( AVERAGE ( 'report Ticket_Calendar'[CalendarTicketPrice] ) )",
+              "--متوسط حسابی مبلغ فروش بلیط در قراردادهای سازمانی"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "002_average_TicketBasePrice",
             "description": "متوسط حسابی مبلغ پایه بلیط در قراردادهای سازمانی",
-            "expression": " CALCULATE(AVERAGE('report Ticket_Calendar'[TicketBasePrice]))",
+            "expression": [
+              "",
+              "CALCULATE ( AVERAGE ( 'report Ticket_Calendar'[TicketBasePrice] ) )",
+              "--متوسط حسابی مبلغ پایه بلیط در قراردادهای سازمانی"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "003_sum_Discounts _per_session",
             "description": "جمع مبلغ تخفیف داده شده در قراردادهای سازمانی",
-            "expression": "CALCULATE(SUM('report Ticket_Calendar'[Discounts _per_session]))",
+            "expression": [
+              "",
+              "CALCULATE ( SUM ( 'report Ticket_Calendar'[Discounts _per_session] ) )",
+              "--جمع مبلغ تخفیف داده شده در قراردادهای سازمانی"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "004_Percent_Discounts _per_session",
             "description": "درصد تخفیف داده شده در قراردادها",
-            "expression": " DIVIDE(AVERAGE('report Ticket_Calendar'[Discounts _per_session]),'report Ticket_Calendar'[002_average_TicketBasePrice],0)",
+            "expression": [
+              "",
+              "DIVIDE (",
+              "    AVERAGE ( 'report Ticket_Calendar'[Discounts _per_session] ),",
+              "    'report Ticket_Calendar'[002_average_TicketBasePrice],",
+              "    0",
+              ")",
+              "--درصد تخفیف داده شده در قراردادها"
+            ],
             "formatString": "0.00%;-0.00%;0.00%"
           }
         ]
@@ -3909,19 +4222,31 @@
           {
             "name": "001_Debit",
             "description": "گردش بدهکار",
-            "expression": "CALCULATE(SUM('rah financial_balance_report'[Debit]))",
+            "expression": [
+              "",
+              "CALCULATE ( SUM ( 'rah financial_balance_report'[Debit] ) )",
+              "--گردش بدهکار"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "002_Credit",
             "description": "گردش بستانکار",
-            "expression": "CALCULATE(SUM('rah financial_balance_report'[Credit]))",
+            "expression": [
+              "",
+              "CALCULATE ( SUM ( 'rah financial_balance_report'[Credit] ) )",
+              "--گردش بستانکار"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "003_change_amount",
             "description": "مانده بدهکار و یا بستانکار",
-            "expression": "CALCULATE(SUM('rah financial_balance_report'[change_amount]))",
+            "expression": [
+              "",
+              "CALCULATE ( SUM ( 'rah financial_balance_report'[change_amount] ) )",
+              "--مانده بدهکار و یا بستانکار"
+            ],
             "formatString": "#,#"
           }
         ]
