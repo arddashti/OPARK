@@ -1295,10 +1295,13 @@
             "description": "درصد تحقق تارگت",
             "expression": [
               "",
-              "DIVIDE (",
+              "VAR t = DIVIDE (",
               "    'report sales_contract'[028_total_session_count],",
               "    'report sales_target'[001_sum_sales_target]",
               ") * 100",
+              "",
+              "RETURN",
+              "IF(ISBLANK(t),0,t)",
               "--درصد تحقق تارگت"
             ],
             "formatString": "0.00"
@@ -1346,7 +1349,7 @@
             ],
             "expression": [
               "",
-              "CALCULATE (",
+              "VAR t = CALCULATE (",
               "    'in select_table_date_now'[012_SumTicketPrice_with_today],",
               "    USERELATIONSHIP ( 'report sales_contract'[TicketCardMainID], 'report Reception_Log'[TicketCardMainID] ),",
               "    FILTER (",
@@ -1354,6 +1357,8 @@
               "        'report Reception_Log'[TicketName] = \"گیشه گروهی\"",
               "    )",
               ")",
+              "RETURN",
+              "IF(ISBLANK(t),0,t)",
               "--مبلغ دریافت شده در گیشه به تفکیک قرارداد مربوط به میهمانان گروهی"
             ],
             "formatString": "#,#"
@@ -1617,7 +1622,7 @@
           },
           {
             "name": "Time",
-            "dataType": "string",
+            "dataType": "dateTime",
             "description": "زمان ثبت لاگ",
             "sourceColumn": "Time"
           },
@@ -1692,6 +1697,11 @@
             "name": "Reception_CustomerName",
             "dataType": "string",
             "sourceColumn": "Reception_CustomerName"
+          },
+          {
+            "name": "Hour",
+            "dataType": "int64",
+            "sourceColumn": "Hour"
           }
         ],
         "partitions": [
@@ -3266,6 +3276,21 @@
               "--مبلغ محصولات فروش رفته در هر ایستگاه با فیلتر امروز"
             ],
             "formatString": "#,#."
+          },
+          {
+            "name": "024_percentage_number_people_entering_with_today_ filter_ticket_name",
+            "description": "درصد تعداد نفرات وارد شده به پارک با فیلتر امروز به تفکیک نوع بلیط",
+            "expression": [
+              "",
+              "DIVIDE (",
+              "    CALCULATE ( [001_Number_of_entries_with_today] ),",
+              "    CALCULATE (",
+              "        [001_Number_of_entries_with_today],",
+              "        ALL ( 'report Reception_Log'[TicketName] )",
+              "    )",
+              ")",
+              "--درصد تعداد نفرات وارد شده به پارک با فیلتر امروز به تفکیک نوع بلیط"
+            ]
           }
         ]
       },
