@@ -83,7 +83,8 @@
             "name": "JWeekDay",
             "dataType": "string",
             "description": "نام روز های هفته",
-            "sourceColumn": "JWeekDay"
+            "sourceColumn": "JWeekDay",
+            "sortByColumn": "JWeekDay_num"
           },
           {
             "name": "JWeekNum",
@@ -114,6 +115,11 @@
             "dataType": "int64",
             "description": "شماره یونیک جدول تاریخ که برای محاسباتی روز روز ها از آن استفاده می شود",
             "sourceColumn": "Counter"
+          },
+          {
+            "name": "JWeekDay_num",
+            "dataType": "int64",
+            "sourceColumn": "JWeekDay_num"
           }
         ],
         "partitions": [
@@ -2303,6 +2309,16 @@
             "dataType": "string",
             "description": "این جدول برای نمایش محتوای میجر هایی که تا به حال در دکس نوشته شده است و نمایش ترند آنها استفاده شده است.",
             "sourceColumn": "select subject"
+          },
+          {
+            "name": "y_axis_tornado",
+            "dataType": "string",
+            "sourceColumn": "y_axis_tornado"
+          },
+          {
+            "name": "select subject_trend",
+            "dataType": "string",
+            "sourceColumn": "select subject_trend"
           }
         ],
         "partitions": [
@@ -2315,7 +2331,7 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    in_select_table = Source{[Schema=\"in\",Item=\"select_table\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(in_select_table,\"ي\",\"ی\",Replacer.ReplaceText,{\"select subject\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(in_select_table,\"ي\",\"ی\",Replacer.ReplaceText,{\"select subject\", \"y_axis_tornado\", \"select subject_trend\"})",
                 "in",
                 "    #\"Replaced Value\""
               ]
@@ -2386,6 +2402,26 @@
               "        )",
               "    )",
               ")",
+              "--این مجر براسا انتخاب موضوع مورد نظر در اسلایسر موضوعات مقدار خواسته شده را در هر نموداری نمایش می دهد"
+            ]
+          },
+          {
+            "name": "002_in select_table",
+            "expression": [
+              "",
+              "",
+              "IF (",
+              "    SELECTEDVALUE ( 'in select_table'[select subject_trend] ) = \"تعداد میهمانان ورودی به پارک\",",
+              "    'in select_table_date_now'[001_Number_of_entries_with_today],",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table'[select subject_trend] ) = \"تعداد میهمانان خروجی به پارک\",",
+              "       'in select_table_date_now'[004_Number_of_exits_with_today],0))",
+              "       ",
+              "       ",
+              "       ",
+              "       ",
+              "       ",
+              "       ",
               "--این مجر براسا انتخاب موضوع مورد نظر در اسلایسر موضوعات مقدار خواسته شده را در هر نموداری نمایش می دهد"
             ]
           }
@@ -4278,6 +4314,43 @@
             "formatString": "#,#"
           }
         ]
+      },
+      {
+        "name": "bi DIM_DATE_event",
+        "columns": [
+          {
+            "name": "type",
+            "dataType": "string",
+            "sourceColumn": "type"
+          },
+          {
+            "name": "event",
+            "dataType": "string",
+            "sourceColumn": "event"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_DIM_DATE_event = Source{[Schema=\"bi\",Item=\"DIM_DATE_event\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(bi_DIM_DATE_event,\"ي\",\"ی\",Replacer.ReplaceText,{\"type\", \"event\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -4414,6 +4487,14 @@
         "fromColumn": "Date",
         "toTable": "bi DimDate",
         "toColumn": "Miladi"
+      },
+      {
+        "name": "ddb52f04-849c-4570-9194-e0351a6e56fb",
+        "fromTable": "bi DIM_DATE_event",
+        "fromColumn": "date",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
