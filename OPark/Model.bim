@@ -1406,6 +1406,10 @@
               "--جمع نفرات در گیشه آزاد"
             ],
             "formatString": "#,#"
+          },
+          {
+            "name": "036",
+            "expression": " 'report sales_contract'[031_total_session_count_net]-'report sales_contract'[003_total_Number_of_entries_in_contract]"
           }
         ]
       },
@@ -4351,6 +4355,40 @@
             }
           }
         ]
+      },
+      {
+        "name": "report Reception",
+        "description": "این جدول حاوی اطلاعات مربوط به میهمانان پارک می باشد مانند نام و شماره دستبند",
+        "columns": [
+          {
+            "name": "ReceptionID",
+            "dataType": "int64",
+            "description": "شماره یونیک میهمان",
+            "sourceColumn": "ReceptionID"
+          },
+          {
+            "name": "WristBandNumber",
+            "dataType": "string",
+            "description": "شماره مچنبد",
+            "sourceColumn": "WristBandNumber"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Reception = Source{[Schema=\"report\",Item=\"Reception\"]}[Data]",
+                "in",
+                "    report_Reception"
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -4495,6 +4533,13 @@
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "b9596605-900c-4274-81a4-e6cab72ab127",
+        "fromTable": "report Reception_Log",
+        "fromColumn": "ReceptionID",
+        "toTable": "report Reception",
+        "toColumn": "ReceptionID"
       }
     ],
     "roles": [
@@ -4523,6 +4568,14 @@
           {
             "memberName": "OPARK\\a.dashti",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2706"
+          },
+          {
+            "memberName": "OPARK\\F.Ahmadi",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2748"
+          },
+          {
+            "memberName": "OLAP\\ahmadi",
+            "memberId": "S-1-5-21-4155188726-212848779-2432443270-1005"
           }
         ]
       },
