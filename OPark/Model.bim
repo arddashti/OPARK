@@ -1560,7 +1560,8 @@
           {
             "name": "UsageAmount",
             "dataType": "double",
-            "sourceColumn": "UsageAmount"
+            "sourceColumn": "UsageAmount",
+            "formatString": "#,#"
           },
           {
             "name": "IsNewWristBand",
@@ -1634,7 +1635,14 @@
             "name": "Time",
             "dataType": "dateTime",
             "description": "زمان ثبت لاگ",
-            "sourceColumn": "Time"
+            "sourceColumn": "Time",
+            "formatString": "HH:mm:ss",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"DateTimeCustom\"><DateTimes><DateTime LCID=\"1033\" Group=\"LongTime\" FormatString=\"HH:mm:ss\" /></DateTimes></Format>"
+              }
+            ]
           },
           {
             "name": "ReceptionID_index",
@@ -1691,6 +1699,11 @@
           {
             "name": "Default_charge_index",
             "dataType": "int64",
+            "description": [
+              "این ستون دارای سه وضعیت است که 0 نشاندهنده این است که شارژ گیش فرض ندارد",
+              "1 نشاندهنده این است که میزان شارژ گیش فرض اولیه چقدر است",
+              "2 نشاندهنده این است که چه میزان شارژ پیشفرض بازگردانده شده است"
+            ],
             "sourceColumn": "Default_charge_index"
           },
           {
@@ -1712,6 +1725,12 @@
             "name": "Hour",
             "dataType": "int64",
             "sourceColumn": "Hour"
+          },
+          {
+            "name": "UserID",
+            "dataType": "int64",
+            "description": "id کاربر ثبت کننده اطلاعات",
+            "sourceColumn": "UserID"
           }
         ],
         "partitions": [
@@ -2446,6 +2465,11 @@
             "dataType": "string",
             "description": "عنوان فارسی برای انتخاب دوره های زمانی نمایش اطلاعات در گزارش های روزانه و تحلیل روزانه",
             "sourceColumn": "persian select subject"
+          },
+          {
+            "name": "select subject_ID",
+            "dataType": "int64",
+            "sourceColumn": "select subject_ID"
           }
         ],
         "partitions": [
@@ -4371,6 +4395,16 @@
             "dataType": "string",
             "description": "شماره مچنبد",
             "sourceColumn": "WristBandNumber"
+          },
+          {
+            "name": "Reception_CustomerMobile",
+            "dataType": "string",
+            "sourceColumn": "Reception_CustomerMobile"
+          },
+          {
+            "name": "Reception_CustomerName",
+            "dataType": "string",
+            "sourceColumn": "Reception_CustomerName"
           }
         ],
         "partitions": [
@@ -4382,9 +4416,47 @@
               "expression": [
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    report_Reception = Source{[Schema=\"report\",Item=\"Reception\"]}[Data]",
+                "    report_Reception = Source{[Schema=\"report\",Item=\"Reception\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception,\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\"})",
                 "in",
-                "    report_Reception"
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "report Users",
+        "columns": [
+          {
+            "name": "UserID",
+            "dataType": "int64",
+            "sourceColumn": "UserID"
+          },
+          {
+            "name": "IsDeactive",
+            "dataType": "boolean",
+            "sourceColumn": "IsDeactive"
+          },
+          {
+            "name": "USER_NAME",
+            "dataType": "string",
+            "sourceColumn": "USER_NAME"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Users = Source{[Schema=\"report\",Item=\"Users\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Users,\"ي\",\"ی\",Replacer.ReplaceText,{\"USER_NAME\"})",
+                "in",
+                "    #\"Replaced Value\""
               ]
             }
           }
@@ -4535,11 +4607,28 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "b9596605-900c-4274-81a4-e6cab72ab127",
+        "name": "b0e8f653-cd2e-435e-af23-4c9547af3cca",
         "fromTable": "report Reception_Log",
         "fromColumn": "ReceptionID",
         "toTable": "report Reception",
-        "toColumn": "ReceptionID"
+        "toColumn": "ReceptionID",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "1306561c-871a-4cfd-9a90-0b59243092cc",
+        "fromTable": "report Reception_Log",
+        "fromColumn": "UserID",
+        "toTable": "report Users",
+        "toColumn": "UserID"
+      },
+      {
+        "name": "b8e0a463-1c3c-45ca-9924-3de8fb5dbe7b",
+        "toCardinality": "many",
+        "fromTable": "report Reception_Log",
+        "fromColumn": "today_index_no",
+        "toTable": "in select_table_date_now",
+        "toColumn": "select subject_ID",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
