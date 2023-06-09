@@ -4521,14 +4521,6 @@
         "toColumn": "Miladi"
       },
       {
-        "name": "73416d20-e008-4c20-93b8-8c0d57495b02",
-        "fromTable": "report Station_Reception",
-        "fromColumn": "uniccode_Station_Reception",
-        "toTable": "report Reception_Log",
-        "toColumn": "uniccode_Station_Reception",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
         "name": "e2190814-ff91-4304-819f-31c3c9c4e907",
         "fromTable": "report Reception_Log",
         "fromColumn": "TicketCardMainID",
@@ -4615,19 +4607,28 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "1306561c-871a-4cfd-9a90-0b59243092cc",
+        "name": "d23c51ee-c6fd-4a89-a7bc-b488f084b436",
         "fromTable": "report Reception_Log",
         "fromColumn": "UserID",
         "toTable": "report Users",
         "toColumn": "UserID"
       },
       {
-        "name": "b8e0a463-1c3c-45ca-9924-3de8fb5dbe7b",
+        "name": "d44b5527-843e-4099-9430-0fbd3b6999d4",
+        "fromTable": "report Station_Reception",
+        "fromColumn": "uniccode_Station_Reception",
+        "toTable": "report Reception_Log",
+        "toColumn": "uniccode_Station_Reception",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "3caa65f2-d38d-4470-938d-93ede438adf6",
         "toCardinality": "many",
         "fromTable": "report Reception_Log",
         "fromColumn": "today_index_no",
         "toTable": "in select_table_date_now",
         "toColumn": "select subject_ID",
+        "isActive": false,
         "crossFilteringBehavior": "bothDirections"
       }
     ],
