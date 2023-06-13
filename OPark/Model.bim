@@ -4423,6 +4423,20 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "001_Number_of_entries_totla",
+            "expression": [
+              "",
+              "    CALCULATE (",
+              "        DISTINCTCOUNT ( 'report Reception'[ReceptionID] ),ALL('report Reception_Log'[date_search]))"
+            ]
+          },
+          {
+            "name": "002_Charge_consumption_per_capita",
+            "expression": " 'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations]/'report Reception'[001_Number_of_entries_totla]"
+          }
         ]
       },
       {
@@ -4457,6 +4471,73 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Users,\"ي\",\"ی\",Replacer.ReplaceText,{\"USER_NAME\"})",
                 "in",
                 "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "analyze per_capita_detail",
+        "columns": [
+          {
+            "name": "StationID",
+            "dataType": "int64",
+            "sourceColumn": "StationID"
+          },
+          {
+            "name": "today_index",
+            "dataType": "string",
+            "sourceColumn": "today_index"
+          },
+          {
+            "name": "SUM(UsageAmount)",
+            "dataType": "double",
+            "sourceColumn": "SUM(UsageAmount)"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    analyze_per_capita_detail = Source{[Schema=\"analyze\",Item=\"per_capita_detail\"]}[Data]",
+                "in",
+                "    analyze_per_capita_detail"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "analyze per_capita",
+        "columns": [
+          {
+            "name": "today_index",
+            "dataType": "string",
+            "sourceColumn": "today_index"
+          },
+          {
+            "name": "COUNT(ReceptionID)",
+            "dataType": "int64",
+            "sourceColumn": "COUNT(ReceptionID)"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    analyze_per_capita = Source{[Schema=\"analyze\",Item=\"per_capita\"]}[Data]",
+                "in",
+                "    analyze_per_capita"
               ]
             }
           }
@@ -4630,6 +4711,27 @@
         "toColumn": "select subject_ID",
         "isActive": false,
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "1cca0deb-d940-45a6-bda7-a4343365b000",
+        "fromTable": "analyze per_capita_detail",
+        "fromColumn": "today_index",
+        "toTable": "analyze per_capita",
+        "toColumn": "today_index"
+      },
+      {
+        "name": "3113eb21-ae9f-4e1c-8ca8-5dd60555e4c5",
+        "fromTable": "analyze per_capita_detail",
+        "fromColumn": "StationID",
+        "toTable": "report Station",
+        "toColumn": "StationID"
+      },
+      {
+        "name": "c65cea07-b2e5-4c88-941e-85aac373844d",
+        "fromTable": "analyze per_capita_detail",
+        "fromColumn": "today_index",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi"
       }
     ],
     "roles": [
