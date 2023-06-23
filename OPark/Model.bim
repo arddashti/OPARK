@@ -4423,20 +4423,6 @@
               ]
             }
           }
-        ],
-        "measures": [
-          {
-            "name": "001_Number_of_entries_totla",
-            "expression": [
-              "",
-              "    CALCULATE (",
-              "        DISTINCTCOUNT ( 'report Reception'[ReceptionID] ),ALL('report Reception_Log'[date_search]))"
-            ]
-          },
-          {
-            "name": "002_Charge_consumption_per_capita",
-            "expression": " 'report Reception_Log'[003_The_amount_of_charge_used_at_the_stations]/'report Reception'[001_Number_of_entries_totla]"
-          }
         ]
       },
       {
@@ -4486,13 +4472,43 @@
           },
           {
             "name": "today_index",
-            "dataType": "string",
+            "dataType": "dateTime",
             "sourceColumn": "today_index"
           },
           {
             "name": "SUM(UsageAmount)",
             "dataType": "double",
             "sourceColumn": "SUM(UsageAmount)"
+          },
+          {
+            "name": "StationName",
+            "dataType": "string",
+            "sourceColumn": "StationName"
+          },
+          {
+            "name": "type",
+            "dataType": "string",
+            "sourceColumn": "type"
+          },
+          {
+            "name": "payment type",
+            "dataType": "string",
+            "sourceColumn": "payment type"
+          },
+          {
+            "name": "Location",
+            "dataType": "string",
+            "sourceColumn": "Location"
+          },
+          {
+            "name": "Activity status",
+            "dataType": "string",
+            "sourceColumn": "Activity status"
+          },
+          {
+            "name": "ownership",
+            "dataType": "string",
+            "sourceColumn": "ownership"
           }
         ],
         "partitions": [
@@ -4504,11 +4520,19 @@
               "expression": [
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    analyze_per_capita_detail = Source{[Schema=\"analyze\",Item=\"per_capita_detail\"]}[Data]",
+                "    analyze_per_capita_detail = Source{[Schema=\"analyze\",Item=\"per_capita_detail\"]}[Data],",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(analyze_per_capita_detail,{{\"today_index\", type date}}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"type\", \"payment type\", \"Location\", \"Activity status\", \"ownership\"})",
                 "in",
-                "    analyze_per_capita_detail"
+                "    #\"Replaced Value\""
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_Charge_consumption_per_capita",
+            "expression": " DIVIDE(SUM('analyze per_capita_detail'[SUM(UsageAmount)]),SUM('analyze per_capita'[COUNT(ReceptionID)]))"
           }
         ]
       },
@@ -4517,7 +4541,7 @@
         "columns": [
           {
             "name": "today_index",
-            "dataType": "string",
+            "dataType": "dateTime",
             "sourceColumn": "today_index"
           },
           {
@@ -4535,9 +4559,77 @@
               "expression": [
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    analyze_per_capita = Source{[Schema=\"analyze\",Item=\"per_capita\"]}[Data]",
+                "    analyze_per_capita = Source{[Schema=\"analyze\",Item=\"per_capita\"]}[Data],",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(analyze_per_capita,{{\"today_index\", type date}})",
                 "in",
-                "    analyze_per_capita"
+                "    #\"Changed Type\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah HR_Employee",
+        "columns": [
+          {
+            "name": "EmployeeID",
+            "dataType": "int64",
+            "sourceColumn": "EmployeeID"
+          },
+          {
+            "name": "Code",
+            "dataType": "string",
+            "description": "کد پرسنلی",
+            "sourceColumn": "Code"
+          },
+          {
+            "name": "Status",
+            "dataType": "string",
+            "description": "وضعیت استخدامی کارکنان",
+            "sourceColumn": "Status"
+          },
+          {
+            "name": "Fullname",
+            "dataType": "string",
+            "description": "نام و نام خانوادگی پرسنل",
+            "sourceColumn": "Fullname"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "description": "جنسیت کارکنان",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "Marriage_EffectiveDate",
+            "dataType": "string",
+            "sourceColumn": "Marriage_EffectiveDate"
+          },
+          {
+            "name": "Marriage_Status",
+            "dataType": "string",
+            "description": "وضعیت تاهل",
+            "sourceColumn": "Marriage_Status"
+          },
+          {
+            "name": "education_degree",
+            "dataType": "string",
+            "sourceColumn": "education_degree"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_HR_Employee = Source{[Schema=\"rah\",Item=\"HR_Employee\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_Employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"Status\", \"Fullname\", \"Gender\", \"Marriage_Status\", \"education_degree\"})",
+                "in",
+                "    #\"Replaced Value\""
               ]
             }
           }
@@ -4713,25 +4805,21 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "1cca0deb-d940-45a6-bda7-a4343365b000",
+        "name": "af499054-88f2-46a2-92ae-3b80da5d909b",
+        "fromCardinality": "one",
+        "fromTable": "bi DimDate",
+        "fromColumn": "Miladi",
+        "toTable": "analyze per_capita",
+        "toColumn": "today_index",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "d3ae48ca-b6d9-46b7-a71f-ce2144db0679",
         "fromTable": "analyze per_capita_detail",
         "fromColumn": "today_index",
         "toTable": "analyze per_capita",
-        "toColumn": "today_index"
-      },
-      {
-        "name": "3113eb21-ae9f-4e1c-8ca8-5dd60555e4c5",
-        "fromTable": "analyze per_capita_detail",
-        "fromColumn": "StationID",
-        "toTable": "report Station",
-        "toColumn": "StationID"
-      },
-      {
-        "name": "c65cea07-b2e5-4c88-941e-85aac373844d",
-        "fromTable": "analyze per_capita_detail",
-        "fromColumn": "today_index",
-        "toTable": "bi DimDate",
-        "toColumn": "Miladi"
+        "toColumn": "today_index",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
