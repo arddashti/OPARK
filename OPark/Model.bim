@@ -4660,27 +4660,33 @@
           },
           {
             "name": "ApplyYearMonth",
-            "dataType": "int64",
+            "dataType": "string",
+            "description": "سال و ماه اعمال",
             "sourceColumn": "ApplyYearMonth"
           },
           {
             "name": "Value",
             "dataType": "double",
-            "sourceColumn": "Value"
+            "description": "مبلغ",
+            "sourceColumn": "Value",
+            "formatString": "#,#"
           },
           {
             "name": "EmployeeRef",
             "dataType": "int64",
+            "description": "ID پرسنلی",
             "sourceColumn": "EmployeeRef"
           },
           {
             "name": "CompensationFactor_Title",
             "dataType": "string",
+            "description": "عناوین اجزا حقوق و دستمزد",
             "sourceColumn": "CompensationFactor_Title"
           },
           {
             "name": "CompensationCalcType_Title",
             "dataType": "string",
+            "description": "گروه بندی عناوین حقوق",
             "sourceColumn": "CompensationCalcType_Title"
           }
         ],
@@ -4694,9 +4700,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    rah_HR_Pay_employee = Source{[Schema=\"rah\",Item=\"HR_Pay_employee\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_Pay_employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"CompensationFactor_Title\", \"CompensationCalcType_Title\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_Pay_employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"CompensationFactor_Title\", \"CompensationCalcType_Title\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"ApplyYearMonth\", type text}})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Changed Type\""
               ]
             }
           }
