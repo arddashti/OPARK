@@ -120,6 +120,11 @@
             "name": "JWeekDay_num",
             "dataType": "int64",
             "sourceColumn": "JWeekDay_num"
+          },
+          {
+            "name": "Counter (#1)",
+            "dataType": "int64",
+            "sourceColumn": "Counter (#1)"
           }
         ],
         "partitions": [
@@ -4601,11 +4606,6 @@
             "sourceColumn": "Gender"
           },
           {
-            "name": "Marriage_EffectiveDate",
-            "dataType": "string",
-            "sourceColumn": "Marriage_EffectiveDate"
-          },
-          {
             "name": "Marriage_Status",
             "dataType": "string",
             "description": "وضعیت تاهل",
@@ -4615,6 +4615,21 @@
             "name": "education_degree",
             "dataType": "string",
             "sourceColumn": "education_degree"
+          },
+          {
+            "name": "FatherName",
+            "dataType": "string",
+            "sourceColumn": "FatherName"
+          },
+          {
+            "name": "NationalID",
+            "dataType": "string",
+            "sourceColumn": "NationalID"
+          },
+          {
+            "name": "BirthDate",
+            "dataType": "string",
+            "sourceColumn": "BirthDate"
           }
         ],
         "partitions": [
@@ -4628,6 +4643,312 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    rah_HR_Employee = Source{[Schema=\"rah\",Item=\"HR_Employee\"]}[Data],",
                 "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_Employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"Status\", \"Fullname\", \"Gender\", \"Marriage_Status\", \"education_degree\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah HR_Pay_employee",
+        "columns": [
+          {
+            "name": "PayCalcItemID",
+            "dataType": "int64",
+            "sourceColumn": "PayCalcItemID"
+          },
+          {
+            "name": "ApplyYearMonth",
+            "dataType": "int64",
+            "sourceColumn": "ApplyYearMonth"
+          },
+          {
+            "name": "Value",
+            "dataType": "double",
+            "sourceColumn": "Value"
+          },
+          {
+            "name": "EmployeeRef",
+            "dataType": "int64",
+            "sourceColumn": "EmployeeRef"
+          },
+          {
+            "name": "CompensationFactor_Title",
+            "dataType": "string",
+            "sourceColumn": "CompensationFactor_Title"
+          },
+          {
+            "name": "CompensationCalcType_Title",
+            "dataType": "string",
+            "sourceColumn": "CompensationCalcType_Title"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_HR_Pay_employee = Source{[Schema=\"rah\",Item=\"HR_Pay_employee\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_Pay_employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"CompensationFactor_Title\", \"CompensationCalcType_Title\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah HR_Loan_employee",
+        "columns": [
+          {
+            "name": "LoanPaymentID",
+            "dataType": "int64",
+            "sourceColumn": "LoanPaymentID"
+          },
+          {
+            "name": "EmployeeRef",
+            "dataType": "int64",
+            "sourceColumn": "EmployeeRef"
+          },
+          {
+            "name": "LoanAmount",
+            "dataType": "double",
+            "sourceColumn": "LoanAmount"
+          },
+          {
+            "name": "InstalmentQuantity",
+            "dataType": "int64",
+            "sourceColumn": "InstalmentQuantity"
+          },
+          {
+            "name": "InstalmentAmount",
+            "dataType": "double",
+            "sourceColumn": "InstalmentAmount"
+          },
+          {
+            "name": "ExtraAmount",
+            "dataType": "double",
+            "sourceColumn": "ExtraAmount"
+          },
+          {
+            "name": "ExtraPaymentMethodCode",
+            "dataType": "int64",
+            "sourceColumn": "ExtraPaymentMethodCode"
+          },
+          {
+            "name": "Remainder",
+            "dataType": "double",
+            "sourceColumn": "Remainder"
+          },
+          {
+            "name": "LoanNumber",
+            "dataType": "string",
+            "sourceColumn": "LoanNumber"
+          },
+          {
+            "name": "LoanType_Title",
+            "dataType": "string",
+            "sourceColumn": "LoanType_Title"
+          },
+          {
+            "name": "ConfirmationDate",
+            "dataType": "string",
+            "sourceColumn": "ConfirmationDate"
+          },
+          {
+            "name": "VerificationDate",
+            "dataType": "string",
+            "sourceColumn": "VerificationDate"
+          },
+          {
+            "name": "ConfirmedPaymentDate",
+            "dataType": "string",
+            "sourceColumn": "ConfirmedPaymentDate"
+          },
+          {
+            "name": "PaymentDate",
+            "dataType": "string",
+            "sourceColumn": "PaymentDate"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_HR_Loan_employee = Source{[Schema=\"rah\",Item=\"HR_Loan_employee\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_Loan_employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"LoanType_Title\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah HR_decree_Employee",
+        "columns": [
+          {
+            "name": "EmployeeRef",
+            "dataType": "int64",
+            "sourceColumn": "EmployeeRef"
+          },
+          {
+            "name": "WorkLocationCode",
+            "dataType": "int64",
+            "sourceColumn": "WorkLocationCode"
+          },
+          {
+            "name": "Status",
+            "dataType": "int64",
+            "sourceColumn": "Status"
+          },
+          {
+            "name": "ConfirmYearMonth",
+            "dataType": "int64",
+            "sourceColumn": "ConfirmYearMonth"
+          },
+          {
+            "name": "ConfirmerRef",
+            "dataType": "int64",
+            "sourceColumn": "ConfirmerRef"
+          },
+          {
+            "name": "PaymentConfirmerRef",
+            "dataType": "int64",
+            "sourceColumn": "PaymentConfirmerRef"
+          },
+          {
+            "name": "AfterIssueStatusCode",
+            "dataType": "int64",
+            "sourceColumn": "AfterIssueStatusCode"
+          },
+          {
+            "name": "ApplyYearMonth",
+            "dataType": "int64",
+            "sourceColumn": "ApplyYearMonth"
+          },
+          {
+            "name": "IssueYearMonth",
+            "dataType": "int64",
+            "sourceColumn": "IssueYearMonth"
+          },
+          {
+            "name": "EmploymentType",
+            "dataType": "string",
+            "sourceColumn": "EmploymentType"
+          },
+          {
+            "name": "StatuteType",
+            "dataType": "string",
+            "sourceColumn": "StatuteType"
+          },
+          {
+            "name": "Post_title",
+            "dataType": "string",
+            "sourceColumn": "Post_title"
+          },
+          {
+            "name": "Department_title",
+            "dataType": "string",
+            "sourceColumn": "Department_title"
+          },
+          {
+            "name": "Job_title",
+            "dataType": "string",
+            "sourceColumn": "Job_title"
+          },
+          {
+            "name": "EmploymentDate",
+            "dataType": "string",
+            "sourceColumn": "EmploymentDate"
+          },
+          {
+            "name": "IssueDate",
+            "dataType": "string",
+            "sourceColumn": "IssueDate"
+          },
+          {
+            "name": "ApplyDate",
+            "dataType": "string",
+            "sourceColumn": "ApplyDate"
+          },
+          {
+            "name": "ExpiryDate",
+            "dataType": "string",
+            "sourceColumn": "ExpiryDate"
+          },
+          {
+            "name": "ConfirmDate",
+            "dataType": "string",
+            "sourceColumn": "ConfirmDate"
+          },
+          {
+            "name": "PaymentConfirmDate",
+            "dataType": "string",
+            "sourceColumn": "PaymentConfirmDate"
+          },
+          {
+            "name": "Basepay",
+            "dataType": "double",
+            "sourceColumn": "Basepay"
+          },
+          {
+            "name": "UF12",
+            "dataType": "double",
+            "sourceColumn": "UF12"
+          },
+          {
+            "name": "UF11",
+            "dataType": "double",
+            "sourceColumn": "UF11"
+          },
+          {
+            "name": "UF8",
+            "dataType": "double",
+            "sourceColumn": "UF8"
+          },
+          {
+            "name": "UF7",
+            "dataType": "double",
+            "sourceColumn": "UF7"
+          },
+          {
+            "name": "Childpay",
+            "dataType": "double",
+            "sourceColumn": "Childpay"
+          },
+          {
+            "name": "UF9",
+            "dataType": "double",
+            "sourceColumn": "UF9"
+          },
+          {
+            "name": "HousePay",
+            "dataType": "double",
+            "sourceColumn": "HousePay"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_HR_decree_Employee = Source{[Schema=\"rah\",Item=\"HR_decree_Employee\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_decree_Employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"EmploymentType\", \"StatuteType\", \"Post_title\", \"Department_title\", \"Job_title\"})",
                 "in",
                 "    #\"Replaced Value\""
               ]
@@ -4820,6 +5141,27 @@
         "toTable": "analyze per_capita",
         "toColumn": "today_index",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "fa908546-a3e7-421b-8777-0532983fe0e9",
+        "fromTable": "rah HR_Pay_employee",
+        "fromColumn": "EmployeeRef",
+        "toTable": "rah HR_Employee",
+        "toColumn": "EmployeeID"
+      },
+      {
+        "name": "7c54b926-2e0a-4a76-9a11-1e1e837be412",
+        "fromTable": "rah HR_decree_Employee",
+        "fromColumn": "EmployeeRef",
+        "toTable": "rah HR_Employee",
+        "toColumn": "EmployeeID"
+      },
+      {
+        "name": "6b037bd3-0600-462e-8068-550206e52ef7",
+        "fromTable": "rah HR_Loan_employee",
+        "fromColumn": "EmployeeRef",
+        "toTable": "rah HR_Employee",
+        "toColumn": "EmployeeID"
       }
     ],
     "roles": [
