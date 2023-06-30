@@ -4654,6 +4654,12 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "01",
+            "expression": " DISTINCTCOUNT('rah HR_Employee'[Code])"
+          }
         ]
       },
       {
