@@ -4654,20 +4654,6 @@
               ]
             }
           }
-        ],
-        "measures": [
-          {
-            "name": "01_NumberOfEmployee",
-            "description": "تعداد کل پرسنل ",
-            "expression": [
-              " DISTINCTCOUNT('rah HR_Employee'[Code])",
-              "",
-              "",
-              "",
-              "-----تعداد کل پرسنل "
-            ],
-            "formatString": "0"
-          }
         ]
       },
       {
@@ -4980,6 +4966,20 @@
                 "    #\"Replaced Value\""
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "02_NumberOfEmployee",
+            "description": "تعداد کل پرسنل ",
+            "expression": [
+              " DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef])",
+              "",
+              "",
+              "",
+              "-----تعداد کل پرسنل "
+            ],
+            "formatString": "0"
           }
         ]
       }
