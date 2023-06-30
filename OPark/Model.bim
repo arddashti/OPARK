@@ -4636,6 +4636,18 @@
             "name": "BirthDate",
             "dataType": "string",
             "sourceColumn": "BirthDate"
+          },
+          {
+            "type": "calculated",
+            "name": "03_MiladiBirthday",
+            "dataType": "dateTime",
+            "isDataTypeInferred": true,
+            "description": "تاریخ تولد میلادی کارمندان ",
+            "expression": [
+              " LOOKUPVALUE('bi DimDate'[Miladi], 'bi DimDate'[Jalali_1],'rah HR_Employee'[BirthDate])",
+              "",
+              "-----  تاریخ تولد میلادی کارمندان "
+            ]
           }
         ],
         "partitions": [
