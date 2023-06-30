@@ -4664,6 +4664,16 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "01_AgeAvg",
+            "expression": [
+              " AVERAGE('rah HR_Employee'[age])",
+              "",
+              "---- میانگین سن کارمندان "
+            ]
+          }
         ]
       },
       {
