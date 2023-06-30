@@ -4638,31 +4638,6 @@
             "sourceColumn": "BirthDate"
           },
           {
-            "type": "calculated",
-            "name": "03_MiladiBirthday",
-            "dataType": "dateTime",
-            "isDataTypeInferred": true,
-            "description": "تاریخ تولد میلادی کارمندان ",
-            "expression": [
-              " LOOKUPVALUE('bi DimDate'[Miladi], 'bi DimDate'[Jalali_1],'rah HR_Employee'[BirthDate])",
-              "",
-              "-----  تاریخ تولد میلادی کارمندان "
-            ]
-          },
-          {
-            "type": "calculated",
-            "name": "02_Ag",
-            "dataType": "int64",
-            "isDataTypeInferred": true,
-            "description": " سن پرسنل ",
-            "expression": [
-              " DATEDIFF('rah HR_Employee'[03_MiladiBirthday],TODAY(), YEAR)",
-              "",
-              "",
-              "-----محاسبه سن پرسنل "
-            ]
-          },
-          {
             "name": "age",
             "dataType": "int64",
             "sourceColumn": "age"
