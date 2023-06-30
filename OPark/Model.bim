@@ -5191,11 +5191,11 @@
         "toColumn": "EmployeeID"
       },
       {
-        "name": "2c7d40a7-8cfa-4b11-976d-da13a7008f2f",
-        "fromTable": "bi DimDate",
-        "fromColumn": "Jalali_1",
-        "toTable": "rah HR_decree_Employee",
-        "toColumn": "EmploymentDate"
+        "name": "a6a3505f-e383-4af7-a4a6-ad455393763b",
+        "fromTable": "rah HR_decree_Employee",
+        "fromColumn": "EmploymentDate",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
       }
     ],
     "roles": [
