@@ -4657,8 +4657,16 @@
         ],
         "measures": [
           {
-            "name": "01",
-            "expression": " DISTINCTCOUNT('rah HR_Employee'[Code])"
+            "name": "01_NumberOfEmployee",
+            "description": "تعداد کل پرسنل ",
+            "expression": [
+              " DISTINCTCOUNT('rah HR_Employee'[Code])",
+              "",
+              "",
+              "",
+              "-----تعداد کل پرسنل "
+            ],
+            "formatString": "0"
           }
         ]
       },
