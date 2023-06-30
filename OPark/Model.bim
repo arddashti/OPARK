@@ -4668,6 +4668,7 @@
         "measures": [
           {
             "name": "01_AgeAvg",
+            "description": "میانگین سن کارمندان",
             "expression": [
               " AVERAGE('rah HR_Employee'[age])",
               "",
