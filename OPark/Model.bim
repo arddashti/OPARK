@@ -4673,7 +4673,8 @@
               " AVERAGE('rah HR_Employee'[age])",
               "",
               "---- میانگین سن کارمندان "
-            ]
+            ],
+            "formatString": "0"
           }
         ]
       },
