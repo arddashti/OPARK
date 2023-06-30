@@ -4648,6 +4648,19 @@
               "",
               "-----  تاریخ تولد میلادی کارمندان "
             ]
+          },
+          {
+            "type": "calculated",
+            "name": "02_Ag",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "description": " سن پرسنل ",
+            "expression": [
+              " DATEDIFF('rah HR_Employee'[03_MiladiBirthday],TODAY(), YEAR)",
+              "",
+              "",
+              "-----محاسبه سن پرسنل "
+            ]
           }
         ],
         "partitions": [
