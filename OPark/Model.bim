@@ -4661,6 +4661,16 @@
               "",
               "-----محاسبه سن پرسنل "
             ]
+          },
+          {
+            "name": "age",
+            "dataType": "int64",
+            "sourceColumn": "age"
+          },
+          {
+            "name": "age_category",
+            "dataType": "string",
+            "sourceColumn": "age_category"
           }
         ],
         "partitions": [
