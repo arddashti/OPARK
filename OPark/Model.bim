@@ -4716,6 +4716,11 @@
             "dataType": "string",
             "description": "گروه بندی عناوین حقوق",
             "sourceColumn": "CompensationCalcType_Title"
+          },
+          {
+            "name": "unic_code_decree",
+            "dataType": "string",
+            "sourceColumn": "unic_code_decree"
           }
         ],
         "partitions": [
@@ -4971,6 +4976,11 @@
             "name": "HousePay",
             "dataType": "double",
             "sourceColumn": "HousePay"
+          },
+          {
+            "name": "unic_code_decree",
+            "dataType": "string",
+            "sourceColumn": "unic_code_decree"
           }
         ],
         "partitions": [
@@ -5192,20 +5202,6 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "fa908546-a3e7-421b-8777-0532983fe0e9",
-        "fromTable": "rah HR_Pay_employee",
-        "fromColumn": "EmployeeRef",
-        "toTable": "rah HR_Employee",
-        "toColumn": "EmployeeID"
-      },
-      {
-        "name": "7c54b926-2e0a-4a76-9a11-1e1e837be412",
-        "fromTable": "rah HR_decree_Employee",
-        "fromColumn": "EmployeeRef",
-        "toTable": "rah HR_Employee",
-        "toColumn": "EmployeeID"
-      },
-      {
         "name": "6b037bd3-0600-462e-8068-550206e52ef7",
         "fromTable": "rah HR_Loan_employee",
         "fromColumn": "EmployeeRef",
@@ -5218,6 +5214,20 @@
         "fromColumn": "EmploymentDate",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
+      },
+      {
+        "name": "cc02fc67-efad-460b-99b6-8c8bac9b6931",
+        "fromTable": "rah HR_decree_Employee",
+        "fromColumn": "EmployeeRef",
+        "toTable": "rah HR_Employee",
+        "toColumn": "EmployeeID"
+      },
+      {
+        "name": "bbb966fa-acb6-44c7-95e8-608aa2a0226d",
+        "fromTable": "rah HR_Pay_employee",
+        "fromColumn": "unic_code_decree",
+        "toTable": "rah HR_decree_Employee",
+        "toColumn": "unic_code_decree"
       }
     ],
     "roles": [
