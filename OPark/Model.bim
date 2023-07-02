@@ -5184,14 +5184,6 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "d3ae48ca-b6d9-46b7-a71f-ce2144db0679",
-        "fromTable": "analyze per_capita_detail",
-        "fromColumn": "today_index",
-        "toTable": "analyze per_capita",
-        "toColumn": "today_index",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
         "name": "fa908546-a3e7-421b-8777-0532983fe0e9",
         "fromTable": "rah HR_Pay_employee",
         "fromColumn": "EmployeeRef",
@@ -5213,9 +5205,9 @@
         "toColumn": "EmployeeID"
       },
       {
-        "name": "a6a3505f-e383-4af7-a4a6-ad455393763b",
+        "name": "10b4c8c5-08c0-497d-b541-d7d972b7d467",
         "fromTable": "rah HR_decree_Employee",
-        "fromColumn": "EmploymentDate",
+        "fromColumn": "ApplyDate",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
       }
