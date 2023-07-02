@@ -4667,12 +4667,12 @@
         ],
         "measures": [
           {
-            "name": "01_AgeAvg",
+            "name": "001_AgeAvg",
             "description": "میانگین سن کارمندان",
             "expression": [
               " AVERAGE('rah HR_Employee'[age])",
               "",
-              "---- میانگین سن کارمندان "
+              "-- میانگین سن کارمندان "
             ],
             "formatString": "0"
           }
@@ -4992,14 +4992,14 @@
         ],
         "measures": [
           {
-            "name": "02_NumberOfEmployee",
+            "name": "002_NumberOfEmployee",
             "description": "تعداد کل پرسنل ",
             "expression": [
               " DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef])",
               "",
               "",
               "",
-              "-----تعداد کل پرسنل "
+              "--تعداد کل پرسنل "
             ],
             "formatString": "0"
           }
