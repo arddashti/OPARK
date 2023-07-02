@@ -5209,13 +5209,6 @@
         "toColumn": "EmployeeID"
       },
       {
-        "name": "a6a3505f-e383-4af7-a4a6-ad455393763b",
-        "fromTable": "rah HR_decree_Employee",
-        "fromColumn": "EmploymentDate",
-        "toTable": "bi DimDate",
-        "toColumn": "Jalali_1"
-      },
-      {
         "name": "cc02fc67-efad-460b-99b6-8c8bac9b6931",
         "fromTable": "rah HR_decree_Employee",
         "fromColumn": "EmployeeRef",
@@ -5228,6 +5221,13 @@
         "fromColumn": "unic_code_decree",
         "toTable": "rah HR_decree_Employee",
         "toColumn": "unic_code_decree"
+      },
+      {
+        "name": "f469c179-5432-454b-93a5-3a3d4667474b",
+        "fromTable": "rah HR_decree_Employee",
+        "fromColumn": "ApplyDate",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
       }
     ],
     "roles": [
