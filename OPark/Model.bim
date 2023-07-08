@@ -5014,6 +5014,68 @@
             "formatString": "0"
           }
         ]
+      },
+      {
+        "name": "bi station_counter",
+        "description": "جدول تعداد نفرات وارد شده به هر ایستگاه به تفکیک نام ایستگاه و تاریخ و ساعت",
+        "columns": [
+          {
+            "name": "bomrang",
+            "dataType": "int64",
+            "sourceColumn": "bomrang"
+          },
+          {
+            "name": "abase",
+            "dataType": "int64",
+            "sourceColumn": "abase"
+          },
+          {
+            "name": "orang",
+            "dataType": "int64",
+            "sourceColumn": "orang"
+          },
+          {
+            "name": "opich",
+            "dataType": "int64",
+            "sourceColumn": "opich"
+          },
+          {
+            "name": "DJ",
+            "dataType": "int64",
+            "sourceColumn": "DJ"
+          },
+          {
+            "name": "DK",
+            "dataType": "int64",
+            "sourceColumn": "DK"
+          },
+          {
+            "name": "time",
+            "dataType": "string",
+            "sourceColumn": "time"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_station_counter = Source{[Schema=\"bi\",Item=\"station_counter\"]}[Data]",
+                "in",
+                "    bi_station_counter"
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -5226,6 +5288,13 @@
         "name": "f469c179-5432-454b-93a5-3a3d4667474b",
         "fromTable": "rah HR_decree_Employee",
         "fromColumn": "ApplyDate",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
+      },
+      {
+        "name": "2dde360c-d618-4d01-b058-e1b5454f5b9c",
+        "fromTable": "bi station_counter",
+        "fromColumn": "date",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
       }
