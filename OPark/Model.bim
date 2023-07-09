@@ -4585,6 +4585,7 @@
           {
             "name": "EmployeeID",
             "dataType": "int64",
+            "description": "ID پرسنلی",
             "sourceColumn": "EmployeeID"
           },
           {
@@ -4620,56 +4621,67 @@
           {
             "name": "education_degree",
             "dataType": "string",
+            "description": "مدرک تحصیلی",
             "sourceColumn": "education_degree"
           },
           {
             "name": "FatherName",
             "dataType": "string",
+            "description": "نام پدر",
             "sourceColumn": "FatherName"
           },
           {
             "name": "NationalID",
             "dataType": "string",
+            "description": "شماره ملی",
             "sourceColumn": "NationalID"
           },
           {
             "name": "BirthDate",
             "dataType": "string",
+            "description": "تاریخ تولد",
             "sourceColumn": "BirthDate"
           },
           {
             "name": "age",
             "dataType": "int64",
+            "description": "سن",
             "sourceColumn": "age"
           },
           {
             "name": "age_category",
             "dataType": "string",
+            "description": "دسته بندی سن",
             "sourceColumn": "age_category"
           },
           {
             "name": "Employment_until_departure",
             "dataType": "int64",
+            "description": "مدت زمان ماندگاری از زمان استخدام تا زمان حکم پایان کار",
             "sourceColumn": "Employment_until_departure"
           },
           {
             "name": "duration of service",
             "dataType": "int64",
+            "description": "مدت زمات خدمت در شرکت",
             "sourceColumn": "duration of service"
           },
           {
             "name": "Number_of_termination",
             "dataType": "int64",
+            "description": "تعداد دفعات حکم پایان کار",
             "sourceColumn": "Number_of_termination"
           },
           {
             "name": "Number_of_employment",
             "dataType": "int64",
+            "description": "تعداد دفعات استخدام",
             "sourceColumn": "Number_of_employment"
           },
           {
             "name": "interval_betwee_ employment",
             "dataType": "double",
+            "description": "فاصله زمانی بین دو استخدام بر حسب روز",
             "sourceColumn": "interval_betwee_ employment"
           }
         ],
