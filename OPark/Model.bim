@@ -4646,6 +4646,31 @@
             "name": "age_category",
             "dataType": "string",
             "sourceColumn": "age_category"
+          },
+          {
+            "name": "Employment_until_departure",
+            "dataType": "int64",
+            "sourceColumn": "Employment_until_departure"
+          },
+          {
+            "name": "duration of service",
+            "dataType": "int64",
+            "sourceColumn": "duration of service"
+          },
+          {
+            "name": "Number_of_termination",
+            "dataType": "int64",
+            "sourceColumn": "Number_of_termination"
+          },
+          {
+            "name": "Number_of_employment",
+            "dataType": "int64",
+            "sourceColumn": "Number_of_employment"
+          },
+          {
+            "name": "interval_betwee_ employment",
+            "dataType": "double",
+            "sourceColumn": "interval_betwee_ employment"
           }
         ],
         "partitions": [
