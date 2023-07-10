@@ -5113,6 +5113,44 @@
             }
           }
         ]
+      },
+      {
+        "name": "bi DimDate_YearMonth",
+        "description": "با توجه به اینکه ریزدانگی داده های در جدول های منابع انسانی با سایر گزارشات متفاوت است بنابراین جهت استفاده از جدول تاریخ نیاز به یک جدول جدید با ریز دانگی در حد ماه می باشد. بنابراین این جدول برای برطرف کردن این نیاز اضافه گردید.",
+        "columns": [
+          {
+            "name": "jyear",
+            "dataType": "string",
+            "sourceColumn": "jyear"
+          },
+          {
+            "name": "jmonthT",
+            "dataType": "string",
+            "sourceColumn": "jmonthT"
+          },
+          {
+            "name": "ApplyYearMonth",
+            "dataType": "string",
+            "sourceColumn": "ApplyYearMonth"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_DimDate_YearMonth = Source{[Schema=\"bi\",Item=\"DimDate_YearMonth\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(bi_DimDate_YearMonth,\"ي\",\"ی\",Replacer.ReplaceText,{\"jmonthT\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -5322,18 +5360,18 @@
         "toColumn": "unic_code_decree"
       },
       {
-        "name": "f469c179-5432-454b-93a5-3a3d4667474b",
-        "fromTable": "rah HR_decree_Employee",
-        "fromColumn": "ApplyDate",
-        "toTable": "bi DimDate",
-        "toColumn": "Jalali_1"
-      },
-      {
         "name": "2dde360c-d618-4d01-b058-e1b5454f5b9c",
         "fromTable": "bi station_counter",
         "fromColumn": "date",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
+      },
+      {
+        "name": "47437e84-4c5f-44bf-a41d-624f024b8f72",
+        "fromTable": "rah HR_decree_Employee",
+        "fromColumn": "ApplyYearMonth",
+        "toTable": "bi DimDate_YearMonth",
+        "toColumn": "ApplyYearMonth"
       }
     ],
     "roles": [
