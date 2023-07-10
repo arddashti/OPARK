@@ -5353,13 +5353,6 @@
         "toColumn": "EmployeeID"
       },
       {
-        "name": "bbb966fa-acb6-44c7-95e8-608aa2a0226d",
-        "fromTable": "rah HR_Pay_employee",
-        "fromColumn": "unic_code_decree",
-        "toTable": "rah HR_decree_Employee",
-        "toColumn": "unic_code_decree"
-      },
-      {
         "name": "2dde360c-d618-4d01-b058-e1b5454f5b9c",
         "fromTable": "bi station_counter",
         "fromColumn": "date",
@@ -5367,11 +5360,19 @@
         "toColumn": "Jalali_1"
       },
       {
-        "name": "47437e84-4c5f-44bf-a41d-624f024b8f72",
-        "fromTable": "rah HR_decree_Employee",
+        "name": "38b6e32e-f38f-41ee-a39d-90110403f232",
+        "fromTable": "rah HR_Pay_employee",
         "fromColumn": "ApplyYearMonth",
         "toTable": "bi DimDate_YearMonth",
         "toColumn": "ApplyYearMonth"
+      },
+      {
+        "name": "1fa442c7-ae86-4d58-9686-878ddeba155c",
+        "fromTable": "rah HR_Pay_employee",
+        "fromColumn": "unic_code_decree",
+        "toTable": "rah HR_decree_Employee",
+        "toColumn": "unic_code_decree",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
