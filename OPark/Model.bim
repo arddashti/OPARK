@@ -4712,6 +4712,14 @@
               "-- میانگین سن کارمندان "
             ],
             "formatString": "0"
+          },
+          {
+            "name": "002_count_employment",
+            "expression": "CALCULATE(DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef]),FILTER('rah HR_decree_Employee','rah HR_decree_Employee'[StatuteType] =\"حکم استخدام\"),USERELATIONSHIP('bi DimDate_YearMonth'[ApplyYearMonth],'rah HR_decree_Employee'[ApplyYearMonth]))"
+          },
+          {
+            "name": "003_count_termination",
+            "expression": "CALCULATE(DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef]),FILTER('rah HR_decree_Employee','rah HR_decree_Employee'[StatuteType] =\"حکم پایان خدمت\"),USERELATIONSHIP('bi DimDate_YearMonth'[ApplyYearMonth],'rah HR_decree_Employee'[ApplyYearMonth]))"
           }
         ]
       },
@@ -5379,6 +5387,14 @@
         "toTable": "rah HR_decree_Employee",
         "toColumn": "unic_code_decree",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "e8ccc333-f8cb-4767-a4e4-f3047a15b33c",
+        "fromTable": "rah HR_decree_Employee",
+        "fromColumn": "ApplyYearMonth",
+        "toTable": "bi DimDate_YearMonth",
+        "toColumn": "ApplyYearMonth",
+        "isActive": false
       }
     ],
     "roles": [
