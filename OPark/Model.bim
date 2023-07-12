@@ -6778,6 +6778,39 @@
             ]
           }
         ]
+      },
+      {
+        "name": "BI_HR_View",
+        "description": "BI_HR_View-گزارش های غیر مالی داشبورد منابع انسانی",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_HR_View",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2772"
+          }
+        ]
+      },
+      {
+        "name": "BI_HR_Limited_Salary",
+        "description": "BI_HR_Limited_Salary-گزارش های غیر مالی داشبورد منابع انسانی",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_HR_Limited_Salary",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2773"
+          }
+        ]
+      },
+      {
+        "name": "BI_HR_Full_Salary",
+        "description": "BI_HR_Full_Salary-گزارش های غیر مالی داشبورد منابع انسانی",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_HR_Full_Salary",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2774"
+          }
+        ]
       }
     ],
     "annotations": [
