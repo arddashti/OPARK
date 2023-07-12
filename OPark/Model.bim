@@ -4715,11 +4715,18 @@
           },
           {
             "name": "002_count_employment",
-            "expression": "CALCULATE(DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef]),FILTER('rah HR_decree_Employee','rah HR_decree_Employee'[StatuteType] =\"حکم استخدام\"),USERELATIONSHIP('bi DimDate_YearMonth'[ApplyYearMonth],'rah HR_decree_Employee'[ApplyYearMonth]))"
+            "expression": [
+              "CALCULATE(DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef]),FILTER('rah HR_decree_Employee','rah HR_decree_Employee'[StatuteType] =\"حکم استخدام\"),USERELATIONSHIP('bi DimDate_YearMonth'[ApplyYearMonth],'rah HR_decree_Employee'[ApplyYearMonth]))",
+              "",
+              "--lمحاسبه تعداد افرادی که استخدام شده اند"
+            ]
           },
           {
             "name": "003_count_termination",
-            "expression": "CALCULATE(DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef]),FILTER('rah HR_decree_Employee','rah HR_decree_Employee'[StatuteType] =\"حکم پایان خدمت\"),USERELATIONSHIP('bi DimDate_YearMonth'[ApplyYearMonth],'rah HR_decree_Employee'[ApplyYearMonth]))"
+            "expression": [
+              "CALCULATE(DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef]),FILTER('rah HR_decree_Employee','rah HR_decree_Employee'[StatuteType] =\"حکم پایان خدمت\"),USERELATIONSHIP('bi DimDate_YearMonth'[ApplyYearMonth],'rah HR_decree_Employee'[ApplyYearMonth]))",
+              "--lمحاسبه تعداد افردای که از شرکت خارج شده اند"
+            ]
           }
         ]
       },
