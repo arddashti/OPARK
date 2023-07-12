@@ -5126,12 +5126,18 @@
           {
             "name": "jmonthT",
             "dataType": "string",
-            "sourceColumn": "jmonthT"
+            "sourceColumn": "jmonthT",
+            "sortByColumn": "jmonthN"
           },
           {
             "name": "ApplyYearMonth",
             "dataType": "string",
             "sourceColumn": "ApplyYearMonth"
+          },
+          {
+            "name": "jmonthN",
+            "dataType": "int64",
+            "sourceColumn": "jmonthN"
           }
         ],
         "partitions": [
