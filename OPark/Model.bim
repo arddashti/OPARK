@@ -6840,6 +6840,16 @@
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2774"
           }
         ]
+      },
+      {
+        "name": "Bi_park_view",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\Bi_park_view",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2776"
+          }
+        ]
       }
     ],
     "annotations": [
