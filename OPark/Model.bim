@@ -100,7 +100,7 @@
           },
           {
             "name": "dayNUM",
-            "dataType": "string",
+            "dataType": "int64",
             "description": "شماره روز در ماه شمسی",
             "sourceColumn": "dayNUM"
           },
