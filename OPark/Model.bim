@@ -4781,7 +4781,7 @@
             "name": "001_CompensationFactor_Title",
             "dataType": "string",
             "isDataTypeInferred": true,
-            "description": " ادغام شدن نام اضافه کاری به اضافه کاری و تعطیل کاری  ",
+            "description": " --- عناوین اجزای حقوق ادغام شدن نام اضافه کاری به اضافه کاری و تعطیل کاری  ",
             "expression": [
               "",
               "        IF('rah HR_Pay_employee'[CompensationFactor_Title] = \"اضافه کاری\",",
