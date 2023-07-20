@@ -4775,6 +4775,20 @@
             "name": "unic_code_decree",
             "dataType": "string",
             "sourceColumn": "unic_code_decree"
+          },
+          {
+            "type": "calculated",
+            "name": "001_CompensationFactor_Title",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "description": " ادغام شدن نام اضافه کاری به اضافه کاری و تعطیل کاری  ",
+            "expression": [
+              "",
+              "        IF('rah HR_Pay_employee'[CompensationFactor_Title] = \"اضافه کاری\",",
+              "               \"اضافه کاری و تعطیل کاری\" , 'rah HR_Pay_employee'[CompensationFactor_Title])",
+              "",
+              "-- ادغام شدن نام اضافه کاری به اضافه کاری و تعطیل کاری  "
+            ]
           }
         ],
         "partitions": [
@@ -5113,7 +5127,7 @@
           },
           {
             "name": "time",
-            "dataType": "int64",
+            "dataType": "decimal",
             "sourceColumn": "time"
           },
           {
