@@ -4581,6 +4581,7 @@
       },
       {
         "name": "rah HR_Employee",
+        "description": "جدول مشخصات کارکنان",
         "columns": [
           {
             "name": "EmployeeID",
@@ -4732,6 +4733,7 @@
       },
       {
         "name": "rah HR_Pay_employee",
+        "description": "جدول پرداخت ها به کارکنان",
         "columns": [
           {
             "name": "PayCalcItemID",
@@ -4796,6 +4798,7 @@
       },
       {
         "name": "rah HR_Loan_employee",
+        "description": "جدول وام های پرداختی به کارکنان",
         "columns": [
           {
             "name": "LoanPaymentID",
@@ -4888,6 +4891,7 @@
       },
       {
         "name": "rah HR_decree_Employee",
+        "description": "جدول احکام منابع انسانی",
         "columns": [
           {
             "name": "EmployeeRef",
@@ -5033,6 +5037,11 @@
             "name": "unic_code_decree",
             "dataType": "string",
             "sourceColumn": "unic_code_decree"
+          },
+          {
+            "name": "Post_cat",
+            "dataType": "string",
+            "sourceColumn": "Post_cat"
           }
         ],
         "partitions": [
@@ -5045,9 +5054,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    rah_HR_decree_Employee = Source{[Schema=\"rah\",Item=\"HR_decree_Employee\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_decree_Employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"EmploymentType\", \"StatuteType\", \"Post_title\", \"Department_title\", \"Job_title\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_decree_Employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"EmploymentType\", \"StatuteType\", \"Post_title\", \"Department_title\", \"Job_title\"}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Post_cat\"})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Replaced Value1\""
               ]
             }
           }
