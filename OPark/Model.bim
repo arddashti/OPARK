@@ -4808,6 +4808,15 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "test",
+            "expression": [
+              " ",
+              "             sum('rah HR_Pay_employee'[Value]) /  'rah HR_decree_Employee'[002_NumberOfEmployee]"
+            ]
+          }
         ]
       },
       {
