@@ -5113,7 +5113,7 @@
           },
           {
             "name": "time",
-            "dataType": "string",
+            "dataType": "int64",
             "sourceColumn": "time"
           },
           {
