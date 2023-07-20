@@ -6861,7 +6861,7 @@
         "modelPermission": "read",
         "members": [
           {
-            "memberName": "OPARK\\Bi_park_view",
+            "memberName": "OPARK\\BI_Park_View",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2776"
           }
         ]
