@@ -100,7 +100,7 @@
           },
           {
             "name": "dayNUM",
-            "dataType": "int64",
+            "dataType": "string",
             "description": "شماره روز در ماه شمسی",
             "sourceColumn": "dayNUM"
           },
@@ -5136,7 +5136,7 @@
           },
           {
             "name": "time",
-            "dataType": "decimal",
+            "dataType": "int64",
             "sourceColumn": "time"
           },
           {
@@ -5206,6 +5206,195 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(bi_DimDate_YearMonth,\"ي\",\"ی\",Replacer.ReplaceText,{\"jmonthT\"})",
                 "in",
                 "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "bi Calendar",
+        "columns": [
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          },
+          {
+            "name": "Sorting",
+            "dataType": "string",
+            "sourceColumn": "Sorting"
+          },
+          {
+            "name": "Year Mon",
+            "dataType": "string",
+            "sourceColumn": "Year Mon"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_Calendar = Source{[Schema=\"bi\",Item=\"Calendar\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(bi_Calendar,\"ي\",\"ی\",Replacer.ReplaceText,{\"Year Mon\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "PeriodRange",
+        "description": "جدول انتخاب دوره های زمانی برای پیاده سازی ویژوال میزان تغییرات دوره ای",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "Period",
+            "dataType": "int64",
+            "isNameInferred": false,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Value]"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "CalculatedTable 1",
+            "source": {
+              "type": "calculated",
+              "expression": " GENERATESERIES(1, 12, 1)"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Period Range",
+            "expression": " SELECTEDVALUE('PeriodRange'[Period], 6)"
+          }
+        ]
+      },
+      {
+        "name": "bi station_counter_V2",
+        "columns": [
+          {
+            "name": "station_name",
+            "dataType": "string",
+            "sourceColumn": "station_name"
+          },
+          {
+            "name": "counter",
+            "dataType": "int64",
+            "sourceColumn": "counter"
+          },
+          {
+            "name": "time",
+            "dataType": "string",
+            "sourceColumn": "time"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "unic_code",
+            "dataType": "string",
+            "sourceColumn": "unic_code"
+          },
+          {
+            "name": "station_index",
+            "dataType": "int64",
+            "sourceColumn": "station_index"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_station_counter_V2 = Source{[Schema=\"bi\",Item=\"station_counter_V2\"]}[Data],",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(bi_station_counter_V2,{{\"time\", type text}})",
+                "in",
+                "    #\"Changed Type\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_station_counter",
+            "expression": " CALCULATE(SUM('bi station_counter_V2'[counter]))"
+          },
+          {
+            "name": "002_FilteredValue",
+            "expression": [
+              "",
+              "",
+              "",
+              "VAR SelectedValue = SELECTEDVALUE('bi station_counter_V2'[station_name])",
+              "RETURN",
+              "IF(",
+              "    NOT(ISBLANK(SelectedValue)),",
+              "    IF(",
+              "      MAX( 'bi station_counter_V2'[station_name] )= SelectedValue,",
+              "      CALCULATE(SUM('bi station_counter_V2'[counter])),",
+              "        0",
+              "    ),",
+              "    0",
+              ")"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "bi Dim_time",
+        "columns": [
+          {
+            "name": "time",
+            "dataType": "string",
+            "sourceColumn": "time"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "unic_code",
+            "dataType": "string",
+            "sourceColumn": "unic_code"
+          },
+          {
+            "name": "station_name",
+            "dataType": "string",
+            "sourceColumn": "station_name"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_Dim_time = Source{[Schema=\"bi\",Item=\"Dim_time\"]}[Data]",
+                "in",
+                "    bi_Dim_time"
               ]
             }
           }
@@ -5440,6 +5629,20 @@
         "toTable": "bi DimDate_YearMonth",
         "toColumn": "ApplyYearMonth",
         "isActive": false
+      },
+      {
+        "name": "32ee3f45-ca4a-4eef-962f-5a0f72788c61",
+        "fromTable": "bi station_counter_V2",
+        "fromColumn": "date",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
+      },
+      {
+        "name": "a487358a-5908-4349-811f-9cf15e70b64e",
+        "fromTable": "bi station_counter_V2",
+        "fromColumn": "unic_code",
+        "toTable": "bi Dim_time",
+        "toColumn": "unic_code"
       }
     ],
     "roles": [
@@ -6884,7 +7087,7 @@
         "modelPermission": "read",
         "members": [
           {
-            "memberName": "OPARK\\BI_Park_View",
+            "memberName": "OPARK\\Bi_park_view",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2776"
           }
         ]
