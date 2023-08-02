@@ -4482,44 +4482,14 @@
             "sourceColumn": "StationID"
           },
           {
-            "name": "today_index",
-            "dataType": "dateTime",
-            "sourceColumn": "today_index"
-          },
-          {
             "name": "SUM(UsageAmount)",
             "dataType": "double",
             "sourceColumn": "SUM(UsageAmount)"
           },
           {
-            "name": "StationName",
+            "name": "unic_code",
             "dataType": "string",
-            "sourceColumn": "StationName"
-          },
-          {
-            "name": "type",
-            "dataType": "string",
-            "sourceColumn": "type"
-          },
-          {
-            "name": "payment type",
-            "dataType": "string",
-            "sourceColumn": "payment type"
-          },
-          {
-            "name": "Location",
-            "dataType": "string",
-            "sourceColumn": "Location"
-          },
-          {
-            "name": "Activity status",
-            "dataType": "string",
-            "sourceColumn": "Activity status"
-          },
-          {
-            "name": "ownership",
-            "dataType": "string",
-            "sourceColumn": "ownership"
+            "sourceColumn": "unic_code"
           }
         ],
         "partitions": [
@@ -4531,11 +4501,9 @@
               "expression": [
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    analyze_per_capita_detail = Source{[Schema=\"analyze\",Item=\"per_capita_detail\"]}[Data],",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(analyze_per_capita_detail,{{\"today_index\", type date}}),",
-                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"type\", \"payment type\", \"Location\", \"Activity status\", \"ownership\"})",
+                "    analyze_per_capita_detail = Source{[Schema=\"analyze\",Item=\"per_capita_detail\"]}[Data]",
                 "in",
-                "    #\"Replaced Value\""
+                "    analyze_per_capita_detail"
               ]
             }
           }
@@ -4543,7 +4511,7 @@
         "measures": [
           {
             "name": "001_Charge_consumption_per_capita",
-            "expression": " DIVIDE(SUM('analyze per_capita_detail'[SUM(UsageAmount)]),SUM('analyze per_capita'[COUNT(ReceptionID)]))"
+            "expression": " DIVIDE(SUM('analyze per_capita_detail'[SUM(UsageAmount)]),SUM('analyze per_capita'[attendees]))"
           }
         ]
       },
@@ -4551,14 +4519,49 @@
         "name": "analyze per_capita",
         "columns": [
           {
-            "name": "today_index",
-            "dataType": "dateTime",
-            "sourceColumn": "today_index"
+            "name": "Hour",
+            "dataType": "int64",
+            "sourceColumn": "Hour"
           },
           {
-            "name": "COUNT(ReceptionID)",
+            "name": "unic_code",
+            "dataType": "string",
+            "sourceColumn": "unic_code"
+          },
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "date_search",
+            "dataType": "string",
+            "sourceColumn": "date_search"
+          },
+          {
+            "name": "entries",
             "dataType": "int64",
-            "sourceColumn": "COUNT(ReceptionID)"
+            "sourceColumn": "entries"
+          },
+          {
+            "name": "outputs",
+            "dataType": "int64",
+            "sourceColumn": "outputs"
+          },
+          {
+            "name": "Sum(entries)",
+            "dataType": "int64",
+            "sourceColumn": "Sum(entries)"
+          },
+          {
+            "name": "Sum(outputs)",
+            "dataType": "int64",
+            "sourceColumn": "Sum(outputs)"
+          },
+          {
+            "name": "attendees",
+            "dataType": "int64",
+            "sourceColumn": "attendees"
           }
         ],
         "partitions": [
@@ -4571,7 +4574,7 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    analyze_per_capita = Source{[Schema=\"analyze\",Item=\"per_capita\"]}[Data],",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(analyze_per_capita,{{\"today_index\", type date}})",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(analyze_per_capita,{{\"Date\", type date}})",
                 "in",
                 "    #\"Changed Type\""
               ]
@@ -5570,23 +5573,6 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "af499054-88f2-46a2-92ae-3b80da5d909b",
-        "fromCardinality": "one",
-        "fromTable": "bi DimDate",
-        "fromColumn": "Miladi",
-        "toTable": "analyze per_capita",
-        "toColumn": "today_index",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
-        "name": "d3ae48ca-b6d9-46b7-a71f-ce2144db0679",
-        "fromTable": "analyze per_capita_detail",
-        "fromColumn": "today_index",
-        "toTable": "analyze per_capita",
-        "toColumn": "today_index",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
         "name": "6b037bd3-0600-462e-8068-550206e52ef7",
         "fromTable": "rah HR_Loan_employee",
         "fromColumn": "EmployeeRef",
@@ -5643,6 +5629,27 @@
         "fromColumn": "unic_code",
         "toTable": "bi Dim_time",
         "toColumn": "unic_code"
+      },
+      {
+        "name": "c501ed31-8044-48cf-9f0f-89c34c69ec8f",
+        "fromTable": "analyze per_capita_detail",
+        "fromColumn": "unic_code",
+        "toTable": "analyze per_capita",
+        "toColumn": "unic_code"
+      },
+      {
+        "name": "ec8c519c-40b2-41ea-acf9-f171f37e2232",
+        "fromTable": "analyze per_capita_detail",
+        "fromColumn": "StationID",
+        "toTable": "report Station",
+        "toColumn": "StationID"
+      },
+      {
+        "name": "dd438c52-397b-4ad9-8ad0-2cda2cd9e0b8",
+        "fromTable": "analyze per_capita",
+        "fromColumn": "date_search",
+        "toTable": "bi DimDate",
+        "toColumn": "date_search"
       }
     ],
     "roles": [
