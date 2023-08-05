@@ -5282,6 +5282,7 @@
       },
       {
         "name": "bi station_counter_V2",
+        "description": "این جدول شکل اصلاح شده جدول ویرایش یک می باشد که برای ثبت داده های مروبط به تعداد نفرات وراد شده به هر دستگاه بازی با استفاده از کانترهای هر دستگاه ثبت می شود.",
         "columns": [
           {
             "name": "station_name",
@@ -5339,7 +5340,10 @@
         "measures": [
           {
             "name": "001_station_counter",
-            "expression": " CALCULATE(SUM('bi station_counter_V2'[counter]))"
+            "expression": [
+              " CALCULATE(SUM('bi station_counter_V2'[counter]))",
+              "-- جمع تعداد  نفرات وارد شده به ادستگاه های بازی"
+            ]
           },
           {
             "name": "002_FilteredValue",
@@ -5357,7 +5361,8 @@
               "        0",
               "    ),",
               "    0",
-              ")"
+              ")",
+              "-- این فرمول شکل تکمیل شده فرمول شماره یک همین جدول است که به دلیل استفاده در ویژال نیاز بود که مقادیری که وجود ندارد در عوض فیلتر شدن مقدار آنها صفر شود بنابراین از این فرمولاستفاده گردید."
             ]
           }
         ]
@@ -5398,6 +5403,53 @@
                 "    bi_Dim_time = Source{[Schema=\"bi\",Item=\"Dim_time\"]}[Data]",
                 "in",
                 "    bi_Dim_time"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "report shift",
+        "description": "این جدول اطلاعات مربوط به شیف هر روز و طول مدت هر سیفت و جنسیت و زمان شروع و پایان را ارائه میی کند.",
+        "columns": [
+          {
+            "name": "FromTime",
+            "dataType": "string",
+            "sourceColumn": "FromTime"
+          },
+          {
+            "name": "ToTime",
+            "dataType": "string",
+            "sourceColumn": "ToTime"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "Shift_duration",
+            "dataType": "int64",
+            "sourceColumn": "Shift_duration"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_shift = Source{[Schema=\"report\",Item=\"shift\"]}[Data]",
+                "in",
+                "    report_shift"
               ]
             }
           }
