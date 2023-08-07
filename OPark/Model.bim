@@ -2353,6 +2353,11 @@
             "name": "select subject_trend",
             "dataType": "string",
             "sourceColumn": "select subject_trend"
+          },
+          {
+            "name": "HR_title_select",
+            "dataType": "string",
+            "sourceColumn": "HR_title_select"
           }
         ],
         "partitions": [
@@ -2365,9 +2370,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    in_select_table = Source{[Schema=\"in\",Item=\"select_table\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(in_select_table,\"ي\",\"ی\",Replacer.ReplaceText,{\"select subject\", \"y_axis_tornado\", \"select subject_trend\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(in_select_table,\"ي\",\"ی\",Replacer.ReplaceText,{\"select subject\", \"y_axis_tornado\", \"select subject_trend\"}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"HR_title_select\"})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Replaced Value1\""
               ]
             }
           }
@@ -4731,6 +4737,31 @@
               "CALCULATE(DISTINCTCOUNT('rah HR_decree_Employee'[EmployeeRef]),FILTER('rah HR_decree_Employee','rah HR_decree_Employee'[StatuteType] =\"حکم پایان خدمت\"),USERELATIONSHIP('bi DimDate_YearMonth'[ApplyYearMonth],'rah HR_decree_Employee'[ApplyYearMonth]))",
               "--lمحاسبه تعداد افردای که از شرکت خارج شده اند"
             ]
+          },
+          {
+            "name": "004_Number_of_Employees",
+            "description": "تعداد پرسنل",
+            "expression": [
+              " CALCULATE(COUNT([EmployeeID]))",
+              "",
+              "--تعداد پرسنل"
+            ]
+          },
+          {
+            "name": "005_Number_of_male_employees",
+            "expression": [
+              " CALCULATE(COUNT([EmployeeID]),FILTER('rah HR_Employee','rah HR_Employee'[Gender] = \"مرد\"))",
+              "",
+              "--تعداد پرسنل مرد"
+            ]
+          },
+          {
+            "name": "006_Number_of_female_employees",
+            "expression": [
+              " CALCULATE(COUNT([EmployeeID]),FILTER('rah HR_Employee','rah HR_Employee'[Gender] = \"زن\"))",
+              "",
+              "-- تعداد پرسنل زن"
+            ]
           }
         ]
       },
@@ -4814,11 +4845,213 @@
         ],
         "measures": [
           {
-            "name": "test",
+            "name": "001_Number_employees_received_salary",
+            "description": "تعداد کارکنانی که حقوق دریافت کرده اند",
             "expression": [
-              " ",
-              "             sum('rah HR_Pay_employee'[Value]) /  'rah HR_decree_Employee'[002_NumberOfEmployee]"
-            ]
+              " CALCULATE(DISTINCTCOUNT('rah HR_Pay_employee'[EmployeeRef]))",
+              "",
+              "-- تعداد کارکنانی که حقوق دریافت کرده اند"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_Number_male_employees_received_salary",
+            "description": "تعداد کارکنان مرد که حقوق دریافت کرده اند",
+            "expression": [
+              " CALCULATE(DISTINCTCOUNT('rah HR_Pay_employee'[EmployeeRef]),FILTER('rah HR_Employee','rah HR_Employee'[Gender] = \"مرد\"))",
+              "",
+              "--تعداد کارکنان مرد که حقوق دریافت کرده اند"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "003_Number_female_employees_received_salary",
+            "description": " تعداد کارکنان زن که حقوق دریافت کرده اند",
+            "expression": [
+              " CALCULATE(DISTINCTCOUNT('rah HR_Pay_employee'[EmployeeRef]),FILTER('rah HR_Employee','rah HR_Employee'[Gender] = \"زن\"))",
+              "",
+              "-- تعداد کارکنان زن که حقوق دریافت کرده اند"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "004_Total_salary_and_benefits",
+            "description": "جمع کل مزایای پرداختی به کارکنان",
+            "expression": [
+              " CALCULATE(SUM([Value]),FILTER('rah HR_Pay_employee','rah HR_Pay_employee'[CompensationFactor_Title] = \"جمع مزایا\"))",
+              "",
+              "--جمع کل مزایای پرداختی به کارکنان"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "005_male_Total_salary_and_benefits",
+            "description": "جمع کل مزاایای پرداختی به کارکنان مرد",
+            "expression": [
+              " CALCULATE(SUM([Value]),FILTER('rah HR_Pay_employee','rah HR_Pay_employee'[CompensationFactor_Title] = \"جمع مزایا\"),FILTER('rah HR_Employee','rah HR_Employee'[Gender] = \"مرد\"))",
+              "",
+              "--جمع کل مزاایای پرداختی به کارکنان مرد"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "006_female_Total_salary_and_benefits",
+            "description": "جمع کل مزاایای پرداختی به کارکنان زن",
+            "expression": [
+              " CALCULATE(SUM([Value]),FILTER('rah HR_Pay_employee','rah HR_Pay_employee'[CompensationFactor_Title] = \"جمع مزایا\"),FILTER('rah HR_Employee','rah HR_Employee'[Gender] = \"زن\"))",
+              "",
+              "--جمع کل مزاایای پرداختی به کارکنان زن"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "007_Per_capita_salaries_paid_to_employees",
+            "description": "سرانه حقوق پرداختی به کارکنان",
+            "expression": [
+              " DIVIDE('rah HR_Pay_employee'[004_Total_salary_and_benefits],'rah HR_Pay_employee'[001_Number_employees_received_salary])",
+              "",
+              "--سرانه حقوق پرداختی به کارکنان"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "008_male_Per_capita_salaries_paid_to_employees",
+            "expression": [
+              " DIVIDE('rah HR_Pay_employee'[005_male_Total_salary_and_benefits],'rah HR_Pay_employee'[002_Number_male_employees_received_salary])",
+              "",
+              "--سرانه حقوق پرداختی به کارکنان مرد"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "009_female_Per_capita_salaries_paid_to_employees",
+            "expression": [
+              " DIVIDE('rah HR_Pay_employee'[006_female_Total_salary_and_benefits],'rah HR_Pay_employee'[003_Number_female_employees_received_salary])",
+              "",
+              "--سرانه حقوق پرداختی به کارکنان زن"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "010_in select_table_HR_total",
+            "expression": [
+              "",
+              "",
+              "IF (",
+              "    SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"جمع مزایایی پرداختی\",",
+              "   'rah HR_Pay_employee'[004_Total_salary_and_benefits],",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"تعداد پرسنل\",",
+              "       'rah HR_Pay_employee'[001_Number_employees_received_salary],",
+              "         IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"سرانه مزایایی پرداختی\",",
+              "         'rah HR_Pay_employee'[007_Per_capita_salaries_paid_to_employees],",
+              "         IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"نسبت مزایای پرداختی به طول مدت شیفت\",",
+              "         'rah HR_Pay_employee'[016_Ratio_of pay_to_shift_duration],",
+              " IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"طول مدت شیفت کاری بر حسب ساعت\",",
+              "         'rah HR_Pay_employee'[013_shift_duration],",
+              "0))",
+              "",
+              "        ",
+              "        ",
+              "        )",
+              "        ))",
+              ""
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "011_in select_table_HR_male",
+            "expression": [
+              "",
+              "",
+              "IF (",
+              "    SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"جمع مزایایی پرداختی\",",
+              "   'rah HR_Pay_employee'[005_male_Total_salary_and_benefits],",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"تعداد پرسنل\",",
+              "       'rah HR_Pay_employee'[002_Number_male_employees_received_salary],",
+              "         IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"سرانه مزایایی پرداختی\",",
+              "         'rah HR_Pay_employee'[008_male_Per_capita_salaries_paid_to_employees],",
+              "         IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"نسبت مزایای پرداختی به طول مدت شیفت\",",
+              "         'rah HR_Pay_employee'[017_male_Ratio_of pay_to_shift_duration],",
+              " IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"طول مدت شیفت کاری بر حسب ساعت\",",
+              "         'rah HR_Pay_employee'[014_shift_duration_male],",
+              "0))",
+              "",
+              "        ",
+              "        ",
+              "        )",
+              "        ))",
+              ""
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "012_in select_table_HR_female",
+            "expression": [
+              "",
+              "",
+              "IF (",
+              "    SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"جمع مزایایی پرداختی\",",
+              "   'rah HR_Pay_employee'[006_female_Total_salary_and_benefits],",
+              "    IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"تعداد پرسنل\",",
+              "       'rah HR_Pay_employee'[003_Number_female_employees_received_salary],",
+              "         IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"سرانه مزایایی پرداختی\",",
+              "         'rah HR_Pay_employee'[009_female_Per_capita_salaries_paid_to_employees],",
+              "         IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"نسبت مزایای پرداختی به طول مدت شیفت\",",
+              "         'rah HR_Pay_employee'[018_male_Ratio_of pay_to_shift_duration],",
+              " IF (",
+              "        SELECTEDVALUE ( 'in select_table'[HR_title_select] ) = \"طول مدت شیفت کاری بر حسب ساعت\",",
+              "         'rah HR_Pay_employee'[015_shift_duration_female],",
+              "0))",
+              "",
+              "",
+              "        ",
+              "        ",
+              "        )",
+              "        ))",
+              ""
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "013_shift_duration",
+            "expression": "CALCULATE(SUM('report shift'[Shift_duration]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "014_shift_duration_male",
+            "expression": "CALCULATE(SUM('report shift'[Shift_duration]),FILTER('report shift','report shift'[Gender] = \"Male\"))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "015_shift_duration_female",
+            "expression": "CALCULATE(SUM('report shift'[Shift_duration]),FILTER('report shift','report shift'[Gender] = \"Female\"))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "016_Ratio_of pay_to_shift_duration",
+            "expression": "DIVIDE('rah HR_Pay_employee'[004_Total_salary_and_benefits],'rah HR_Pay_employee'[013_shift_duration])",
+            "formatString": "#,#"
+          },
+          {
+            "name": "017_male_Ratio_of pay_to_shift_duration",
+            "expression": "DIVIDE('rah HR_Pay_employee'[005_male_Total_salary_and_benefits],'rah HR_Pay_employee'[014_shift_duration_male])",
+            "formatString": "#,#"
+          },
+          {
+            "name": "018_male_Ratio_of pay_to_shift_duration",
+            "expression": "DIVIDE('rah HR_Pay_employee'[006_female_Total_salary_and_benefits],'rah HR_Pay_employee'[015_shift_duration_female])",
+            "formatString": "#,#"
           }
         ]
       },
@@ -5097,7 +5330,7 @@
               "",
               "",
               "",
-              "--تعداد کل پرسنل "
+              "--تعداد کل پرسنل دارای حکم"
             ],
             "formatString": "0"
           }
@@ -5287,36 +5520,46 @@
           {
             "name": "station_name",
             "dataType": "string",
+            "description": "نام دستگاه بازی",
             "sourceColumn": "station_name"
           },
           {
             "name": "counter",
             "dataType": "int64",
+            "description": [
+              "تعداد شماره انجام شده توسط شمارشگر دستگاه",
+              "این مقدار با تعداد نفرات مطابقت ندارد زیرا ممکن است در هر بار شماره تعداد دو تا چهار نفر وارد بازی شده باشند و بنابراین لازم است که ضریب تیوپ برای هر بازی مشخص شده و به این جدول اضافه گردد."
+            ],
             "sourceColumn": "counter"
           },
           {
             "name": "time",
             "dataType": "string",
+            "description": "ساعت",
             "sourceColumn": "time"
           },
           {
             "name": "date",
             "dataType": "string",
+            "description": "تاریخ",
             "sourceColumn": "date"
           },
           {
             "name": "Gender",
             "dataType": "string",
+            "description": "جنسیت",
             "sourceColumn": "Gender"
           },
           {
             "name": "unic_code",
             "dataType": "string",
+            "description": "کد یونیک جهت اتصال به جدول تایم ",
             "sourceColumn": "unic_code"
           },
           {
             "name": "station_index",
             "dataType": "int64",
+            "description": "شماره دستگاه بازی",
             "sourceColumn": "station_index"
           }
         ],
@@ -5429,13 +5672,18 @@
           },
           {
             "name": "Shift_duration",
-            "dataType": "int64",
+            "dataType": "double",
             "sourceColumn": "Shift_duration"
           },
           {
             "name": "date",
             "dataType": "string",
             "sourceColumn": "date"
+          },
+          {
+            "name": "ApplyYearMonth",
+            "dataType": "string",
+            "sourceColumn": "ApplyYearMonth"
           }
         ],
         "partitions": [
@@ -5702,6 +5950,22 @@
         "fromColumn": "date_search",
         "toTable": "bi DimDate",
         "toColumn": "date_search"
+      },
+      {
+        "name": "df2dd829-ebb0-4ffc-ba9d-0f73125e9d69",
+        "fromTable": "report shift",
+        "fromColumn": "ApplyYearMonth",
+        "toTable": "bi DimDate_YearMonth",
+        "toColumn": "ApplyYearMonth"
+      },
+      {
+        "name": "d76892b1-afa5-4266-907e-2f55545c9bfd",
+        "toCardinality": "many",
+        "fromTable": "rah HR_Pay_employee",
+        "fromColumn": "ApplyYearMonth",
+        "toTable": "report shift",
+        "toColumn": "ApplyYearMonth",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
