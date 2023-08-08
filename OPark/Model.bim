@@ -4808,6 +4808,7 @@
           {
             "name": "unic_code_decree",
             "dataType": "string",
+            "description": "کد ارتباط بین جدول پرداخت با جدول احکام",
             "sourceColumn": "unic_code_decree"
           },
           {
@@ -4958,7 +4959,9 @@
               "        ",
               "        )",
               "        ))",
-              ""
+              "",
+              "",
+              "-- فرمول جهت انتخاب موضوعی که در صفحه داشبورد نمایش داده می شود"
             ],
             "formatString": "#,#"
           },
@@ -4988,7 +4991,8 @@
               "        ",
               "        )",
               "        ))",
-              ""
+              "",
+              "-- فرمول جهت انتخاب موضوعی که در صفحه داشبورد نمایش  داده می شود با فیلتر اعداد برای مردان"
             ],
             "formatString": "#,#"
           },
@@ -5019,7 +5023,9 @@
               "        ",
               "        )",
               "        ))",
-              ""
+              "",
+              "",
+              "-- فرمول جهت انتخاب موضوعی که در صفحه داشبورد نمایش  داده می شود با فیلتر اعداد برای زنان"
             ],
             "formatString": "#,#"
           },
@@ -5682,31 +5688,37 @@
           {
             "name": "FromTime",
             "dataType": "string",
+            "description": "ساعت شروع قانونی شیفت",
             "sourceColumn": "FromTime"
           },
           {
             "name": "ToTime",
             "dataType": "string",
+            "description": "ساعت پایان قانونی شیفت",
             "sourceColumn": "ToTime"
           },
           {
             "name": "Gender",
             "dataType": "string",
+            "description": "جنسیت شیفت",
             "sourceColumn": "Gender"
           },
           {
             "name": "Shift_duration",
             "dataType": "double",
+            "description": "طول مدت شیفت بر حسب ساعت",
             "sourceColumn": "Shift_duration"
           },
           {
             "name": "date",
             "dataType": "string",
+            "description": "تاریخ شیفت",
             "sourceColumn": "date"
           },
           {
             "name": "ApplyYearMonth",
             "dataType": "string",
+            "description": "کد اتصال بین جداول شیفت با جدول پرداخت و احکام و جدول تقویم با ریزدانگی ماهانه",
             "sourceColumn": "ApplyYearMonth"
           }
         ],
