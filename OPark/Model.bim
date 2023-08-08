@@ -5025,32 +5025,56 @@
           },
           {
             "name": "013_shift_duration",
-            "expression": "CALCULATE(SUM('report shift'[Shift_duration]))",
+            "expression": [
+              "CALCULATE(SUM('report shift'[Shift_duration]))",
+              "",
+              "--جمع ساعات طول شیفت"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "014_shift_duration_male",
-            "expression": "CALCULATE(SUM('report shift'[Shift_duration]),FILTER('report shift','report shift'[Gender] = \"Male\"))",
+            "expression": [
+              "CALCULATE(SUM('report shift'[Shift_duration]),FILTER('report shift','report shift'[Gender] = \"Male\"))",
+              "",
+              "-- جمع ساعات طول شیفت مردان"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "015_shift_duration_female",
-            "expression": "CALCULATE(SUM('report shift'[Shift_duration]),FILTER('report shift','report shift'[Gender] = \"Female\"))",
+            "expression": [
+              "CALCULATE(SUM('report shift'[Shift_duration]),FILTER('report shift','report shift'[Gender] = \"Female\"))",
+              "",
+              "-- جمع ساعات طول شیفت زنان"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "016_Ratio_of pay_to_shift_duration",
-            "expression": "DIVIDE('rah HR_Pay_employee'[004_Total_salary_and_benefits],'rah HR_Pay_employee'[013_shift_duration])",
+            "expression": [
+              "DIVIDE('rah HR_Pay_employee'[004_Total_salary_and_benefits],'rah HR_Pay_employee'[013_shift_duration])",
+              "",
+              "-- نسبت جمع مزایای چرداختی به طول شیفت که مشخص می کند به ازای هر ساعت کاری پارک چه مقدار پرداخت شده است"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "017_male_Ratio_of pay_to_shift_duration",
-            "expression": "DIVIDE('rah HR_Pay_employee'[005_male_Total_salary_and_benefits],'rah HR_Pay_employee'[014_shift_duration_male])",
+            "expression": [
+              "DIVIDE('rah HR_Pay_employee'[005_male_Total_salary_and_benefits],'rah HR_Pay_employee'[014_shift_duration_male])",
+              "",
+              "-- نسبت جمع مزایای چرداختی به طول شیفت مردان که مشخص می کند به ازای هر ساعت کاری شیفت مردان چه مقدار پرداخت شده است"
+            ],
             "formatString": "#,#"
           },
           {
             "name": "018_male_Ratio_of pay_to_shift_duration",
-            "expression": "DIVIDE('rah HR_Pay_employee'[006_female_Total_salary_and_benefits],'rah HR_Pay_employee'[015_shift_duration_female])",
+            "expression": [
+              "DIVIDE('rah HR_Pay_employee'[006_female_Total_salary_and_benefits],'rah HR_Pay_employee'[015_shift_duration_female])",
+              "",
+              "-- نسبت جمع مزایای چرداختی به طول شیفت مردان که مشخص می کند به ازای هر ساعت کاری شیفت زنان  چه مقدار پرداخت شده است"
+            ],
             "formatString": "#,#"
           }
         ]
