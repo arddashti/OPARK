@@ -314,13 +314,6 @@
             "sourceColumn": "branch_code"
           },
           {
-            "name": "cash_excel",
-            "dataType": "int64",
-            "description": "مانده اکسل",
-            "sourceColumn": "cash_excel",
-            "formatString": "#,#"
-          },
-          {
             "name": "date",
             "dataType": "string",
             "description": "تاریخ",
@@ -376,7 +369,7 @@
             "expression": [
               "",
               "CALCULATE (",
-              "    SUM ( 'rah cash_balance'[cash_excel] ),",
+              "    SUM ( 'rah cash_balance'[cash_rah] ),",
               "    FILTER ( 'rah cash_balance', 'rah cash_balance'[max_indicator] = \"1\" )",
               ")",
               "--آخرین موجودی نقد حساب بانکی"
@@ -4526,7 +4519,7 @@
         "columns": [
           {
             "name": "Hour",
-            "dataType": "int64",
+            "dataType": "string",
             "sourceColumn": "Hour"
           },
           {
@@ -4541,7 +4534,7 @@
           },
           {
             "name": "date_search",
-            "dataType": "string",
+            "dataType": "int64",
             "sourceColumn": "date_search"
           },
           {
@@ -4568,6 +4561,11 @@
             "name": "attendees",
             "dataType": "int64",
             "sourceColumn": "attendees"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
           }
         ],
         "partitions": [
@@ -4580,7 +4578,7 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    analyze_per_capita = Source{[Schema=\"analyze\",Item=\"per_capita\"]}[Data],",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(analyze_per_capita,{{\"Date\", type date}})",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(analyze_per_capita,{{\"Date\", type date}, {\"date_search\", Int64.Type}})",
                 "in",
                 "    #\"Changed Type\""
               ]
@@ -5967,13 +5965,6 @@
         "toColumn": "unic_code"
       },
       {
-        "name": "c501ed31-8044-48cf-9f0f-89c34c69ec8f",
-        "fromTable": "analyze per_capita_detail",
-        "fromColumn": "unic_code",
-        "toTable": "analyze per_capita",
-        "toColumn": "unic_code"
-      },
-      {
         "name": "ec8c519c-40b2-41ea-acf9-f171f37e2232",
         "fromTable": "analyze per_capita_detail",
         "fromColumn": "StationID",
@@ -6001,6 +5992,15 @@
         "fromColumn": "ApplyYearMonth",
         "toTable": "report shift",
         "toColumn": "ApplyYearMonth",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "29ba3b9c-993f-4ed9-9807-df9bd7624790",
+        "toCardinality": "many",
+        "fromTable": "analyze per_capita_detail",
+        "fromColumn": "unic_code",
+        "toTable": "analyze per_capita",
+        "toColumn": "unic_code",
         "crossFilteringBehavior": "bothDirections"
       }
     ],
@@ -6632,10 +6632,6 @@
               },
               {
                 "name": "branch_code",
-                "metadataPermission": "none"
-              },
-              {
-                "name": "cash_excel",
                 "metadataPermission": "none"
               },
               {
