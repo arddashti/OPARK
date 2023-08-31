@@ -200,7 +200,7 @@
           },
           {
             "name": "id",
-            "dataType": "string",
+            "dataType": "int64",
             "sourceColumn": "id"
           },
           {
@@ -342,6 +342,11 @@
             "dataType": "string",
             "description": "کد تفصیلی",
             "sourceColumn": "Code"
+          },
+          {
+            "name": "cash_excel",
+            "dataType": "int64",
+            "sourceColumn": "cash_excel"
           }
         ],
         "partitions": [
@@ -369,7 +374,7 @@
             "expression": [
               "",
               "CALCULATE (",
-              "    SUM ( 'rah cash_balance'[cash_rah] ),",
+              "    SUM ( 'rah cash_balance'[cash_excel] ),",
               "    FILTER ( 'rah cash_balance', 'rah cash_balance'[max_indicator] = \"1\" )",
               ")",
               "--آخرین موجودی نقد حساب بانکی"
