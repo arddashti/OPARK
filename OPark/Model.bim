@@ -5741,6 +5741,58 @@
             }
           }
         ]
+      },
+      {
+        "name": "crm Internal_quality_survey",
+        "columns": [
+          {
+            "name": "topic",
+            "dataType": "string",
+            "sourceColumn": "topic"
+          },
+          {
+            "name": "Response",
+            "dataType": "string",
+            "sourceColumn": "Response"
+          },
+          {
+            "name": "ID",
+            "dataType": "string",
+            "sourceColumn": "ID"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          },
+          {
+            "name": "start_time",
+            "dataType": "string",
+            "sourceColumn": "start_time"
+          },
+          {
+            "name": "end_time",
+            "dataType": "string",
+            "sourceColumn": "end_time"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    crm_Internal_quality_survey = Source{[Schema=\"crm\",Item=\"Internal_quality_survey\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(crm_Internal_quality_survey,\"ي\",\"ی\",Replacer.ReplaceText,{\"topic\", \"Response\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -6007,6 +6059,13 @@
         "toTable": "analyze per_capita",
         "toColumn": "unic_code",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "aa74ab31-d59e-480b-b64e-81e124fdf9a4",
+        "fromTable": "crm Internal_quality_survey",
+        "fromColumn": "date",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
       }
     ],
     "roles": [
