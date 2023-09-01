@@ -5748,32 +5748,43 @@
           {
             "name": "topic",
             "dataType": "string",
+            "description": "موضوع نظر سنجی",
             "sourceColumn": "topic"
           },
           {
             "name": "Response",
             "dataType": "string",
+            "description": "پاسخ سوالات نظر سنجی",
             "sourceColumn": "Response"
           },
           {
             "name": "ID",
             "dataType": "string",
+            "description": "شناسه پاسخ دهنده",
             "sourceColumn": "ID"
           },
           {
             "name": "date",
             "dataType": "string",
+            "description": "تاریخ",
             "sourceColumn": "date"
           },
           {
             "name": "start_time",
             "dataType": "string",
+            "description": "زمان شروع",
             "sourceColumn": "start_time"
           },
           {
             "name": "end_time",
             "dataType": "string",
+            "description": "زمان پایان",
             "sourceColumn": "end_time"
+          },
+          {
+            "name": "topic_category",
+            "dataType": "string",
+            "sourceColumn": "topic_category"
           }
         ],
         "partitions": [
@@ -5786,9 +5797,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    crm_Internal_quality_survey = Source{[Schema=\"crm\",Item=\"Internal_quality_survey\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(crm_Internal_quality_survey,\"ي\",\"ی\",Replacer.ReplaceText,{\"topic\", \"Response\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(crm_Internal_quality_survey,\"ي\",\"ی\",Replacer.ReplaceText,{\"topic\", \"Response\"}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"topic_category\"})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Replaced Value1\""
               ]
             }
           }
