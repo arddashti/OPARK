@@ -5805,6 +5805,58 @@
             }
           }
         ]
+      },
+      {
+        "name": "bi Temperature_Chlorine_files",
+        "columns": [
+          {
+            "name": "station",
+            "dataType": "string",
+            "sourceColumn": "station"
+          },
+          {
+            "name": "Values",
+            "dataType": "string",
+            "sourceColumn": "Values"
+          },
+          {
+            "name": "operator",
+            "dataType": "string",
+            "sourceColumn": "operator"
+          },
+          {
+            "name": "subject",
+            "dataType": "string",
+            "sourceColumn": "subject"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "sourceColumn": "category"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    bi_Temperature_Chlorine_files = Source{[Schema=\"bi\",Item=\"Temperature_Chlorine_files\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(bi_Temperature_Chlorine_files,\"ي\",\"ی\",Replacer.ReplaceText,{\"station\", \"Values\", \"operator\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -6075,6 +6127,13 @@
       {
         "name": "aa74ab31-d59e-480b-b64e-81e124fdf9a4",
         "fromTable": "crm Internal_quality_survey",
+        "fromColumn": "date",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
+      },
+      {
+        "name": "98f856f4-6ebd-43f0-b3f1-1b3c0a25ffc3",
+        "fromTable": "bi Temperature_Chlorine_files",
         "fromColumn": "date",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
