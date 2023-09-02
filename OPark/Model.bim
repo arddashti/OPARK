@@ -5816,7 +5816,7 @@
           },
           {
             "name": "Values",
-            "dataType": "string",
+            "dataType": "double",
             "sourceColumn": "Values"
           },
           {
@@ -5850,7 +5850,7 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    bi_Temperature_Chlorine_files = Source{[Schema=\"bi\",Item=\"Temperature_Chlorine_files\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(bi_Temperature_Chlorine_files,\"ي\",\"ی\",Replacer.ReplaceText,{\"station\", \"Values\", \"operator\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(bi_Temperature_Chlorine_files,\"ي\",\"ی\",Replacer.ReplaceText,{\"station\",  \"operator\"})",
                 "in",
                 "    #\"Replaced Value\""
               ]
