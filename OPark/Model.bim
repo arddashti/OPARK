@@ -346,7 +346,13 @@
           {
             "name": "cash_excel",
             "dataType": "int64",
-            "sourceColumn": "cash_excel"
+            "sourceColumn": "cash_excel",
+            "formatString": "#,#"
+          },
+          {
+            "name": "jyear",
+            "dataType": "string",
+            "sourceColumn": "jyear"
           }
         ],
         "partitions": [
@@ -402,6 +408,15 @@
               "",
               "'rah cash_balance'[001_total_amount] - 'rah cash_balance'[002_total_obligation]",
               "--موجودی در دسترس"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "004_Average Monthly Balance",
+            "expression": [
+              " ",
+              "    CALCULATE(",
+              "        AVERAGE('rah cash_balance'[cash_rah]))"
             ],
             "formatString": "#,#"
           }
