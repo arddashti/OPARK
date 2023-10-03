@@ -5759,6 +5759,7 @@
       },
       {
         "name": "crm Internal_quality_survey",
+        "description": "جدول مربوط به اطلاعات نظر سنجی داخلی از کارکنان",
         "columns": [
           {
             "name": "topic",
@@ -5799,7 +5800,14 @@
           {
             "name": "topic_category",
             "dataType": "string",
+            "description": "دسته بندی سوالات",
             "sourceColumn": "topic_category"
+          },
+          {
+            "name": "Response_no",
+            "dataType": "int64",
+            "description": "پاسخ فرد شرکت کننده در نظر سنجی تبدیل شده به عدد",
+            "sourceColumn": "Response_no"
           }
         ],
         "partitions": [
@@ -7592,7 +7600,7 @@
         "modelPermission": "read",
         "members": [
           {
-            "memberName": "OPARK\\BI_Park_View",
+            "memberName": "OPARK\\Bi_park_view",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2776"
           }
         ]
