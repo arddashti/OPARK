@@ -6216,6 +6216,29 @@
         "fromColumn": "date",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
+      },
+      {
+        "name": "348ef3ec-5326-4d13-8db7-606b55597893",
+        "fromTable": "rah HR_Commission",
+        "fromColumn": "ApplyYearMonth",
+        "toTable": "bi DimDate_YearMonth",
+        "toColumn": "ApplyYearMonth"
+      },
+      {
+        "name": "dfa18c2e-942a-476d-b79e-da3eb69c664c",
+        "fromTable": "rah HR_Commission",
+        "fromColumn": "EmployeeID",
+        "toTable": "rah HR_Employee",
+        "toColumn": "EmployeeID"
+      },
+      {
+        "name": "b4ccb56e-124d-47ba-a209-ad55ca421162",
+        "toCardinality": "many",
+        "fromTable": "report sales_contract",
+        "fromColumn": "sales_user_ID",
+        "toTable": "rah HR_Commission",
+        "toColumn": "sales_user_ID",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
