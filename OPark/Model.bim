@@ -5458,22 +5458,26 @@
           {
             "name": "jyear",
             "dataType": "string",
+            "description": "سال شمسی",
             "sourceColumn": "jyear"
           },
           {
             "name": "jmonthT",
             "dataType": "string",
+            "description": "عنوان فارسی ماه",
             "sourceColumn": "jmonthT",
             "sortByColumn": "jmonthN"
           },
           {
             "name": "ApplyYearMonth",
             "dataType": "string",
+            "description": "کد یونیک ترکیبی سال و ماه",
             "sourceColumn": "ApplyYearMonth"
           },
           {
             "name": "jmonthN",
             "dataType": "int64",
+            "description": "شماره ماه",
             "sourceColumn": "jmonthN"
           }
         ],
@@ -5876,6 +5880,58 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(bi_Temperature_Chlorine_files,\"ي\",\"ی\",Replacer.ReplaceText,{\"station\",  \"operator\"})",
                 "in",
                 "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah HR_Commission",
+        "description": "جدول کمیسیون های دریافتی پرسنل فروش که در این جدئول کدهای دیگر این افراد در قسمت های دیگر نرم افزار راهکاران و کد مورد استفاده در نرم اففزار یاسان گنجانده شده است.",
+        "columns": [
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "description": "مبلغ پرداخت شده برای کمیسیون",
+            "sourceColumn": "Credit"
+          },
+          {
+            "name": "Code",
+            "dataType": "string",
+            "description": "کد سطح چهارم نفرات در نرم افزار راهکاران که مشخص می کند چهع پرداخت های به نفرات با این کد انجام شده است.",
+            "sourceColumn": "Code"
+          },
+          {
+            "name": "EmployeeID",
+            "dataType": "int64",
+            "description": "ای دی فرد در سیستم جبران خدمات نرم افزار راهکاران که با ان مشخص می شود تا حالا چقدر به این فرد اتنجام شده است.",
+            "sourceColumn": "EmployeeID"
+          },
+          {
+            "name": "sales_user_ID",
+            "dataType": "int64",
+            "description": "ای دی فرد در نرم افزار یایسان که می تواند برای محاسبه موارد استخراج شده از نرم افزار یاسان مانند میزان فروش و غیره مورد استفاده قرارا گیرد.",
+            "sourceColumn": "sales_user_ID"
+          },
+          {
+            "name": "ApplyYearMonth",
+            "dataType": "string",
+            "description": "کد یونیک ترکیبی سال و ماه",
+            "sourceColumn": "ApplyYearMonth"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_HR_Commission = Source{[Schema=\"rah\",Item=\"HR_Commission\"]}[Data]",
+                "in",
+                "    rah_HR_Commission"
               ]
             }
           }
@@ -7600,7 +7656,7 @@
         "modelPermission": "read",
         "members": [
           {
-            "memberName": "OPARK\\Bi_park_view",
+            "memberName": "OPARK\\BI_Park_View",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2776"
           }
         ]
