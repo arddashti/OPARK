@@ -5844,6 +5844,17 @@
               "                  -- ماکزیمم امتیار سوالات "
             ],
             "formatString": "#,#"
+          },
+          {
+            "name": "002_Score Question",
+            "description": " محاسبه امتیاز هر سوال ",
+            "expression": [
+              "",
+              "                  SUMX('crm Internal_quality_survey', ",
+              "                          COUNT('crm Internal_quality_survey'[ID])* 'crm Internal_quality_survey'[Response_no])",
+              "",
+              "-- محاسبه امتیاز هر سوال "
+            ]
           }
         ]
       },
