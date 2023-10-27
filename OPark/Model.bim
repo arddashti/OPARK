@@ -5855,6 +5855,16 @@
               "",
               "-- محاسبه امتیاز هر سوال "
             ]
+          },
+          {
+            "name": "003_ Total Score for Question",
+            "description": " امتیاز کل هر سوال ",
+            "expression": [
+              "",
+              "                               DIVIDE('crm Internal_quality_survey'[002_Score Question], 'crm Internal_quality_survey'[001_Maximum score of the question])",
+              "                               ",
+              "                               -- امتیاز کل هر سوال "
+            ]
           }
         ]
       },
