@@ -5831,6 +5831,20 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "001_Maximum score of the question",
+            "description": " ماکزیمم امتیار سوالات ",
+            "expression": [
+              " ",
+              "                  COUNT('crm Internal_quality_survey'[ID]) * 5",
+              "                  ",
+              "                  ",
+              "                  -- ماکزیمم امتیار سوالات "
+            ],
+            "formatString": "#,#"
+          }
         ]
       },
       {
