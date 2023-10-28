@@ -5838,7 +5838,7 @@
             "description": " ماکزیمم امتیار سوالات ",
             "expression": [
               " ",
-              "                  COUNT('crm Internal_quality_survey'[ID]) * 5",
+              "                count('crm Internal_quality_survey'[Response_no]) * 5",
               "                  ",
               "                  ",
               "                  -- ماکزیمم امتیار سوالات "
@@ -5850,10 +5850,11 @@
             "description": " محاسبه امتیاز هر سوال ",
             "expression": [
               "",
-              "                  SUMX('crm Internal_quality_survey', ",
-              "                          COUNT('crm Internal_quality_survey'[ID])* 'crm Internal_quality_survey'[Response_no])",
+              "               sum('crm Internal_quality_survey'[Response_no])",
               "",
-              "-- محاسبه امتیاز هر سوال "
+              "-- محاسبه امتیاز هر سوال ",
+              "",
+              ""
             ]
           },
           {
@@ -5861,10 +5862,11 @@
             "description": " امتیاز کل هر سوال ",
             "expression": [
               "",
-              "                               DIVIDE('crm Internal_quality_survey'[002_Score Question], 'crm Internal_quality_survey'[001_Maximum score of the question])",
+              "                          DIVIDE('crm Internal_quality_survey'[002_Score Question], 'crm Internal_quality_survey'[001_Maximum score of the question])",
               "                               ",
               "                               -- امتیاز کل هر سوال "
-            ]
+            ],
+            "formatString": "0.00%;-0.00%;0.00%"
           }
         ]
       },
