@@ -4692,7 +4692,7 @@
           },
           {
             "name": "Employment_until_departure",
-            "dataType": "int64",
+            "dataType": "double",
             "description": "مدت زمان ماندگاری از زمان استخدام تا زمان حکم پایان کار",
             "sourceColumn": "Employment_until_departure"
           },
@@ -4719,6 +4719,16 @@
             "dataType": "double",
             "description": "فاصله زمانی بین دو استخدام بر حسب روز",
             "sourceColumn": "interval_betwee_ employment"
+          },
+          {
+            "name": "Pay_Code_rahkaran",
+            "dataType": "string",
+            "sourceColumn": "Pay_Code_rahkaran"
+          },
+          {
+            "name": "sales_user_ID",
+            "dataType": "int64",
+            "sourceColumn": "sales_user_ID"
           }
         ],
         "partitions": [
@@ -4796,11 +4806,6 @@
         "description": "جدول پرداخت ها به کارکنان",
         "columns": [
           {
-            "name": "PayCalcItemID",
-            "dataType": "int64",
-            "sourceColumn": "PayCalcItemID"
-          },
-          {
             "name": "ApplyYearMonth",
             "dataType": "string",
             "description": "سال و ماه اعمال",
@@ -4818,18 +4823,6 @@
             "dataType": "int64",
             "description": "ID پرسنلی",
             "sourceColumn": "EmployeeRef"
-          },
-          {
-            "name": "CompensationFactor_Title",
-            "dataType": "string",
-            "description": "عناوین اجزا حقوق و دستمزد",
-            "sourceColumn": "CompensationFactor_Title"
-          },
-          {
-            "name": "CompensationCalcType_Title",
-            "dataType": "string",
-            "description": "گروه بندی عناوین حقوق",
-            "sourceColumn": "CompensationCalcType_Title"
           },
           {
             "name": "unic_code_decree",
@@ -4850,6 +4843,27 @@
               "",
               "-- ادغام شدن نام اضافه کاری به اضافه کاری و تعطیل کاری  "
             ]
+          },
+          {
+            "name": "CategoryCode",
+            "dataType": "int64",
+            "sourceColumn": "CategoryCode"
+          },
+          {
+            "name": "Category_name",
+            "dataType": "string",
+            "sourceColumn": "Category_name"
+          },
+          {
+            "name": "Value_improve",
+            "dataType": "double",
+            "sourceColumn": "Value_improve",
+            "formatString": "#,0"
+          },
+          {
+            "name": "CompensationFactor_Title",
+            "dataType": "string",
+            "sourceColumn": "CompensationFactor_Title"
           }
         ],
         "partitions": [
@@ -4862,10 +4876,11 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    rah_HR_Pay_employee = Source{[Schema=\"rah\",Item=\"HR_Pay_employee\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(rah_HR_Pay_employee,\"ي\",\"ی\",Replacer.ReplaceText,{\"CompensationFactor_Title\", \"CompensationCalcType_Title\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"ApplyYearMonth\", type text}})",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(rah_HR_Pay_employee,{{\"ApplyYearMonth\", type text}}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Category_name\"}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Replaced Value1\",\"ي\",\"ی\",Replacer.ReplaceText,{\"CompensationFactor_Title\"})",
                 "in",
-                "    #\"Changed Type\""
+                "    #\"Replaced Value\""
               ]
             }
           }
@@ -5929,58 +5944,6 @@
             }
           }
         ]
-      },
-      {
-        "name": "rah HR_Commission",
-        "description": "جدول کمیسیون های دریافتی پرسنل فروش که در این جدئول کدهای دیگر این افراد در قسمت های دیگر نرم افزار راهکاران و کد مورد استفاده در نرم اففزار یاسان گنجانده شده است.",
-        "columns": [
-          {
-            "name": "Credit",
-            "dataType": "double",
-            "description": "مبلغ پرداخت شده برای کمیسیون",
-            "sourceColumn": "Credit"
-          },
-          {
-            "name": "Code",
-            "dataType": "string",
-            "description": "کد سطح چهارم نفرات در نرم افزار راهکاران که مشخص می کند چهع پرداخت های به نفرات با این کد انجام شده است.",
-            "sourceColumn": "Code"
-          },
-          {
-            "name": "EmployeeID",
-            "dataType": "int64",
-            "description": "ای دی فرد در سیستم جبران خدمات نرم افزار راهکاران که با ان مشخص می شود تا حالا چقدر به این فرد اتنجام شده است.",
-            "sourceColumn": "EmployeeID"
-          },
-          {
-            "name": "sales_user_ID",
-            "dataType": "int64",
-            "description": "ای دی فرد در نرم افزار یایسان که می تواند برای محاسبه موارد استخراج شده از نرم افزار یاسان مانند میزان فروش و غیره مورد استفاده قرارا گیرد.",
-            "sourceColumn": "sales_user_ID"
-          },
-          {
-            "name": "ApplyYearMonth",
-            "dataType": "string",
-            "description": "کد یونیک ترکیبی سال و ماه",
-            "sourceColumn": "ApplyYearMonth"
-          }
-        ],
-        "partitions": [
-          {
-            "name": "Partition",
-            "dataView": "full",
-            "source": {
-              "type": "m",
-              "expression": [
-                "let",
-                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    rah_HR_Commission = Source{[Schema=\"rah\",Item=\"HR_Commission\"]}[Data]",
-                "in",
-                "    rah_HR_Commission"
-              ]
-            }
-          }
-        ]
       }
     ],
     "relationships": [
@@ -6261,29 +6224,6 @@
         "fromColumn": "date",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
-      },
-      {
-        "name": "348ef3ec-5326-4d13-8db7-606b55597893",
-        "fromTable": "rah HR_Commission",
-        "fromColumn": "ApplyYearMonth",
-        "toTable": "bi DimDate_YearMonth",
-        "toColumn": "ApplyYearMonth"
-      },
-      {
-        "name": "dfa18c2e-942a-476d-b79e-da3eb69c664c",
-        "fromTable": "rah HR_Commission",
-        "fromColumn": "EmployeeID",
-        "toTable": "rah HR_Employee",
-        "toColumn": "EmployeeID"
-      },
-      {
-        "name": "b4ccb56e-124d-47ba-a209-ad55ca421162",
-        "toCardinality": "many",
-        "fromTable": "report sales_contract",
-        "fromColumn": "sales_user_ID",
-        "toTable": "rah HR_Commission",
-        "toColumn": "sales_user_ID",
-        "crossFilteringBehavior": "bothDirections"
       },
       {
         "name": "5f90d885-fb9b-4614-b5d6-98241c23a1ef",
