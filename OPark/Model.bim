@@ -125,6 +125,11 @@
             "name": "Counter (#1)",
             "dataType": "int64",
             "sourceColumn": "Counter (#1)"
+          },
+          {
+            "name": "ApplyYearMonth",
+            "dataType": "string",
+            "sourceColumn": "ApplyYearMonth"
           }
         ],
         "partitions": [
@@ -143,9 +148,12 @@
                 "    #\"Extracted Last Characters\" = Table.TransformColumns(#\"Renamed Columns\", {{\"dayNUM\", each Text.End(_, 2), type text}}),",
                 "    #\"Duplicated Column1\" = Table.DuplicateColumn(#\"Extracted Last Characters\", \"Miladi\", \"Miladi - Copy\"),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Duplicated Column1\",{{\"Miladi\", type date}, {\"date_search\", Int64.Type}}),",
-                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Changed Type\",{{\"Miladi - Copy\", \"Miladi - text\"}})",
+                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Changed Type\",{{\"Miladi - Copy\", \"Miladi - text\"}}),",
+                "    #\"Duplicated Column2\" = Table.DuplicateColumn(#\"Renamed Columns1\", \"date_search\", \"date_search - Copy\"),",
+                "    #\"Extracted First Characters\" = Table.TransformColumns(#\"Duplicated Column2\", {{\"date_search - Copy\", each Text.Start(Text.From(_, \"en-US\"), 6), type text}}),",
+                "    #\"Renamed Columns2\" = Table.RenameColumns(#\"Extracted First Characters\",{{\"date_search - Copy\", \"ApplyYearMonth\"}})",
                 "in",
-                "    #\"Renamed Columns1\""
+                "    #\"Renamed Columns2\""
               ]
             },
             "annotations": [
@@ -6239,6 +6247,13 @@
         "toTable": "rah HR_Commission",
         "toColumn": "sales_user_ID",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "5f90d885-fb9b-4614-b5d6-98241c23a1ef",
+        "fromTable": "bi DimDate",
+        "fromColumn": "ApplyYearMonth",
+        "toTable": "bi DimDate_YearMonth",
+        "toColumn": "ApplyYearMonth"
       }
     ],
     "roles": [
