@@ -5839,6 +5839,43 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "001_Maximum score of the question",
+            "description": " ماکزیمم امتیار سوالات ",
+            "expression": [
+              " ",
+              "                count('crm Internal_quality_survey'[Response_no]) * 5",
+              "                  ",
+              "                  ",
+              "                  -- ماکزیمم امتیار سوالات "
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "002_Score Question",
+            "description": " محاسبه امتیاز هر سوال ",
+            "expression": [
+              "",
+              "               sum('crm Internal_quality_survey'[Response_no])",
+              "",
+              "-- محاسبه امتیاز هر سوال ",
+              "",
+              ""
+            ]
+          },
+          {
+            "name": "003_ Total Score for Question",
+            "description": " امتیاز کل هر سوال ",
+            "expression": [
+              "",
+              "                          DIVIDE('crm Internal_quality_survey'[002_Score Question], 'crm Internal_quality_survey'[001_Maximum score of the question])",
+              "                               ",
+              "                               -- امتیاز کل هر سوال "
+            ],
+            "formatString": "0.00%;-0.00%;0.00%"
+          }
         ]
       },
       {
