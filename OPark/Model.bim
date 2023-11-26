@@ -4857,6 +4857,7 @@
           {
             "name": "Value_improve",
             "dataType": "double",
+            "description": "مبلغ اصلاح شده- در این مبلغ مقدار پرداخت ها با یک ضریب منفی برای کسر و ضریب مثبت یک برای دریافت و ضریب صفر برای مواردی که تجمیع جزئیات می بانشد و خودشان را می شود از مقادیر موجود محاسبه کرد",
             "sourceColumn": "Value_improve",
             "formatString": "#,0"
           },
@@ -5944,6 +5945,113 @@
             }
           }
         ]
+      },
+      {
+        "name": "poolticket park_list",
+        "columns": [
+          {
+            "name": "name",
+            "dataType": "string",
+            "sourceColumn": "name"
+          },
+          {
+            "name": "city",
+            "dataType": "string",
+            "sourceColumn": "city"
+          },
+          {
+            "name": "gender",
+            "dataType": "string",
+            "sourceColumn": "gender"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    poolticket_park_list = Source{[Schema=\"poolticket\",Item=\"park_list\"]}[Data],",
+                "    #\"Removed Columns\" = Table.RemoveColumns(poolticket_park_list,{\"base_url\"}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"name\", \"city\", \"gender\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "poolticket comment_page",
+        "columns": [
+          {
+            "name": "user_name",
+            "dataType": "string",
+            "sourceColumn": "user_name"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          },
+          {
+            "name": "Strengths",
+            "dataType": "string",
+            "sourceColumn": "Strengths"
+          },
+          {
+            "name": "weak points",
+            "dataType": "string",
+            "sourceColumn": "weak points"
+          },
+          {
+            "name": "quality_staff_ interaction",
+            "dataType": "int64",
+            "sourceColumn": "quality_staff_ interaction"
+          },
+          {
+            "name": "Location_access",
+            "dataType": "int64",
+            "sourceColumn": "Location_access"
+          },
+          {
+            "name": "Service_quality",
+            "dataType": "int64",
+            "sourceColumn": "Service_quality"
+          },
+          {
+            "name": "ratio_price_to_quality",
+            "dataType": "int64",
+            "sourceColumn": "ratio_price_to_quality"
+          },
+          {
+            "name": "park_name",
+            "dataType": "string",
+            "sourceColumn": "park_name"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    poolticket_comment_page = Source{[Schema=\"poolticket\",Item=\"comment_page\"]}[Data],",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(poolticket_comment_page,{{\"quality_staff_ interaction\", Int64.Type}, {\"Location_access\", Int64.Type}, {\"Service_quality\", Int64.Type}, {\"ratio_price_to_quality\", Int64.Type}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Iteration\"}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"user_name\", \"Strengths\", \"weak points\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -6231,6 +6339,20 @@
         "fromColumn": "ApplyYearMonth",
         "toTable": "bi DimDate_YearMonth",
         "toColumn": "ApplyYearMonth"
+      },
+      {
+        "name": "c9ce40e9-3f20-404d-b4d1-5bf048bbb613",
+        "fromTable": "poolticket comment_page",
+        "fromColumn": "park_name",
+        "toTable": "poolticket park_list",
+        "toColumn": "name"
+      },
+      {
+        "name": "f5975594-76fc-404b-8464-642d27eff1e1",
+        "fromTable": "poolticket comment_page",
+        "fromColumn": "date",
+        "toTable": "bi DimDate",
+        "toColumn": "Jalali_1"
       }
     ],
     "roles": [
