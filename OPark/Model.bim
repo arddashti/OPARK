@@ -1580,11 +1580,6 @@
             "sourceColumn": "Gender"
           },
           {
-            "name": "ReceptionLogID",
-            "dataType": "int64",
-            "sourceColumn": "ReceptionLogID"
-          },
-          {
             "name": "ActionDescription",
             "dataType": "string",
             "sourceColumn": "ActionDescription"
@@ -1767,7 +1762,7 @@
         ],
         "partitions": [
           {
-            "name": "after_2022_12_01",
+            "name": "after_2022_12_30",
             "source": {
               "type": "m",
               "expression": [
@@ -1775,12 +1770,15 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"today_index\", type date}, {\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\", \"today_index\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value1\",{{\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}, {\"today_index\", type datetime}}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"}),",
                 "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
-                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"})",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] > #datetime(2022, 12, 31, 0, 0, 0))",
                 "in",
-                "    #\"Removed Duplicates\""
+                "    #\"Filtered Rows\""
               ]
             },
             "annotations": [
@@ -1791,12 +1789,56 @@
                   "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                   "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
                   "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
-                  "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"today_index\", type date}, {\"uniccode_Station_Reception\", type text}}),",
-                  "    #\"Removed Duplicates\" = Table.Distinct(#\"Changed Type\", {\"uniccode_Station_Reception\"}),",
-                  "    #\"Removed Columns\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"InsertDate\", \"StationInvoiceNum\"}),",
-                  "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}})",
+                  "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\", \"today_index\"}),",
+                  "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value1\",{{\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}, {\"today_index\", type datetime}}),",
+                  "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"}),",
+                  "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
+                  "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
+                  "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
+                  "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] > #datetime(2022, 12, 31, 0, 0, 0))",
                   "in",
-                  "    #\"Changed Type1\"</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "    #\"Filtered Rows\"</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "before_2022_12_30",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\", \"today_index\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value1\",{{\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}, {\"today_index\", type datetime}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"}),",
+                "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] < #datetime(2022, 12, 31, 0, 0, 0))",
+                "in",
+                "    #\"Filtered Rows\""
+              ]
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>let",
+                  "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                  "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
+                  "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
+                  "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\", \"today_index\"}),",
+                  "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value1\",{{\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}, {\"today_index\", type datetime}}),",
+                  "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"}),",
+                  "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
+                  "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
+                  "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
+                  "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] < #datetime(2022, 12, 31, 0, 0, 0))",
+                  "in",
+                  "    #\"Filtered Rows\"</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -4443,6 +4485,16 @@
             "name": "Reception_CustomerName",
             "dataType": "string",
             "sourceColumn": "Reception_CustomerName"
+          },
+          {
+            "name": "GroupNum",
+            "dataType": "string",
+            "sourceColumn": "GroupNum"
+          },
+          {
+            "name": "IsDelete",
+            "dataType": "boolean",
+            "sourceColumn": "IsDelete"
           }
         ],
         "partitions": [
@@ -5409,73 +5461,6 @@
         ]
       },
       {
-        "name": "bi station_counter",
-        "description": "جدول تعداد نفرات وارد شده به هر ایستگاه به تفکیک نام ایستگاه و تاریخ و ساعت",
-        "columns": [
-          {
-            "name": "bomrang",
-            "dataType": "int64",
-            "sourceColumn": "bomrang"
-          },
-          {
-            "name": "abase",
-            "dataType": "int64",
-            "sourceColumn": "abase"
-          },
-          {
-            "name": "orang",
-            "dataType": "int64",
-            "sourceColumn": "orang"
-          },
-          {
-            "name": "opich",
-            "dataType": "int64",
-            "sourceColumn": "opich"
-          },
-          {
-            "name": "DJ",
-            "dataType": "int64",
-            "sourceColumn": "DJ"
-          },
-          {
-            "name": "DK",
-            "dataType": "int64",
-            "sourceColumn": "DK"
-          },
-          {
-            "name": "time",
-            "dataType": "int64",
-            "sourceColumn": "time"
-          },
-          {
-            "name": "date",
-            "dataType": "string",
-            "sourceColumn": "date"
-          },
-          {
-            "name": "Gender",
-            "dataType": "string",
-            "sourceColumn": "Gender"
-          }
-        ],
-        "partitions": [
-          {
-            "name": "Partition",
-            "dataView": "full",
-            "source": {
-              "type": "m",
-              "expression": [
-                "let",
-                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    bi_station_counter = Source{[Schema=\"bi\",Item=\"station_counter\"]}[Data]",
-                "in",
-                "    bi_station_counter"
-              ]
-            }
-          }
-        ]
-      },
-      {
         "name": "bi DimDate_YearMonth",
         "description": "با توجه به اینکه ریزدانگی داده های در جدول های منابع انسانی با سایر گزارشات متفاوت است بنابراین جهت استفاده از جدول تاریخ نیاز به یک جدول جدید با ریز دانگی در حد ماه می باشد. بنابراین این جدول برای برطرف کردن این نیاز اضافه گردید.",
         "columns": [
@@ -6077,13 +6062,6 @@
         "toColumn": "TicketTypeID (right)"
       },
       {
-        "name": "82d13c20-e188-4c8f-a4a4-53f9c6261d87",
-        "fromTable": "report Reception_Log",
-        "fromColumn": "today_index",
-        "toTable": "bi DimDate",
-        "toColumn": "Miladi"
-      },
-      {
         "name": "d6692146-09ce-42d9-a4d4-410864b83466",
         "fromTable": "report Reception_Log",
         "fromColumn": "StationID",
@@ -6237,13 +6215,6 @@
         "toColumn": "EmployeeID"
       },
       {
-        "name": "2dde360c-d618-4d01-b058-e1b5454f5b9c",
-        "fromTable": "bi station_counter",
-        "fromColumn": "date",
-        "toTable": "bi DimDate",
-        "toColumn": "Jalali_1"
-      },
-      {
         "name": "38b6e32e-f38f-41ee-a39d-90110403f232",
         "fromTable": "rah HR_Pay_employee",
         "fromColumn": "ApplyYearMonth",
@@ -6353,6 +6324,13 @@
         "fromColumn": "date",
         "toTable": "bi DimDate",
         "toColumn": "Jalali_1"
+      },
+      {
+        "name": "0acf3995-3496-42a8-af1a-482aff1ed66a",
+        "fromTable": "report Reception_Log",
+        "fromColumn": "today_index",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi"
       }
     ],
     "roles": [
@@ -7604,10 +7582,6 @@
               },
               {
                 "name": "Gender",
-                "metadataPermission": "none"
-              },
-              {
-                "name": "ReceptionLogID",
                 "metadataPermission": "none"
               },
               {
