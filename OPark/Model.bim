@@ -4569,6 +4569,21 @@
             "name": "unic_code",
             "dataType": "string",
             "sourceColumn": "unic_code"
+          },
+          {
+            "name": "date_search",
+            "dataType": "string",
+            "sourceColumn": "date_search"
+          },
+          {
+            "name": "Hour",
+            "dataType": "int64",
+            "sourceColumn": "Hour"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
           }
         ],
         "partitions": [
@@ -4646,6 +4661,11 @@
             "name": "Gender",
             "dataType": "string",
             "sourceColumn": "Gender"
+          },
+          {
+            "name": "id",
+            "dataType": "string",
+            "sourceColumn": "id"
           }
         ],
         "partitions": [
