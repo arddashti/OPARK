@@ -4556,11 +4556,6 @@
         "name": "analyze per_capita_detail",
         "columns": [
           {
-            "name": "StationID",
-            "dataType": "int64",
-            "sourceColumn": "StationID"
-          },
-          {
             "name": "SUM(UsageAmount)",
             "dataType": "double",
             "sourceColumn": "SUM(UsageAmount)"
@@ -4571,19 +4566,9 @@
             "sourceColumn": "unic_code"
           },
           {
-            "name": "date_search",
+            "name": "unic_code_2",
             "dataType": "string",
-            "sourceColumn": "date_search"
-          },
-          {
-            "name": "Hour",
-            "dataType": "int64",
-            "sourceColumn": "Hour"
-          },
-          {
-            "name": "Gender",
-            "dataType": "string",
-            "sourceColumn": "Gender"
+            "sourceColumn": "unic_code_2"
           }
         ],
         "partitions": [
@@ -4605,7 +4590,34 @@
         "measures": [
           {
             "name": "001_Charge_consumption_per_capita",
-            "expression": " DIVIDE(SUM('analyze per_capita_detail'[SUM(UsageAmount)]),SUM('analyze per_capita'[attendees]))"
+            "expression": " DIVIDE(SUM('analyze per_capita_detail'[SUM(UsageAmount)]),SUM('analyze per_capita'[attendees]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "037_total_amount_sales_at_stations",
+            "description": "جمع مبلغ فروش در ایستگاه ها به تفکیک ساعات و ایستگاه ها در تحلیل روند فروش ",
+            "expression": [
+              "",
+              "",
+              "",
+              "VAR SelectedValue = SELECTEDVALUE('report Station_Reception'[StationName])",
+              "RETURN",
+              "IF(",
+              "    NOT(ISBLANK(SelectedValue)),",
+              "    IF(",
+              "      MAX('report Station_Reception'[StationName] )= SelectedValue,",
+              "       CALCULATE(SUM('analyze per_capita_detail'[SUM(UsageAmount)])),",
+              "        0",
+              "    ),",
+              "    0",
+              ")",
+              "-- ا دلیل استفاده در ویژال نیاز بود که مقادیری که وجود ندارد در عوض فیلتر شدن مقدار آنها صفر شود بنابراین از این فرمولاستفاده گردید.",
+              "",
+              "",
+              "",
+              "--جمع مبلغ فروش در ایستگاه ها به تفکیک ساعات و ایستگاه ها در تحلیل روند فروش "
+            ],
+            "formatString": "#,#"
           }
         ]
       },
@@ -4615,7 +4627,8 @@
           {
             "name": "Hour",
             "dataType": "string",
-            "sourceColumn": "Hour"
+            "sourceColumn": "Hour",
+            "sortByColumn": "id"
           },
           {
             "name": "unic_code",
@@ -4664,7 +4677,7 @@
           },
           {
             "name": "id",
-            "dataType": "string",
+            "dataType": "int64",
             "sourceColumn": "id"
           }
         ],
@@ -4683,6 +4696,17 @@
                 "    #\"Changed Type\""
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "001_per_capita_count",
+            "expression": [
+              "",
+              "",
+              "",
+              "CALCULATE(SUM('analyze per_capita'[entries]))"
+            ]
           }
         ]
       },
@@ -6057,6 +6081,57 @@
             }
           }
         ]
+      },
+      {
+        "name": "analyze Dim_time_per_capita",
+        "columns": [
+          {
+            "name": "date_search",
+            "dataType": "string",
+            "sourceColumn": "date_search"
+          },
+          {
+            "name": "Hour",
+            "dataType": "int64",
+            "sourceColumn": "Hour"
+          },
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "StationID",
+            "dataType": "int64",
+            "sourceColumn": "StationID"
+          },
+          {
+            "name": "unic_code_2",
+            "dataType": "string",
+            "sourceColumn": "unic_code_2"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    analyze_Dim_time_per_capita = Source{[Schema=\"analyze\",Item=\"Dim_time_per_capita\"]}[Data]",
+                "in",
+                "    analyze_Dim_time_per_capita"
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -6272,20 +6347,6 @@
         "toColumn": "unic_code"
       },
       {
-        "name": "ec8c519c-40b2-41ea-acf9-f171f37e2232",
-        "fromTable": "analyze per_capita_detail",
-        "fromColumn": "StationID",
-        "toTable": "report Station",
-        "toColumn": "StationID"
-      },
-      {
-        "name": "dd438c52-397b-4ad9-8ad0-2cda2cd9e0b8",
-        "fromTable": "analyze per_capita",
-        "fromColumn": "date_search",
-        "toTable": "bi DimDate",
-        "toColumn": "date_search"
-      },
-      {
         "name": "df2dd829-ebb0-4ffc-ba9d-0f73125e9d69",
         "fromTable": "report shift",
         "fromColumn": "ApplyYearMonth",
@@ -6299,15 +6360,6 @@
         "fromColumn": "ApplyYearMonth",
         "toTable": "report shift",
         "toColumn": "ApplyYearMonth",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
-        "name": "29ba3b9c-993f-4ed9-9807-df9bd7624790",
-        "toCardinality": "many",
-        "fromTable": "analyze per_capita_detail",
-        "fromColumn": "unic_code",
-        "toTable": "analyze per_capita",
-        "toColumn": "unic_code",
         "crossFilteringBehavior": "bothDirections"
       },
       {
@@ -6351,6 +6403,27 @@
         "fromColumn": "today_index",
         "toTable": "bi DimDate",
         "toColumn": "Miladi"
+      },
+      {
+        "name": "54393cab-203d-48e5-956b-d1f958b65e5b",
+        "fromTable": "analyze Dim_time_per_capita",
+        "fromColumn": "StationID",
+        "toTable": "report Station",
+        "toColumn": "StationID"
+      },
+      {
+        "name": "27a93707-4c5c-4056-bef7-16757c0d900a",
+        "fromTable": "analyze per_capita_detail",
+        "fromColumn": "unic_code_2",
+        "toTable": "analyze Dim_time_per_capita",
+        "toColumn": "unic_code_2"
+      },
+      {
+        "name": "5c884586-2a73-4650-9abd-f583d1c9b519",
+        "fromTable": "analyze Dim_time_per_capita",
+        "fromColumn": "date_search",
+        "toTable": "bi DimDate",
+        "toColumn": "date_search"
       }
     ],
     "roles": [
