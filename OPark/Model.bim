@@ -6132,6 +6132,105 @@
             }
           }
         ]
+      },
+      {
+        "name": "analyze customer_segmentation",
+        "columns": [
+          {
+            "name": "date_search",
+            "dataType": "string",
+            "sourceColumn": "date_search"
+          },
+          {
+            "name": "CustomerMobile",
+            "dataType": "string",
+            "sourceColumn": "CustomerMobile"
+          },
+          {
+            "name": "CustomerName",
+            "dataType": "string",
+            "sourceColumn": "CustomerName"
+          },
+          {
+            "name": "visits",
+            "dataType": "string",
+            "sourceColumn": "visits"
+          },
+          {
+            "name": "number_of_people",
+            "dataType": "int64",
+            "sourceColumn": "number_of_people"
+          },
+          {
+            "name": "Sum_Cost",
+            "dataType": "double",
+            "sourceColumn": "Sum_Cost"
+          },
+          {
+            "name": "Sum_Cahrge",
+            "dataType": "double",
+            "sourceColumn": "Sum_Cahrge"
+          },
+          {
+            "name": "Cost_per_capita",
+            "dataType": "double",
+            "sourceColumn": "Cost_per_capita"
+          },
+          {
+            "name": "Charge_per_capita",
+            "dataType": "double",
+            "sourceColumn": "Charge_per_capita"
+          },
+          {
+            "name": "TicketName",
+            "dataType": "string",
+            "sourceColumn": "TicketName"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "dollar_price",
+            "dataType": "double",
+            "sourceColumn": "dollar_price"
+          },
+          {
+            "name": "dollar_Charge_per_capita",
+            "dataType": "int64",
+            "sourceColumn": "dollar_Charge_per_capita"
+          },
+          {
+            "name": "dollar_Charge_per_capita_Binned",
+            "dataType": "string",
+            "sourceColumn": "dollar_Charge_per_capita [Binned]",
+            "sortByColumn": "binned_order"
+          },
+          {
+            "name": "binned_order",
+            "dataType": "int64",
+            "sourceColumn": "binned_order"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    analyze_customer_segmentation = Source{[Schema=\"analyze\",Item=\"customer_segmentation\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(analyze_customer_segmentation,\"ي\",\"ی\",Replacer.ReplaceText,{\"CustomerName\", \"TicketName\"}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"jyear\", \"jmonthN\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -6421,6 +6520,13 @@
       {
         "name": "5c884586-2a73-4650-9abd-f583d1c9b519",
         "fromTable": "analyze Dim_time_per_capita",
+        "fromColumn": "date_search",
+        "toTable": "bi DimDate",
+        "toColumn": "date_search"
+      },
+      {
+        "name": "f8e82ce3-ea9e-4d46-9fe3-05e833b269aa",
+        "fromTable": "analyze per_capita",
         "fromColumn": "date_search",
         "toTable": "bi DimDate",
         "toColumn": "date_search"
