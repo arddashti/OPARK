@@ -6211,6 +6211,11 @@
             "name": "binned_order",
             "dataType": "int64",
             "sourceColumn": "binned_order"
+          },
+          {
+            "name": "Charge_consumption_percentage",
+            "dataType": "string",
+            "sourceColumn": "Charge_consumption_percentage"
           }
         ],
         "partitions": [
@@ -6530,6 +6535,14 @@
         "fromColumn": "date_search",
         "toTable": "bi DimDate",
         "toColumn": "date_search"
+      },
+      {
+        "name": "5b88cf98-d8af-48ec-9316-8a63a1cd9d1a",
+        "fromTable": "report Reception",
+        "fromColumn": "GroupNum",
+        "toTable": "analyze customer_segmentation",
+        "toColumn": "visits",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
