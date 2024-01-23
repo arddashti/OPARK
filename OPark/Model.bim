@@ -4095,8 +4095,10 @@
               "",
               "CALCULATE (",
               "    SUM ( 'report sales_target'[sales_user_target] ),",
-              "    FILTER ( 'report sales_target', 'report sales_target'[sales_user_ID] <> \"G\" )",
-              ")",
+              "    FILTER ( 'report sales_target', 'report sales_target'[sales_user_ID] <> \"G\" ),",
+              "    USERELATIONSHIP('report sales_target'[year],'bi DimDate'[jyear])",
+              "    ",
+              "    )",
               "--جمع تارگت فروشندگان با توجه به اینکه برای جلوگیری از اضافه شدن جدول برای تارگت های گیشه گروهی در قسمت ای دی یوزر ها برای مقادیر گیشه گروهی عبارت  G درج شده که با فیلتر کردن این داده های عدد تارگت مربوط به قرارداد سازمانی استخراج می گردد."
             ],
             "formatString": "#,#"
@@ -6543,6 +6545,15 @@
         "toTable": "analyze customer_segmentation",
         "toColumn": "visits",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "7c54a803-4709-4bf4-8315-0c7d49ef2105",
+        "toCardinality": "many",
+        "fromTable": "report sales_target",
+        "fromColumn": "year",
+        "toTable": "bi DimDate",
+        "toColumn": "jyear",
+        "isActive": false
       }
     ],
     "roles": [
