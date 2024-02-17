@@ -1762,7 +1762,7 @@
         ],
         "partitions": [
           {
-            "name": "after_2022_12_30",
+            "name": "after_2023_12_30",
             "source": {
               "type": "m",
               "expression": [
@@ -1771,12 +1771,9 @@
                 "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
                 "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\", \"today_index\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value1\",{{\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}, {\"today_index\", type datetime}}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"}),",
-                "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
-                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] > #datetime(2022, 12, 31, 0, 0, 0))",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value1\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type datetime}}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #datetime(2023, 12, 31, 0, 0, 0))",
                 "in",
                 "    #\"Filtered Rows\""
               ]
@@ -1795,7 +1792,7 @@
                   "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
                   "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
                   "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
-                  "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] > #datetime(2022, 12, 31, 0, 0, 0))",
+                  "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] > #datetime(2023, 12, 31, 0, 0, 0))",
                   "in",
                   "    #\"Filtered Rows\"</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
@@ -1803,7 +1800,7 @@
             ]
           },
           {
-            "name": "before_2022_12_30",
+            "name": "before_2023_12_30",
             "source": {
               "type": "m",
               "expression": [
@@ -1817,7 +1814,7 @@
                 "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
                 "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
                 "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] < #datetime(2022, 12, 31, 0, 0, 0))",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] < #datetime(2023, 12, 31, 0, 0, 0))",
                 "in",
                 "    #\"Filtered Rows\""
               ]
@@ -6234,6 +6231,39 @@
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"jyear\", \"jmonthN\"})",
                 "in",
                 "    #\"Removed Columns\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "test test",
+        "columns": [
+          {
+            "name": "test",
+            "dataType": "string",
+            "sourceColumn": "test"
+          },
+          {
+            "type": "calculated",
+            "name": "Calculated Column 1",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "'test test'[test]&\"A\""
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    test_test = Source{[Schema=\"test\",Item=\"test\"]}[Data]",
+                "in",
+                "    test_test"
               ]
             }
           }
