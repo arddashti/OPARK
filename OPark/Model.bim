@@ -1769,11 +1769,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
-                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\", \"today_index\"}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value1\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type datetime}}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #datetime(2023, 12, 31, 0, 0, 0))",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2023, 12, 31))",
                 "in",
                 "    #\"Filtered Rows\""
               ]
@@ -1807,14 +1806,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    report_Reception_Log = Source{[Schema=\"report\",Item=\"Reception_Log\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\"}),",
-                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\", \"today_index\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value1\",{{\"uniccode_Station_Reception\", type text}, {\"date_search\", Int64.Type}, {\"TicketCardMainID\", type text}, {\"today_index\", type datetime}}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"InsertDate\", \"StationInvoiceNum\"}),",
-                "    // اینم ورد باید بررسی گردد که چرا به وجود آمده و چرا یک آیتم تکراری وجود دارد",
-                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"uniccode_Station_Reception\"}),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"ReceptionLogID\"}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns1\", each [today_index] < #datetime(2023, 12, 31, 0, 0, 0))",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2023, 12, 31))",
                 "in",
                 "    #\"Filtered Rows\""
               ]
@@ -4494,6 +4489,16 @@
             "name": "IsDelete",
             "dataType": "boolean",
             "sourceColumn": "IsDelete"
+          },
+          {
+            "name": "InsertDate",
+            "dataType": "dateTime",
+            "sourceColumn": "InsertDate"
+          },
+          {
+            "name": "InsertByUserID",
+            "dataType": "int64",
+            "sourceColumn": "InsertByUserID"
           }
         ],
         "partitions": [
@@ -4506,9 +4511,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    report_Reception = Source{[Schema=\"report\",Item=\"Reception\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception,\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception,\"ي\",\"ی\",Replacer.ReplaceText,{\"Reception_CustomerName\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Replaced Value\", {\"ReceptionID\"})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Removed Duplicates\""
               ]
             }
           }
@@ -4531,6 +4537,11 @@
             "name": "USER_NAME",
             "dataType": "string",
             "sourceColumn": "USER_NAME"
+          },
+          {
+            "name": "insert_type_user",
+            "dataType": "string",
+            "sourceColumn": "insert_type_user"
           }
         ],
         "partitions": [
@@ -4543,7 +4554,7 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    report_Users = Source{[Schema=\"report\",Item=\"Users\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(report_Users,\"ي\",\"ی\",Replacer.ReplaceText,{\"USER_NAME\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(report_Users,\"ي\",\"ی\",Replacer.ReplaceText,{\"USER_NAME\", \"insert_type_user\"})",
                 "in",
                 "    #\"Replaced Value\""
               ]
@@ -6228,9 +6239,10 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    analyze_customer_segmentation = Source{[Schema=\"analyze\",Item=\"customer_segmentation\"]}[Data],",
                 "    #\"Replaced Value\" = Table.ReplaceValue(analyze_customer_segmentation,\"ي\",\"ی\",Replacer.ReplaceText,{\"CustomerName\", \"TicketName\"}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"jyear\", \"jmonthN\"})",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"jyear\", \"jmonthN\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns\", {\"visits\"})",
                 "in",
-                "    #\"Removed Columns\""
+                "    #\"Removed Duplicates\""
               ]
             }
           }
