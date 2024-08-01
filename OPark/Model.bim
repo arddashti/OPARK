@@ -4492,13 +4492,18 @@
           },
           {
             "name": "InsertDate",
-            "dataType": "dateTime",
+            "dataType": "string",
             "sourceColumn": "InsertDate"
           },
           {
             "name": "InsertByUserID",
             "dataType": "int64",
             "sourceColumn": "InsertByUserID"
+          },
+          {
+            "name": "InsertTime",
+            "dataType": "string",
+            "sourceColumn": "InsertTime"
           }
         ],
         "partitions": [
@@ -5992,16 +5997,6 @@
             "name": "name",
             "dataType": "string",
             "sourceColumn": "name"
-          },
-          {
-            "name": "city",
-            "dataType": "string",
-            "sourceColumn": "city"
-          },
-          {
-            "name": "gender",
-            "dataType": "string",
-            "sourceColumn": "gender"
           }
         ],
         "partitions": [
@@ -6015,7 +6010,7 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    poolticket_park_list = Source{[Schema=\"poolticket\",Item=\"park_list\"]}[Data],",
                 "    #\"Removed Columns\" = Table.RemoveColumns(poolticket_park_list,{\"base_url\"}),",
-                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"name\", \"city\", \"gender\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"name\"})",
                 "in",
                 "    #\"Replaced Value\""
               ]
