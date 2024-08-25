@@ -1406,6 +1406,7 @@
               "        FILTER (",
               "            'report Reception_Log',",
               "            'report Reception_Log'[TicketName] = \"گیشه آزاد\"",
+              "            || 'report Reception_Log'[TicketName] = \"کیوسک\"",
               "        ),",
               "FILTER('bi DimDate','bi DimDate'[Counter (#1)] <> 0)",
               "    )",
@@ -1433,6 +1434,7 @@
               "    FILTER (",
               "        'report Reception_Log',",
               "        'report Reception_Log'[TicketName] = \"گیشه آزاد\"",
+              "       || 'report Reception_Log'[TicketName] = \"کیوسک\"",
               "    )",
               ")",
               "--جمع نفرات در گیشه آزاد"
@@ -6653,6 +6655,10 @@
           {
             "memberName": "OPARK\\BI_Financial_BankView",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2733"
+          },
+          {
+            "memberName": "OPARK\\BI_Marketing_Access",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-3126"
           }
         ],
         "tablePermissions": [
