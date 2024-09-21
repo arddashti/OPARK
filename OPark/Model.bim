@@ -77,7 +77,8 @@
             "name": "JQuarterT",
             "dataType": "string",
             "description": "نام فصل تاریخ شمسی",
-            "sourceColumn": "JQuarterT"
+            "sourceColumn": "JQuarterT",
+            "sortByColumn": "JquarterN"
           },
           {
             "name": "JWeekDay",
@@ -6186,7 +6187,9 @@
           {
             "name": "Charge_per_capita",
             "dataType": "double",
-            "sourceColumn": "Charge_per_capita"
+            "description": "متوسط تعداد نفرات در هر روز",
+            "sourceColumn": "Charge_per_capita",
+            "formatString": "#,#"
           },
           {
             "name": "TicketName",
@@ -6223,6 +6226,11 @@
             "name": "Charge_consumption_percentage",
             "dataType": "string",
             "sourceColumn": "Charge_consumption_percentage"
+          },
+          {
+            "name": "dollar_Charge",
+            "dataType": "double",
+            "sourceColumn": "dollar_Charge"
           }
         ],
         "partitions": [
@@ -6242,6 +6250,50 @@
                 "    #\"Removed Duplicates\""
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "039_total_number_of_people",
+            "description": "تعداد کل میهمانان از جدول دسته بندی میهمانان",
+            "expression": [
+              " CALCULATE(SUM('analyze customer_segmentation'[number_of_people]))",
+              "",
+              "--تعداد کل میهمانان از جدول دسته بندی میهمانان"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "038_Number_of_days_of_park_activity",
+            "description": "تعداد روز فعالیت پارک",
+            "expression": [
+              " CALCULATE(DISTINCTCOUNT('analyze customer_segmentation'[date_search]))",
+              "",
+              "--تعداد روز فعالیت پارک"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "040_Average_number_of_people_per_day",
+            "expression": [
+              "CALCULATE(DIVIDE('analyze customer_segmentation'[039_total_number_of_people],'analyze customer_segmentation'[038_Number_of_days_of_park_activity]))",
+              "",
+              "",
+              "--متوسط تعداد نفرات در هر روز"
+            ]
+          },
+          {
+            "name": "041_Average_number_of_people_per_day_all",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    DIVIDE(",
+              "        'analyze customer_segmentation'[039_total_number_of_people],",
+              "        'analyze customer_segmentation'[038_Number_of_days_of_park_activity]",
+              "    ),",
+              "    ALL('bi DimDate')  -- Ignores any filters on all columns in the bi DimDate table",
+              ")"
+            ]
           }
         ]
       },
@@ -6578,14 +6630,6 @@
         "toColumn": "date_search"
       },
       {
-        "name": "5b88cf98-d8af-48ec-9316-8a63a1cd9d1a",
-        "fromTable": "report Reception",
-        "fromColumn": "GroupNum",
-        "toTable": "analyze customer_segmentation",
-        "toColumn": "visits",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
         "name": "7c54a803-4709-4bf4-8315-0c7d49ef2105",
         "toCardinality": "many",
         "fromTable": "report sales_target",
@@ -6593,6 +6637,22 @@
         "toTable": "bi DimDate",
         "toColumn": "jyear",
         "isActive": false
+      },
+      {
+        "name": "5b88cf98-d8af-48ec-9316-8a63a1cd9d1a",
+        "fromTable": "report Reception",
+        "fromColumn": "GroupNum",
+        "toTable": "analyze customer_segmentation",
+        "toColumn": "visits",
+        "isActive": false,
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "c6d0213d-f76c-4272-ac2e-2c732fb10d58",
+        "fromTable": "analyze customer_segmentation",
+        "fromColumn": "date_search",
+        "toTable": "bi DimDate",
+        "toColumn": "date_search"
       }
     ],
     "roles": [
