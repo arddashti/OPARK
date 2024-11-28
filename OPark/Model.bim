@@ -6329,6 +6329,120 @@
             }
           }
         ]
+      },
+      {
+        "name": "rah payable_documents_V2",
+        "columns": [
+          {
+            "name": "VoucherItemID",
+            "dataType": "int64",
+            "sourceColumn": "VoucherItemID"
+          },
+          {
+            "name": "VoucherRef",
+            "dataType": "int64",
+            "sourceColumn": "VoucherRef"
+          },
+          {
+            "name": "Description",
+            "dataType": "string",
+            "sourceColumn": "Description"
+          },
+          {
+            "name": "Date_miladi",
+            "dataType": "string",
+            "sourceColumn": "Date_miladi"
+          },
+          {
+            "name": "Title_DL",
+            "dataType": "string",
+            "sourceColumn": "Title_DL"
+          },
+          {
+            "name": "total_name",
+            "dataType": "string",
+            "sourceColumn": "total_name"
+          },
+          {
+            "name": "moin_name",
+            "dataType": "string",
+            "sourceColumn": "moin_name"
+          },
+          {
+            "name": "level4_name",
+            "dataType": "string",
+            "sourceColumn": "level4_name"
+          },
+          {
+            "name": "level5_name",
+            "dataType": "string",
+            "sourceColumn": "level5_name"
+          },
+          {
+            "name": "level6_name",
+            "dataType": "string",
+            "sourceColumn": "level6_name"
+          },
+          {
+            "name": "change_amount",
+            "dataType": "double",
+            "sourceColumn": "change_amount",
+            "formatString": "#,#"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_payable_documents_V2 = Source{[Schema=\"rah\",Item=\"payable_documents_V2\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_payable_documents_V2,\"ي\",\"ی\",Replacer.ReplaceText,{\"Description\", \"Title_DL\", \"total_name\", \"moin_name\", \"level4_name\", \"level5_name\", \"level6_name\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "club customer",
+        "columns": [
+          {
+            "name": "CustomerID",
+            "dataType": "int64",
+            "sourceColumn": "CustomerID"
+          },
+          {
+            "name": "InsertDate",
+            "dataType": "string",
+            "sourceColumn": "InsertDate"
+          },
+          {
+            "name": "Mobile",
+            "dataType": "string",
+            "sourceColumn": "Mobile"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    club_customer = Source{[Schema=\"club\",Item=\"customer\"]}[Data]",
+                "in",
+                "    club_customer"
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -6653,6 +6767,20 @@
         "fromColumn": "date_search",
         "toTable": "bi DimDate",
         "toColumn": "date_search"
+      },
+      {
+        "name": "f620048f-84a5-4e05-917c-89675454a740",
+        "fromTable": "rah payable_documents_V2",
+        "fromColumn": "Date_miladi",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi - text"
+      },
+      {
+        "name": "91fbd49a-a45a-4a2c-8776-bf701d31ca5f",
+        "fromTable": "club customer",
+        "fromColumn": "InsertDate",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi - text"
       }
     ],
     "roles": [
