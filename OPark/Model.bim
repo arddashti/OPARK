@@ -6410,6 +6410,7 @@
       },
       {
         "name": "club customer",
+        "description": "جدول مربوط به اطلااعت باشگاه مشتریان",
         "columns": [
           {
             "name": "CustomerID",
@@ -6425,6 +6426,11 @@
             "name": "Mobile",
             "dataType": "string",
             "sourceColumn": "Mobile"
+          },
+          {
+            "name": "ClubLevelName",
+            "dataType": "string",
+            "sourceColumn": "ClubLevelName"
           }
         ],
         "partitions": [
@@ -6436,9 +6442,48 @@
               "expression": [
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    club_customer = Source{[Schema=\"club\",Item=\"customer\"]}[Data]",
+                "    club_customer = Source{[Schema=\"club\",Item=\"customer\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(club_customer,\"ي\",\"ی\",Replacer.ReplaceText,{\"ClubLevelName\"})",
                 "in",
-                "    club_customer"
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "club Customer_Score",
+        "description": "اطلاعات مربوط به امتیازات دریافت شده درباشگاه مشتریان",
+        "columns": [
+          {
+            "name": "CustomerID",
+            "dataType": "int64",
+            "sourceColumn": "CustomerID"
+          },
+          {
+            "name": "AddedScore",
+            "dataType": "int64",
+            "sourceColumn": "AddedScore"
+          },
+          {
+            "name": "ScoreTypeTitle",
+            "dataType": "string",
+            "sourceColumn": "ScoreTypeTitle"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    club_Customer_Score = Source{[Schema=\"club\",Item=\"Customer_Score\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(club_Customer_Score,\"ي\",\"ی\",Replacer.ReplaceText,{\"ScoreTypeTitle\"})",
+                "in",
+                "    #\"Replaced Value\""
               ]
             }
           }
@@ -6781,6 +6826,22 @@
         "fromColumn": "InsertDate",
         "toTable": "bi DimDate",
         "toColumn": "Miladi - text"
+      },
+      {
+        "name": "c524edbd-5ed2-4442-916d-043c53a7ac4e",
+        "toCardinality": "many",
+        "fromTable": "analyze customer_segmentation",
+        "fromColumn": "CustomerMobile",
+        "toTable": "club customer",
+        "toColumn": "Mobile",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "2a1a1815-42d4-4de3-ab59-1ed87b03d8b5",
+        "fromTable": "club Customer_Score",
+        "fromColumn": "CustomerID",
+        "toTable": "club customer",
+        "toColumn": "CustomerID"
       }
     ],
     "roles": [
