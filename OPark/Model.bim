@@ -6425,6 +6425,11 @@
             "name": "Mobile",
             "dataType": "string",
             "sourceColumn": "Mobile"
+          },
+          {
+            "name": "ClubLevelName",
+            "dataType": "string",
+            "sourceColumn": "ClubLevelName"
           }
         ],
         "partitions": [
@@ -6439,6 +6444,105 @@
                 "    club_customer = Source{[Schema=\"club\",Item=\"customer\"]}[Data]",
                 "in",
                 "    club_customer"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "club Customer_Score",
+        "columns": [
+          {
+            "name": "CustomerID",
+            "dataType": "int64",
+            "sourceColumn": "CustomerID"
+          },
+          {
+            "name": "AddedScore",
+            "dataType": "int64",
+            "sourceColumn": "AddedScore"
+          },
+          {
+            "name": "ScoreTypeTitle",
+            "dataType": "string",
+            "sourceColumn": "ScoreTypeTitle"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    club_Customer_Score = Source{[Schema=\"club\",Item=\"Customer_Score\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(club_Customer_Score,\"ي\",\"ی\",Replacer.ReplaceText,{\"ScoreTypeTitle\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "club Customer_Prize",
+        "columns": [
+          {
+            "name": "CustomerID",
+            "dataType": "int64",
+            "sourceColumn": "CustomerID"
+          },
+          {
+            "name": "InsertDate",
+            "dataType": "dateTime",
+            "sourceColumn": "InsertDate"
+          },
+          {
+            "name": "PrizeDiscountCode",
+            "dataType": "string",
+            "sourceColumn": "PrizeDiscountCode"
+          },
+          {
+            "name": "PrizeScore",
+            "dataType": "int64",
+            "sourceColumn": "PrizeScore"
+          },
+          {
+            "name": "IsUsed",
+            "dataType": "boolean",
+            "sourceColumn": "IsUsed"
+          },
+          {
+            "name": "UsedDate",
+            "dataType": "dateTime",
+            "sourceColumn": "UsedDate"
+          },
+          {
+            "name": "PrizeTitle",
+            "dataType": "string",
+            "sourceColumn": "PrizeTitle"
+          },
+          {
+            "name": "RequireScore",
+            "dataType": "int64",
+            "sourceColumn": "RequireScore"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    club_Customer_Prize = Source{[Schema=\"club\",Item=\"Customer_Prize\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(club_Customer_Prize,\"ي\",\"ی\",Replacer.ReplaceText,{\"PrizeTitle\"})",
+                "in",
+                "    #\"Replaced Value\""
               ]
             }
           }
@@ -6781,6 +6885,15 @@
         "fromColumn": "InsertDate",
         "toTable": "bi DimDate",
         "toColumn": "Miladi - text"
+      },
+      {
+        "name": "65a229d2-5bb1-4160-8315-dff73af52f29",
+        "toCardinality": "many",
+        "fromTable": "analyze customer_segmentation",
+        "fromColumn": "CustomerMobile",
+        "toTable": "club customer",
+        "toColumn": "Mobile",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
