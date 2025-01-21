@@ -6231,6 +6231,11 @@
             "name": "dollar_Charge",
             "dataType": "double",
             "sourceColumn": "dollar_Charge"
+          },
+          {
+            "name": "AVG_ticket_price",
+            "dataType": "double",
+            "sourceColumn": "AVG_ticket_price"
           }
         ],
         "partitions": [
@@ -6294,6 +6299,19 @@
               "    ALL('bi DimDate')  -- Ignores any filters on all columns in the bi DimDate table",
               ")"
             ]
+          },
+          {
+            "name": "043_AVG_ticket_price_dollar",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    DIVIDE(",
+              "        AVERAGE('analyze customer_segmentation'[AVG_ticket_price]),",
+              "        AVERAGE('analyze customer_segmentation'[dollar_price])",
+              "    )",
+              ")"
+            ],
+            "formatString": "0"
           }
         ]
       },
@@ -6430,6 +6448,51 @@
             "name": "ClubLevelName",
             "dataType": "string",
             "sourceColumn": "ClubLevelName"
+          },
+          {
+            "name": "IsFirstLogin",
+            "dataType": "boolean",
+            "sourceColumn": "IsFirstLogin"
+          },
+          {
+            "name": "FirstLoginDate",
+            "dataType": "dateTime",
+            "sourceColumn": "FirstLoginDate"
+          },
+          {
+            "name": "SumScore",
+            "dataType": "int64",
+            "sourceColumn": "SumScore"
+          },
+          {
+            "name": "CurrentScore",
+            "dataType": "int64",
+            "sourceColumn": "CurrentScore"
+          },
+          {
+            "name": "LastScoreQueryDate",
+            "dataType": "dateTime",
+            "sourceColumn": "LastScoreQueryDate"
+          },
+          {
+            "name": "IntroducerCustomerID",
+            "dataType": "int64",
+            "sourceColumn": "IntroducerCustomerID"
+          },
+          {
+            "name": "IsAlreadyUsedInFriendInvite",
+            "dataType": "boolean",
+            "sourceColumn": "IsAlreadyUsedInFriendInvite"
+          },
+          {
+            "name": "IsSetIntroducerScore",
+            "dataType": "boolean",
+            "sourceColumn": "IsSetIntroducerScore"
+          },
+          {
+            "name": "MinScore",
+            "dataType": "int64",
+            "sourceColumn": "MinScore"
           }
         ],
         "partitions": [
@@ -6446,6 +6509,16 @@
                 "    club_customer"
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "042_MostPopularPrizes",
+            "expression": [
+              " ",
+              "CALCULATE( COUNT('club Customer_Prize'[CustomerPrizeID]))",
+              ""
+            ]
           }
         ]
       },
@@ -6466,6 +6539,66 @@
             "name": "ScoreTypeTitle",
             "dataType": "string",
             "sourceColumn": "ScoreTypeTitle"
+          },
+          {
+            "name": "FriendMobileInFriendInvite",
+            "dataType": "string",
+            "sourceColumn": "FriendMobileInFriendInvite"
+          },
+          {
+            "name": "InsertDate",
+            "dataType": "dateTime",
+            "sourceColumn": "InsertDate"
+          },
+          {
+            "name": "IsApproved",
+            "dataType": "boolean",
+            "sourceColumn": "IsApproved"
+          },
+          {
+            "name": "ApprovedDate",
+            "dataType": "dateTime",
+            "sourceColumn": "ApprovedDate"
+          },
+          {
+            "name": "TransferFromCustomerID",
+            "dataType": "int64",
+            "sourceColumn": "TransferFromCustomerID"
+          },
+          {
+            "name": "TransferToCustomerID",
+            "dataType": "int64",
+            "sourceColumn": "TransferToCustomerID"
+          },
+          {
+            "name": "AddScoreByManagementUserID",
+            "dataType": "int64",
+            "sourceColumn": "AddScoreByManagementUserID"
+          },
+          {
+            "name": "ManagementScoringID",
+            "dataType": "int64",
+            "sourceColumn": "ManagementScoringID"
+          },
+          {
+            "name": "SurveyID",
+            "dataType": "int64",
+            "sourceColumn": "SurveyID"
+          },
+          {
+            "name": "ReceptionSumAmount",
+            "dataType": "int64",
+            "sourceColumn": "ReceptionSumAmount"
+          },
+          {
+            "name": "PerAmount",
+            "dataType": "int64",
+            "sourceColumn": "PerAmount"
+          },
+          {
+            "name": "Score",
+            "dataType": "int64",
+            "sourceColumn": "Score"
           }
         ],
         "partitions": [
@@ -6528,6 +6661,26 @@
             "name": "RequireScore",
             "dataType": "int64",
             "sourceColumn": "RequireScore"
+          },
+          {
+            "name": "CustomerPrizeID",
+            "dataType": "int64",
+            "sourceColumn": "CustomerPrizeID"
+          },
+          {
+            "name": "IsDelete",
+            "dataType": "boolean",
+            "sourceColumn": "IsDelete"
+          },
+          {
+            "name": "DeleteByManagementUserID",
+            "dataType": "int64",
+            "sourceColumn": "DeleteByManagementUserID"
+          },
+          {
+            "name": "DeleteDate",
+            "dataType": "dateTime",
+            "sourceColumn": "DeleteDate"
           }
         ],
         "partitions": [
@@ -6894,6 +7047,20 @@
         "toTable": "club customer",
         "toColumn": "Mobile",
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "c2e4ba70-a983-493d-893c-e958b304afb1",
+        "fromTable": "club Customer_Score",
+        "fromColumn": "CustomerID",
+        "toTable": "club customer",
+        "toColumn": "CustomerID"
+      },
+      {
+        "name": "c8b14833-63c7-4831-a938-70f7abc1deb1",
+        "fromTable": "club Customer_Prize",
+        "fromColumn": "CustomerID",
+        "toTable": "club customer",
+        "toColumn": "CustomerID"
       }
     ],
     "roles": [
