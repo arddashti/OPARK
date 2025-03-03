@@ -4526,6 +4526,17 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "044_number_of_visit_customer",
+            "description": "متوسط تعداد حضور میهمانان در پارک",
+            "expression": [
+              " DIVIDE(DISTINCTCOUNT('report Reception'[ReceptionID]),DISTINCTCOUNT('report Reception'[Reception_CustomerMobile]))",
+              "",
+              "--متوسط تعداد حضور میهمانان در پارک"
+            ]
+          }
         ]
       },
       {
@@ -6280,6 +6291,7 @@
           },
           {
             "name": "040_Average_number_of_people_per_day",
+            "description": "متوسط تعداد نفرات در هر روز",
             "expression": [
               "CALCULATE(DIVIDE('analyze customer_segmentation'[039_total_number_of_people],'analyze customer_segmentation'[038_Number_of_days_of_park_activity]))",
               "",
@@ -6302,6 +6314,7 @@
           },
           {
             "name": "043_AVG_ticket_price_dollar",
+            "description": "متوسط قیمت دلاری بلیط",
             "expression": [
               "",
               "CALCULATE(",
@@ -6309,7 +6322,9 @@
               "        AVERAGE('analyze customer_segmentation'[AVG_ticket_price]),",
               "        AVERAGE('analyze customer_segmentation'[dollar_price])",
               "    )",
-              ")"
+              ")",
+              "",
+              "--متوسط قیمت دلاری بلیط"
             ],
             "formatString": "0"
           }
