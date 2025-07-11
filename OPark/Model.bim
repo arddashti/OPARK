@@ -1775,7 +1775,7 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2023, 12, 31))",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2025, 3, 1))",
                 "in",
                 "    #\"Filtered Rows\""
               ]
@@ -1812,7 +1812,7 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2023, 12, 31))",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2025, 3, 1))",
                 "in",
                 "    #\"Filtered Rows\""
               ]
