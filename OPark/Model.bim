@@ -595,13 +595,13 @@
           },
           {
             "name": "uniccode_Station_Reception",
-            "dataType": "string",
+            "dataType": "int64",
             "description": "شماره یونیک این جدول که از اتصال شماره ایستگاه،شماره مشتری ، تاریخ خرید و شماره فاکتور خرید ساخته می شود",
             "sourceColumn": "uniccode_Station_Reception"
           },
           {
             "name": "SumProductPrice",
-            "dataType": "int64",
+            "dataType": "double",
             "description": "جمع قیمت پرداختی که از ضرب تعداد در قیمت پایه محاسبه می شود",
             "sourceColumn": "SumProductPrice"
           }
@@ -617,9 +617,9 @@
                 "    report_Station_Reception = Source{[Schema=\"report\",Item=\"Station_Reception\"]}[Data],",
                 "    #\"Removed Columns\" = Table.RemoveColumns(report_Station_Reception,{\"ReceptionID\", \"StationInvoiceNum\"}),",
                 "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"ProductName\", \"StationName\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"uniccode_Station_Reception\", type text}})",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Replaced Value\",{\"uniccode_Station_Reception_old\"})",
                 "in",
-                "    #\"Changed Type\""
+                "    #\"Removed Columns1\""
               ]
             },
             "annotations": [
@@ -1717,7 +1717,7 @@
           },
           {
             "name": "uniccode_Station_Reception",
-            "dataType": "string",
+            "dataType": "int64",
             "sourceColumn": "uniccode_Station_Reception"
           },
           {
@@ -1775,9 +1775,10 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2025, 3, 1))",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2025, 3, 1)),",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"})",
                 "in",
-                "    #\"Filtered Rows\""
+                "    #\"Removed Columns1\""
               ]
             },
             "annotations": [
@@ -1812,9 +1813,10 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2025, 3, 1))",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2025, 3, 1)),",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"})",
                 "in",
-                "    #\"Filtered Rows\""
+                "    #\"Removed Columns1\""
               ]
             },
             "annotations": [
@@ -6709,6 +6711,64 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    club_Customer_Prize = Source{[Schema=\"club\",Item=\"Customer_Prize\"]}[Data],",
                 "    #\"Replaced Value\" = Table.ReplaceValue(club_Customer_Prize,\"ي\",\"ی\",Replacer.ReplaceText,{\"PrizeTitle\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "analyze Customer_Activity_Summary",
+        "description": "خلاصه‌ی خرید/بازدید مشتری",
+        "columns": [
+          {
+            "name": "CustomerMobile",
+            "dataType": "string",
+            "sourceColumn": "CustomerMobile"
+          },
+          {
+            "name": "CustomerName",
+            "dataType": "string",
+            "sourceColumn": "CustomerName"
+          },
+          {
+            "name": "min_date",
+            "dataType": "string",
+            "sourceColumn": "min_date"
+          },
+          {
+            "name": "max_date",
+            "dataType": "string",
+            "sourceColumn": "max_date"
+          },
+          {
+            "name": "visit_count",
+            "dataType": "int64",
+            "sourceColumn": "visit_count"
+          },
+          {
+            "name": "sum_cost",
+            "dataType": "double",
+            "sourceColumn": "sum_cost"
+          },
+          {
+            "name": "sum_ticket_price",
+            "dataType": "int64",
+            "sourceColumn": "sum_ticket_price"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    analyze_Customer_Activity_Summary = Source{[Schema=\"analyze\",Item=\"Customer_Activity_Summary\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(analyze_Customer_Activity_Summary,\"ي\",\"ی\",Replacer.ReplaceText,{\"CustomerName\"})",
                 "in",
                 "    #\"Replaced Value\""
               ]
