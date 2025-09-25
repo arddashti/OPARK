@@ -617,9 +617,10 @@
                 "    report_Station_Reception = Source{[Schema=\"report\",Item=\"Station_Reception\"]}[Data],",
                 "    #\"Removed Columns\" = Table.RemoveColumns(report_Station_Reception,{\"ReceptionID\", \"StationInvoiceNum\"}),",
                 "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"ProductName\", \"StationName\"}),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Replaced Value\",{\"uniccode_Station_Reception_old\"})",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Replaced Value\",{\"uniccode_Station_Reception_old\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns1\",{{\"uniccode_Station_Reception\", Int32.Type}})",
                 "in",
-                "    #\"Removed Columns1\""
+                "    #\"Changed Type\""
               ]
             },
             "annotations": [
@@ -1776,9 +1777,10 @@
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
                 "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2025, 3, 1)),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"})",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"}),",
+                "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Removed Columns1\",{{\"uniccode_Station_Reception\", Int32.Type}})",
                 "in",
-                "    #\"Removed Columns1\""
+                "    #\"Changed Type1\""
               ]
             },
             "annotations": [
@@ -1814,9 +1816,10 @@
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
                 "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2025, 3, 1)),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"})",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"}),",
+                "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Removed Columns1\",{{\"uniccode_Station_Reception\", Int32.Type}})",
                 "in",
-                "    #\"Removed Columns1\""
+                "    #\"Changed Type1\""
               ]
             },
             "annotations": [
@@ -6775,6 +6778,110 @@
             }
           }
         ]
+      },
+      {
+        "name": "rah cost_center_expense_details",
+        "columns": [
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Code_SL",
+            "dataType": "string",
+            "sourceColumn": "Code_SL"
+          },
+          {
+            "name": "Title_SL",
+            "dataType": "string",
+            "sourceColumn": "Title_SL"
+          },
+          {
+            "name": "Code_GL",
+            "dataType": "string",
+            "sourceColumn": "Code_GL"
+          },
+          {
+            "name": "Title_GL",
+            "dataType": "string",
+            "sourceColumn": "Title_GL"
+          },
+          {
+            "name": "Code_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Code_AccountGroup"
+          },
+          {
+            "name": "Title_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Title_AccountGroup"
+          },
+          {
+            "name": "Code_DL_level4",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level4"
+          },
+          {
+            "name": "Title_DL_level4",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level4"
+          },
+          {
+            "name": "Code_DL_level5",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level5"
+          },
+          {
+            "name": "Title_DL_level5",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level5"
+          },
+          {
+            "name": "Code_DL_level6",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level6"
+          },
+          {
+            "name": "Title_DL_level6",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level6"
+          },
+          {
+            "name": "change_amount",
+            "dataType": "double",
+            "sourceColumn": "change_amount",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Debit",
+            "dataType": "double",
+            "sourceColumn": "Debit"
+          },
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "sourceColumn": "Credit"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_cost_center_expense_details = Source{[Schema=\"rah\",Item=\"cost_center_expense_details\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_cost_center_expense_details,\"ي\",\"ی\",Replacer.ReplaceValue,{\"Date\", \"Title_SL\", \"Title_GL\", \"Title_AccountGroup\", \"Title_DL_level4\", \"Title_DL_level5\", \"Title_DL_level6\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"Date\", type date}})",
+                "in",
+                "    #\"Changed Type\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -7136,6 +7243,13 @@
         "fromColumn": "CustomerID",
         "toTable": "club customer",
         "toColumn": "CustomerID"
+      },
+      {
+        "name": "529abcb5-5ee7-488c-8286-5c621d4b3a13",
+        "fromTable": "rah cost_center_expense_details",
+        "fromColumn": "Date",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi"
       }
     ],
     "roles": [
