@@ -6252,6 +6252,11 @@
             "name": "AVG_ticket_price",
             "dataType": "double",
             "sourceColumn": "AVG_ticket_price"
+          },
+          {
+            "name": "frist_date_flag",
+            "dataType": "int64",
+            "sourceColumn": "frist_date_flag"
           }
         ],
         "partitions": [
@@ -6882,6 +6887,197 @@
             }
           }
         ]
+      },
+      {
+        "name": "rah sales_revenue_details",
+        "columns": [
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Code_SL",
+            "dataType": "string",
+            "sourceColumn": "Code_SL"
+          },
+          {
+            "name": "Title_SL",
+            "dataType": "string",
+            "sourceColumn": "Title_SL"
+          },
+          {
+            "name": "Code_GL",
+            "dataType": "string",
+            "sourceColumn": "Code_GL"
+          },
+          {
+            "name": "Title_GL",
+            "dataType": "string",
+            "sourceColumn": "Title_GL"
+          },
+          {
+            "name": "Code_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Code_AccountGroup"
+          },
+          {
+            "name": "Title_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Title_AccountGroup"
+          },
+          {
+            "name": "Code_DL_level4",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level4"
+          },
+          {
+            "name": "Title_DL_level4",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level4"
+          },
+          {
+            "name": "Code_DL_level5",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level5"
+          },
+          {
+            "name": "Title_DL_level5",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level5"
+          },
+          {
+            "name": "Code_DL_level6",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level6"
+          },
+          {
+            "name": "Title_DL_level6",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level6"
+          },
+          {
+            "name": "change_amount",
+            "dataType": "double",
+            "sourceColumn": "change_amount"
+          },
+          {
+            "name": "Debit",
+            "dataType": "double",
+            "sourceColumn": "Debit"
+          },
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "sourceColumn": "Credit"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_sales_revenue_details = Source{[Schema=\"rah\",Item=\"sales_revenue_details\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_sales_revenue_details,\"ي\",\"ی\",Replacer.ReplaceText,{\"Title_SL\", \"Title_GL\", \"Title_AccountGroup\", \"Title_DL_level4\", \"Title_DL_level5\", \"Title_DL_level6\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "rah sales",
+        "columns": [
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Quantity",
+            "dataType": "double",
+            "sourceColumn": "Quantity",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Fee",
+            "dataType": "double",
+            "sourceColumn": "Fee",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Price",
+            "dataType": "double",
+            "sourceColumn": "Price",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Status",
+            "dataType": "int64",
+            "sourceColumn": "Status"
+          },
+          {
+            "name": "ReductionAmount",
+            "dataType": "double",
+            "sourceColumn": "ReductionAmount",
+            "formatString": "#,#"
+          },
+          {
+            "name": "AdditionAmount",
+            "dataType": "double",
+            "sourceColumn": "AdditionAmount",
+            "formatString": "#,#"
+          },
+          {
+            "name": "NetPrice",
+            "dataType": "double",
+            "sourceColumn": "NetPrice",
+            "formatString": "#,#"
+          },
+          {
+            "name": "ProductID",
+            "dataType": "int64",
+            "sourceColumn": "ProductID"
+          },
+          {
+            "name": "Product_name",
+            "dataType": "string",
+            "sourceColumn": "Product_name"
+          },
+          {
+            "name": "Unit_name",
+            "dataType": "string",
+            "sourceColumn": "Unit_name"
+          },
+          {
+            "name": "SalesArea_name",
+            "dataType": "string",
+            "sourceColumn": "SalesArea_name"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_sales = Source{[Schema=\"rah\",Item=\"sales\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_sales,\"ي\",\"ی\",Replacer.ReplaceText,{\"Product_name\", \"Unit_name\", \"SalesArea_name\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"Date\", type date}})",
+                "in",
+                "    #\"Changed Type\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
@@ -7247,6 +7443,13 @@
       {
         "name": "529abcb5-5ee7-488c-8286-5c621d4b3a13",
         "fromTable": "rah cost_center_expense_details",
+        "fromColumn": "Date",
+        "toTable": "bi DimDate",
+        "toColumn": "Miladi"
+      },
+      {
+        "name": "b277eea6-984d-4bc0-b909-e5b0d6ab0ce9",
+        "fromTable": "rah sales",
         "fromColumn": "Date",
         "toTable": "bi DimDate",
         "toColumn": "Miladi"
@@ -8692,6 +8895,57 @@
           {
             "memberName": "OPARK\\BI_Park_View",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2776"
+          }
+        ]
+      },
+      {
+        "name": "BI_bargh",
+        "description": "داشبوردهای ماترسی هزینه راهکاران-واحد برق",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_bargh",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-3169"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[Code_DL_level5] = \"61016\""
+          }
+        ]
+      },
+      {
+        "name": "BI_tasisat",
+        "description": "داشبوردهای ماترسی هزینه راهکاران-واحد تاسیسات",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_tasisat",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-3170"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[Code_DL_level5] = \"61017\""
+          }
+        ]
+      },
+      {
+        "name": "BI_marketing",
+        "description": "داشبوردهای ماترسی هزینه راهکاران-واحد مارکتینگ",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_Marketing_Access",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-3126"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[Code_DL_level5] = \"61031\""
           }
         ]
       }
