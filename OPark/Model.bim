@@ -6867,6 +6867,11 @@
             "name": "Credit",
             "dataType": "double",
             "sourceColumn": "Credit"
+          },
+          {
+            "name": "doc_type",
+            "dataType": "string",
+            "sourceColumn": "doc_type"
           }
         ],
         "partitions": [
@@ -6889,108 +6894,6 @@
         ]
       },
       {
-        "name": "rah sales_revenue_details",
-        "columns": [
-          {
-            "name": "Date",
-            "dataType": "dateTime",
-            "sourceColumn": "Date"
-          },
-          {
-            "name": "Code_SL",
-            "dataType": "string",
-            "sourceColumn": "Code_SL"
-          },
-          {
-            "name": "Title_SL",
-            "dataType": "string",
-            "sourceColumn": "Title_SL"
-          },
-          {
-            "name": "Code_GL",
-            "dataType": "string",
-            "sourceColumn": "Code_GL"
-          },
-          {
-            "name": "Title_GL",
-            "dataType": "string",
-            "sourceColumn": "Title_GL"
-          },
-          {
-            "name": "Code_AccountGroup",
-            "dataType": "string",
-            "sourceColumn": "Code_AccountGroup"
-          },
-          {
-            "name": "Title_AccountGroup",
-            "dataType": "string",
-            "sourceColumn": "Title_AccountGroup"
-          },
-          {
-            "name": "Code_DL_level4",
-            "dataType": "string",
-            "sourceColumn": "Code_DL_level4"
-          },
-          {
-            "name": "Title_DL_level4",
-            "dataType": "string",
-            "sourceColumn": "Title_DL_level4"
-          },
-          {
-            "name": "Code_DL_level5",
-            "dataType": "string",
-            "sourceColumn": "Code_DL_level5"
-          },
-          {
-            "name": "Title_DL_level5",
-            "dataType": "string",
-            "sourceColumn": "Title_DL_level5"
-          },
-          {
-            "name": "Code_DL_level6",
-            "dataType": "string",
-            "sourceColumn": "Code_DL_level6"
-          },
-          {
-            "name": "Title_DL_level6",
-            "dataType": "string",
-            "sourceColumn": "Title_DL_level6"
-          },
-          {
-            "name": "change_amount",
-            "dataType": "double",
-            "sourceColumn": "change_amount"
-          },
-          {
-            "name": "Debit",
-            "dataType": "double",
-            "sourceColumn": "Debit"
-          },
-          {
-            "name": "Credit",
-            "dataType": "double",
-            "sourceColumn": "Credit"
-          }
-        ],
-        "partitions": [
-          {
-            "name": "Partition",
-            "dataView": "full",
-            "source": {
-              "type": "m",
-              "expression": [
-                "let",
-                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    rah_sales_revenue_details = Source{[Schema=\"rah\",Item=\"sales_revenue_details\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(rah_sales_revenue_details,\"ي\",\"ی\",Replacer.ReplaceText,{\"Title_SL\", \"Title_GL\", \"Title_AccountGroup\", \"Title_DL_level4\", \"Title_DL_level5\", \"Title_DL_level6\"})",
-                "in",
-                "    #\"Replaced Value\""
-              ]
-            }
-          }
-        ]
-      },
-      {
         "name": "rah sales",
         "columns": [
           {
@@ -7001,18 +6904,21 @@
           {
             "name": "Quantity",
             "dataType": "double",
+            "description": "تعداد",
             "sourceColumn": "Quantity",
             "formatString": "#,#"
           },
           {
             "name": "Fee",
             "dataType": "double",
+            "description": "قیمت پایه",
             "sourceColumn": "Fee",
             "formatString": "#,#"
           },
           {
             "name": "Price",
             "dataType": "double",
+            "description": "فروش ناخالص",
             "sourceColumn": "Price",
             "formatString": "#,#"
           },
@@ -7052,12 +6958,33 @@
           {
             "name": "Unit_name",
             "dataType": "string",
+            "description": "واحد",
             "sourceColumn": "Unit_name"
           },
           {
             "name": "SalesArea_name",
             "dataType": "string",
             "sourceColumn": "SalesArea_name"
+          },
+          {
+            "name": "SalesAreaID",
+            "dataType": "int64",
+            "sourceColumn": "SalesAreaID"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "sourceColumn": "category"
+          },
+          {
+            "name": "category_id",
+            "dataType": "string",
+            "sourceColumn": "category_id"
+          },
+          {
+            "name": "Number",
+            "dataType": "string",
+            "sourceColumn": "Number"
           }
         ],
         "partitions": [
@@ -7070,10 +6997,10 @@
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    rah_sales = Source{[Schema=\"rah\",Item=\"sales\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(rah_sales,\"ي\",\"ی\",Replacer.ReplaceText,{\"Product_name\", \"Unit_name\", \"SalesArea_name\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"Date\", type date}})",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(rah_sales,{{\"Date\", type date}}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Product_name\", \"Unit_name\", \"SalesArea_name\", \"category\"})",
                 "in",
-                "    #\"Changed Type\""
+                "    #\"Replaced Value\""
               ]
             }
           }
