@@ -594,12 +594,6 @@
             "sourceColumn": "today_index"
           },
           {
-            "name": "uniccode_Station_Reception",
-            "dataType": "int64",
-            "description": "شماره یونیک این جدول که از اتصال شماره ایستگاه،شماره مشتری ، تاریخ خرید و شماره فاکتور خرید ساخته می شود",
-            "sourceColumn": "uniccode_Station_Reception"
-          },
-          {
             "name": "SumProductPrice",
             "dataType": "double",
             "description": "جمع قیمت پرداختی که از ضرب تعداد در قیمت پایه محاسبه می شود",
@@ -616,11 +610,9 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    report_Station_Reception = Source{[Schema=\"report\",Item=\"Station_Reception\"]}[Data],",
                 "    #\"Removed Columns\" = Table.RemoveColumns(report_Station_Reception,{\"ReceptionID\", \"StationInvoiceNum\"}),",
-                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"ProductName\", \"StationName\"}),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Replaced Value\",{\"uniccode_Station_Reception_old\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns1\",{{\"uniccode_Station_Reception\", Int32.Type}})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Columns\",\"ي\",\"ی\",Replacer.ReplaceText,{\"ProductName\", \"StationName\"})",
                 "in",
-                "    #\"Changed Type\""
+                "    #\"Replaced Value\""
               ]
             },
             "annotations": [
@@ -1717,11 +1709,6 @@
             "formatString": "0"
           },
           {
-            "name": "uniccode_Station_Reception",
-            "dataType": "int64",
-            "sourceColumn": "uniccode_Station_Reception"
-          },
-          {
             "name": "today_index_no",
             "dataType": "int64",
             "description": "مشخص می کند که در جدول اصلی ایا این بخش مربوط به تاریخ گزارش امروز است تا از آن برای فیلتر کردن داده های امروز استفاده شود",
@@ -1776,11 +1763,9 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2025, 3, 1)),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"}),",
-                "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Removed Columns1\",{{\"uniccode_Station_Reception\", Int32.Type}})",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] > #date(2025, 3, 1))",
                 "in",
-                "    #\"Changed Type1\""
+                "    #\"Filtered Rows\""
               ]
             },
             "annotations": [
@@ -1815,11 +1800,9 @@
                 "    #\"Replaced Value\" = Table.ReplaceValue(report_Reception_Log,\"ي\",\"ی\",Replacer.ReplaceText,{\"Gender\", \"ActionDescription\", \"IsNewWristBand\", \"TicketName\", \"TicketNameGroup\", \"Reception_CustomerName\"}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Replaced Value\",{\"InsertDate\", \"StationInvoiceNum\" , \"ReceptionLogID\"} ),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Columns\",{{\"date_search\", Int64.Type}, {\"today_index\", type date}}),",
-                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2025, 3, 1)),",
-                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Filtered Rows\",{\"uniccode_Station_Reception_old\"}),",
-                "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Removed Columns1\",{{\"uniccode_Station_Reception\", Int32.Type}})",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each [today_index] < #date(2025, 3, 1))",
                 "in",
-                "    #\"Changed Type1\""
+                "    #\"Filtered Rows\""
               ]
             },
             "annotations": [
@@ -5788,6 +5771,12 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "Sum of time",
+            "expression": "SUM([time])"
+          }
         ]
       },
       {
@@ -6872,6 +6861,16 @@
             "name": "doc_type",
             "dataType": "string",
             "sourceColumn": "doc_type"
+          },
+          {
+            "name": "profit_loss",
+            "dataType": "string",
+            "sourceColumn": "profit_loss"
+          },
+          {
+            "name": "profit_loss_id",
+            "dataType": "string",
+            "sourceColumn": "profit_loss_id"
           }
         ],
         "partitions": [
@@ -6890,6 +6889,111 @@
                 "    #\"Changed Type\""
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "045_change_amount_income",
+            "expression": [
+              " ",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id], ",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"درآمد\"",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "046_change_amount_cost",
+            "expression": [
+              " ",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id], ",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\"",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "047_change_amount_direct_material_cost",
+            "description": "هزینه مواد مستقیم",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id], ",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\"",
+              "            && 'rah cost_center_expense_details'[Code_DL_level4] = \"51103\"",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "049_change_amount_overhead_cost",
+            "description": "هزینه سربار",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\"",
+              "            && 'rah cost_center_expense_details'[Code_DL_level4] = \"51105\"",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "048_change_amount_direct_labor_cost",
+            "description": "هزینه حقوق و دستمزد مستقیم",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id], ",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\"",
+              "            && 'rah cost_center_expense_details'[Code_DL_level4] = \"51104\"",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "050_total_cost_price",
+            "description": "جمع بهای تمام‌شده",
+            "expression": [
+              "",
+              "[047_change_amount_direct_material_cost] +",
+              "[048_change_amount_direct_labor_cost] +",
+              "[049_change_amount_overhead_cost]"
+            ],
+            "formatString": "#,#"
           }
         ]
       },
@@ -6985,6 +7089,21 @@
             "name": "Number",
             "dataType": "string",
             "sourceColumn": "Number"
+          },
+          {
+            "name": "PartRef",
+            "dataType": "int64",
+            "sourceColumn": "PartRef"
+          },
+          {
+            "name": "profit_loss",
+            "dataType": "string",
+            "sourceColumn": "profit_loss"
+          },
+          {
+            "name": "profit_loss_id",
+            "dataType": "string",
+            "sourceColumn": "profit_loss_id"
           }
         ],
         "partitions": [
@@ -6998,11 +7117,38 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    rah_sales = Source{[Schema=\"rah\",Item=\"sales\"]}[Data],",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(rah_sales,{{\"Date\", type date}}),",
-                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Product_name\", \"Unit_name\", \"SalesArea_name\", \"category\"})",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Product_name\", \"Unit_name\", \"SalesArea_name\", \"category\"}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"profit_loss\"})",
                 "in",
-                "    #\"Replaced Value\""
+                "    #\"Replaced Value1\""
               ]
             }
+          }
+        ],
+        "measures": [
+          {
+            "name": "051_total_income",
+            "description": "درامد",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah sales'[NetPrice]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id], ",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "052_operating_profit_ytd",
+            "description": "سود عملیاتی از ابتدای سال",
+            "expression": [
+              "",
+              "'rah sales'[051_total_income]-'rah cost_center_expense_details'[050_total_cost_price]"
+            ],
+            "formatString": "#,#"
           }
         ]
       }
@@ -7149,14 +7295,6 @@
         "fromColumn": "UserID",
         "toTable": "report Users",
         "toColumn": "UserID"
-      },
-      {
-        "name": "d44b5527-843e-4099-9430-0fbd3b6999d4",
-        "fromTable": "report Station_Reception",
-        "fromColumn": "uniccode_Station_Reception",
-        "toTable": "report Reception_Log",
-        "toColumn": "uniccode_Station_Reception",
-        "crossFilteringBehavior": "bothDirections"
       },
       {
         "name": "3caa65f2-d38d-4470-938d-93ede438adf6",
@@ -7380,6 +7518,16 @@
         "fromColumn": "Date",
         "toTable": "bi DimDate",
         "toColumn": "Miladi"
+      },
+      {
+        "name": "aaa2bcd3-3787-4d87-9164-c585e5ffb6e1",
+        "toCardinality": "many",
+        "fromTable": "rah cost_center_expense_details",
+        "fromColumn": "profit_loss_id",
+        "toTable": "rah sales",
+        "toColumn": "profit_loss_id",
+        "isActive": false,
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
@@ -8151,10 +8299,6 @@
                 "metadataPermission": "none"
               },
               {
-                "name": "uniccode_Station_Reception",
-                "metadataPermission": "none"
-              },
-              {
                 "name": "SumProductPrice",
                 "metadataPermission": "none"
               }
@@ -8723,10 +8867,6 @@
               },
               {
                 "name": "date_search",
-                "metadataPermission": "none"
-              },
-              {
-                "name": "uniccode_Station_Reception",
                 "metadataPermission": "none"
               },
               {
