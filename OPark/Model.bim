@@ -6994,6 +6994,54 @@
               "[049_change_amount_overhead_cost]"
             ],
             "formatString": "#,#"
+          },
+          {
+            "name": "054_Direct Material Cost Variance % of Revenue",
+            "description": "نسبت بهای تمام شده به فروش",
+            "expression": [
+              "",
+              "DIVIDE(",
+              "    'rah cost_center_expense_details'[047_change_amount_direct_material_cost],",
+              "    'rah sales'[051_total_income],",
+              "    0",
+              ")"
+            ]
+          },
+          {
+            "name": "055_Overhead Cost Variance % of Revenue",
+            "description": "نسبت سربار به فروش",
+            "expression": [
+              "",
+              "DIVIDE(",
+              "    'rah cost_center_expense_details'[049_change_amount_overhead_cost],",
+              "    'rah sales'[051_total_income],",
+              "    0",
+              ")"
+            ]
+          },
+          {
+            "name": "056_Direct Labor Cost Variance % of Revenue",
+            "description": "نسبت حقوق و دستمزد به فروش",
+            "expression": [
+              "",
+              "DIVIDE(",
+              "    'rah cost_center_expense_details'[048_change_amount_direct_labor_cost],",
+              "    'rah sales'[051_total_income],",
+              "    0",
+              ")"
+            ]
+          },
+          {
+            "name": "057_Cost of Sales % of Revenue",
+            "description": "نسبت بهای تمام شده به فروش",
+            "expression": [
+              "",
+              "DIVIDE(",
+              "    'rah cost_center_expense_details'[050_total_cost_price],",
+              "    'rah sales'[051_total_income],",
+              "    0",
+              ")"
+            ]
           }
         ]
       },
@@ -7155,6 +7203,18 @@
               "'rah sales'[051_total_income]-'rah cost_center_expense_details'[050_total_cost_price]"
             ],
             "formatString": "#,#"
+          },
+          {
+            "name": "053_Operating Profit Margin YTD (%)",
+            "description": "حاشیه سود عملیاتی",
+            "expression": [
+              " ",
+              "DIVIDE(",
+              "    'rah sales'[052_operating_profit_ytd],",
+              "    'rah sales'[051_total_income],",
+              "    0",
+              ")"
+            ]
           }
         ]
       }
