@@ -7104,6 +7104,11 @@
             "name": "profit_loss_id",
             "dataType": "string",
             "sourceColumn": "profit_loss_id"
+          },
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
           }
         ],
         "partitions": [
@@ -7118,9 +7123,10 @@
                 "    rah_sales = Source{[Schema=\"rah\",Item=\"sales\"]}[Data],",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(rah_sales,{{\"Date\", type date}}),",
                 "    #\"Replaced Value\" = Table.ReplaceValue(#\"Changed Type\",\"ي\",\"ی\",Replacer.ReplaceText,{\"Product_name\", \"Unit_name\", \"SalesArea_name\", \"category\"}),",
-                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"profit_loss\"})",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"ي\",\"ی\",Replacer.ReplaceText,{\"profit_loss\"}),",
+                "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Replaced Value1\",{{\"id\", Int64.Type}})",
                 "in",
-                "    #\"Replaced Value1\""
+                "    #\"Changed Type1\""
               ]
             }
           }
