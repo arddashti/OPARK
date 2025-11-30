@@ -6997,7 +6997,7 @@
           },
           {
             "name": "054_Direct Material Cost Variance % of Revenue",
-            "description": "نسبت بهای تمام شده به فروش",
+            "description": "نسبت مواد به فروش",
             "expression": [
               "",
               "DIVIDE(",
@@ -7005,7 +7005,8 @@
               "    'rah sales'[051_total_income],",
               "    0",
               ")"
-            ]
+            ],
+            "formatString": "0%;-0%;0%"
           },
           {
             "name": "055_Overhead Cost Variance % of Revenue",
@@ -7017,7 +7018,8 @@
               "    'rah sales'[051_total_income],",
               "    0",
               ")"
-            ]
+            ],
+            "formatString": "0%;-0%;0%"
           },
           {
             "name": "056_Direct Labor Cost Variance % of Revenue",
@@ -7029,7 +7031,8 @@
               "    'rah sales'[051_total_income],",
               "    0",
               ")"
-            ]
+            ],
+            "formatString": "0%;-0%;0%"
           },
           {
             "name": "057_Cost of Sales % of Revenue",
@@ -7041,7 +7044,8 @@
               "    'rah sales'[051_total_income],",
               "    0",
               ")"
-            ]
+            ],
+            "formatString": "0%;-0%;0%"
           }
         ]
       },
@@ -7146,7 +7150,8 @@
           {
             "name": "profit_loss",
             "dataType": "string",
-            "sourceColumn": "profit_loss"
+            "sourceColumn": "profit_loss",
+            "sortByColumn": "id"
           },
           {
             "name": "profit_loss_id",
@@ -7214,7 +7219,8 @@
               "    'rah sales'[051_total_income],",
               "    0",
               ")"
-            ]
+            ],
+            "formatString": "0%;-0%;0%"
           }
         ]
       }
