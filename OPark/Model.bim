@@ -6865,12 +6865,18 @@
           {
             "name": "profit_loss",
             "dataType": "string",
-            "sourceColumn": "profit_loss"
+            "sourceColumn": "profit_loss",
+            "sortByColumn": "id"
           },
           {
             "name": "profit_loss_id",
             "dataType": "string",
             "sourceColumn": "profit_loss_id"
+          },
+          {
+            "name": "id",
+            "dataType": "double",
+            "sourceColumn": "id"
           }
         ],
         "partitions": [
@@ -6884,9 +6890,10 @@
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
                 "    rah_cost_center_expense_details = Source{[Schema=\"rah\",Item=\"cost_center_expense_details\"]}[Data],",
                 "    #\"Replaced Value\" = Table.ReplaceValue(rah_cost_center_expense_details,\"ي\",\"ی\",Replacer.ReplaceValue,{\"Date\", \"Title_SL\", \"Title_GL\", \"Title_AccountGroup\", \"Title_DL_level4\", \"Title_DL_level5\", \"Title_DL_level6\"}),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"Date\", type date}})",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"Date\", type date}}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Changed Type\",null,0,Replacer.ReplaceValue,{\"id\"})",
                 "in",
-                "    #\"Changed Type\""
+                "    #\"Replaced Value1\""
               ]
             }
           }
@@ -7046,6 +7053,109 @@
               ")"
             ],
             "formatString": "0%;-0%;0%"
+          },
+          {
+            "name": "058_total_admin_overhead_personnel_costs",
+            "description": "جمع هزینه های پرسنلی اداری  و  ستادی",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    'rah cost_center_expense_details'[Code_DL_level4] = \"62300\",",
+              "    // حذف همه ستون‌ها",
+              "    REMOVEFILTERS('rah cost_center_expense_details'),",
+              "    // نگه داشتن فقط تاریخ",
+              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "059_personnel_pantry_cost",
+            "description": "هزینه ابدارخانه پرسنلی",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    'rah cost_center_expense_details'[Code_DL_level5] = \"61003\",",
+              "    // حذف همه ستون‌ها",
+              "    REMOVEFILTERS('rah cost_center_expense_details'),",
+              "    // نگه داشتن فقط تاریخ",
+              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "060_personnel_kitchen_cost",
+            "description": "هزینه آشپزخانه پرسنلی",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    'rah cost_center_expense_details'[Code_DL_level5] = \"61008\",",
+              "    // حذف همه ستون‌ها",
+              "    REMOVEFILTERS('rah cost_center_expense_details'),",
+              "    // نگه داشتن فقط تاریخ",
+              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "061_fnb_food_storage_cost",
+            "description": "هزینه انبار مواد غذایی f&B",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    'rah cost_center_expense_details'[Code_DL_level5] = \"61033\",",
+              "    // حذف همه ستون‌ها",
+              "    REMOVEFILTERS('rah cost_center_expense_details'),",
+              "    // نگه داشتن فقط تاریخ",
+              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "062_total_admin_and_overhead_cost",
+            "description": "کل هزینه های ستادی و اداری",
+            "expression": [
+              " 'rah cost_center_expense_details'[058_total_admin_overhead_personnel_costs] + ",
+              " 'rah cost_center_expense_details'[059_personnel_pantry_cost] +  'rah cost_center_expense_details'[060_personnel_kitchen_cost] + ",
+              "  'rah cost_center_expense_details'[061_fnb_food_storage_cost]"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "064_share_of_admin_general_expenses",
+            "description": "تسهیم به نسبت هزینه های اداری و عمومی",
+            "expression": " CALCULATE('rah sales'[063_total_income_pct_of_total] * 'rah cost_center_expense_details'[062_total_admin_and_overhead_cost])",
+            "formatString": "#,#"
+          },
+          {
+            "name": "065_total_expense_per_cost_center",
+            "description": "جمع هزینه های هر مرکز",
+            "expression": " 'rah cost_center_expense_details'[064_share_of_admin_general_expenses] + 'rah cost_center_expense_details'[050_total_cost_price]",
+            "formatString": "#,#"
+          },
+          {
+            "name": "066_net_profit_per_cost_center",
+            "description": "سود خالص هر مرکز",
+            "expression": " 'rah sales'[051_total_income] - 'rah cost_center_expense_details'[065_total_expense_per_cost_center] ",
+            "formatString": "#,#"
+          },
+          {
+            "name": "067_net_estimated_profit_margin_%",
+            "description": "حاشیه سود برآوردی خالص",
+            "expression": [
+              "   DIVIDE( 'rah cost_center_expense_details'[066_net_profit_per_cost_center],",
+              "    'rah sales'[051_total_income],",
+              "    0",
+              ")"
+            ],
+            "formatString": "0.0%;-0.0%;0.0%"
           }
         ]
       },
@@ -7221,6 +7331,24 @@
               ")"
             ],
             "formatString": "0%;-0%;0%"
+          },
+          {
+            "name": "063_total_income_pct_of_total",
+            "description": "نسبت از کل درآمد",
+            "expression": [
+              " ",
+              "DIVIDE(",
+              "    [051_total_income],",
+              "    ",
+              "    CALCULATE(",
+              "        [051_total_income],",
+              "        ALL('rah cost_center_expense_details'),           -- تمام فیلترهای مرکز هزینه پاک بشه",
+              "        ALL('rah sales'),                                 -- تمام فیلترهای جدول فروش پاک بشه",
+              "        KEEPFILTERS('bi DimDate')                         -- فقط فیلترهای تاریخ (از Slicer) حفظ بشه",
+              "    )",
+              ")"
+            ],
+            "formatString": "0.0%;-0.0%;0.0%"
           }
         ]
       }
