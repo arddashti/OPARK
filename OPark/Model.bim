@@ -6943,13 +6943,16 @@
               "CALCULATE(",
               "    SUM('rah cost_center_expense_details'[change_amount]),",
               "    USERELATIONSHIP(",
-              "        'rah sales'[profit_loss_id], ",
+              "        'rah sales'[profit_loss_id],",
               "        'rah cost_center_expense_details'[profit_loss_id]",
               "    ),",
               "    FILTER(",
               "        'rah cost_center_expense_details',",
-              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\"",
-              "            && 'rah cost_center_expense_details'[Code_DL_level4] = \"51103\"",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
+              "        (",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51103\" ||",
+              "          'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
+              "        )",
               "    )",
               ")"
             ],
@@ -6962,10 +6965,17 @@
               "",
               "CALCULATE(",
               "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id],",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
               "    FILTER(",
               "        'rah cost_center_expense_details',",
-              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\"",
-              "            && 'rah cost_center_expense_details'[Code_DL_level4] = \"51105\"",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
+              "        (",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51105\"  ||",
+              "          'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
+              "        )",
               "    )",
               ")"
             ],
@@ -6979,13 +6989,16 @@
               "CALCULATE(",
               "    SUM('rah cost_center_expense_details'[change_amount]),",
               "    USERELATIONSHIP(",
-              "        'rah sales'[profit_loss_id], ",
+              "        'rah sales'[profit_loss_id],",
               "        'rah cost_center_expense_details'[profit_loss_id]",
               "    ),",
               "    FILTER(",
               "        'rah cost_center_expense_details',",
-              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\"",
-              "            && 'rah cost_center_expense_details'[Code_DL_level4] = \"51104\"",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
+              "        (",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51104\" ||",
+              "          'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
+              "         )",
               "    )",
               ")"
             ],
@@ -7061,26 +7074,9 @@
               "",
               "CALCULATE(",
               "    SUM('rah cost_center_expense_details'[change_amount]),",
-              "    'rah cost_center_expense_details'[Code_DL_level4] = \"62300\",",
-              "    // حذف همه ستون‌ها",
+              "    'rah cost_center_expense_details'[Code_DL_level4] = \"62300\" ||",
+              "    'rah cost_center_expense_details'[Code_DL_level4] = \"00001\" ,",
               "    REMOVEFILTERS('rah cost_center_expense_details'),",
-              "    // نگه داشتن فقط تاریخ",
-              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
-              ")"
-            ],
-            "formatString": "#,#"
-          },
-          {
-            "name": "059_personnel_pantry_cost",
-            "description": "هزینه ابدارخانه پرسنلی",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM('rah cost_center_expense_details'[change_amount]),",
-              "    'rah cost_center_expense_details'[Code_DL_level5] = \"61003\",",
-              "    // حذف همه ستون‌ها",
-              "    REMOVEFILTERS('rah cost_center_expense_details'),",
-              "    // نگه داشتن فقط تاریخ",
               "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
               ")"
             ],
@@ -7093,27 +7089,21 @@
               "",
               "CALCULATE(",
               "    SUM('rah cost_center_expense_details'[change_amount]),",
-              "    'rah cost_center_expense_details'[Code_DL_level5] = \"61008\",",
-              "    // حذف همه ستون‌ها",
-              "    REMOVEFILTERS('rah cost_center_expense_details'),",
-              "    // نگه داشتن فقط تاریخ",
-              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
-              ")"
-            ],
-            "formatString": "#,#"
-          },
-          {
-            "name": "061_fnb_food_storage_cost",
-            "description": "هزینه انبار مواد غذایی f&B",
-            "expression": [
-              "",
-              "CALCULATE(",
-              "    SUM('rah cost_center_expense_details'[change_amount]),",
-              "    'rah cost_center_expense_details'[Code_DL_level5] = \"61033\",",
-              "    // حذف همه ستون‌ها",
-              "    REMOVEFILTERS('rah cost_center_expense_details'),",
-              "    // نگه داشتن فقط تاریخ",
-              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
+              "    FILTER(",
+              "        ALL('rah cost_center_expense_details'),  // کلید حل مشکل",
+              "        (",
+              "            (",
+              "                'rah cost_center_expense_details'[Code_DL_level4] IN { \"51103\", \"51104\", \"51105\" } &&",
+              "                'rah cost_center_expense_details'[Code_DL_level5] = \"61008\"",
+              "            )",
+              "            ||",
+              "            (",
+              "                'rah cost_center_expense_details'[Code_DL_level4] IN { \"51104\", \"51105\" } &&",
+              "                'rah cost_center_expense_details'[Code_DL_level5] = \"61023\"",
+              "            )",
+              "        )",
+              "    ),",
+              "    KEEPFILTERS('bi DimDate_YearMonth')  // تضمین اضافی برای حفظ فیلتر تاریخ",
               ")"
             ],
             "formatString": "#,#"
@@ -7123,8 +7113,8 @@
             "description": "کل هزینه های ستادی و اداری",
             "expression": [
               " 'rah cost_center_expense_details'[058_total_admin_overhead_personnel_costs] + ",
-              " 'rah cost_center_expense_details'[059_personnel_pantry_cost] +  'rah cost_center_expense_details'[060_personnel_kitchen_cost] + ",
-              "  'rah cost_center_expense_details'[061_fnb_food_storage_cost]"
+              " ( 'rah cost_center_expense_details'[060_personnel_kitchen_cost])",
+              ""
             ],
             "formatString": "#,#"
           },
@@ -7156,6 +7146,42 @@
               ")"
             ],
             "formatString": "0.0%;-0.0%;0.0%"
+          },
+          {
+            "name": "068",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    'rah cost_center_expense_details'[Code_DL_level4] = \"00001\",",
+              "    REMOVEFILTERS('rah cost_center_expense_details'),",
+              "    KEEPFILTERS(VALUES('bi DimDate_YearMonth'[ApplyYearMonth]))",
+              ")"
+            ]
+          },
+          {
+            "name": "0610_personnel_kitchen_cost",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    FILTER(",
+              "        ALLSELECTED('rah cost_center_expense_details'),  // کلید حل مشکل",
+              "        (",
+              "            (",
+              "                'rah cost_center_expense_details'[Code_DL_level4] IN { \"51103\", \"51104\", \"51105\" } &&",
+              "                'rah cost_center_expense_details'[Code_DL_level5] = \"61008\"",
+              "            )",
+              "            ||",
+              "            (",
+              "                'rah cost_center_expense_details'[Code_DL_level4] IN { \"51104\", \"51105\" } &&",
+              "                'rah cost_center_expense_details'[Code_DL_level5] = \"61023\"",
+              "            )",
+              "        )",
+              "    ),",
+              "    KEEPFILTERS('bi DimDate_YearMonth')  // تضمین اضافی برای حفظ فیلتر تاریخ",
+              ")"
+            ]
           }
         ]
       },
