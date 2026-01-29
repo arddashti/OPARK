@@ -6877,6 +6877,16 @@
             "name": "id",
             "dataType": "double",
             "sourceColumn": "id"
+          },
+          {
+            "name": "permission",
+            "dataType": "string",
+            "sourceColumn": "permission"
+          },
+          {
+            "name": "permission_id",
+            "dataType": "string",
+            "sourceColumn": "permission_id"
           }
         ],
         "partitions": [
@@ -6950,8 +6960,8 @@
               "        'rah cost_center_expense_details',",
               "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
               "        (",
-              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51103\" ||",
-              "          'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51103\"",
+              "   --  ||      'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
               "        )",
               "    )",
               ")"
@@ -6973,8 +6983,8 @@
               "        'rah cost_center_expense_details',",
               "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
               "        (",
-              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51105\"  ||",
-              "          'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51105\" ",
+              "    --     ||  'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
               "        )",
               "    )",
               ")"
@@ -6996,8 +7006,8 @@
               "        'rah cost_center_expense_details',",
               "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
               "        (",
-              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51104\" ||",
-              "          'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"51104\" ",
+              "     --   ||  'rah cost_center_expense_details'[Code_DL_level5] = \"61027\"",
               "         )",
               "    )",
               ")"
@@ -7182,6 +7192,96 @@
               "    KEEPFILTERS('bi DimDate_YearMonth')  // تضمین اضافی برای حفظ فیلتر تاریخ",
               ")"
             ]
+          },
+          {
+            "name": "069_other_non_operating_income_and_expenses",
+            "description": "سایر درآمد ها و هزینه های غیر عملیاتی",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id],",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"درآمد\" &&",
+              "        (",
+              "            'rah cost_center_expense_details'[Code_SL] = \"712507\"",
+              "     ||       'rah cost_center_expense_details'[Code_SL] = \"712508\"",
+              "     ||       'rah cost_center_expense_details'[Code_SL] = \"712510\"",
+              "        )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "073_hazineh_hoghogh_setadi",
+            "description": "هزینه حقوق ستادی",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id],",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
+              "        (",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"62300\" ",
+              "         )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "074_hazineh_edari_tashkilati",
+            "description": "هزینه اداری و تشکیلاتی",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id],",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
+              "        (",
+              "            'rah cost_center_expense_details'[Code_DL_level4] = \"00001\" ",
+              "         )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
+          },
+          {
+            "name": "075_hazineh_anbar_mavade_ghazie",
+            "description": "انبار مواد غذایی",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    SUM('rah cost_center_expense_details'[change_amount]),",
+              "    USERELATIONSHIP(",
+              "        'rah sales'[profit_loss_id],",
+              "        'rah cost_center_expense_details'[profit_loss_id]",
+              "    ),",
+              "    FILTER(",
+              "        'rah cost_center_expense_details',",
+              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
+              "        (",
+              "             'rah cost_center_expense_details'[Code_DL_level4] IN { \"51103\", \"51104\", \"51105\" } ",
+              "         )",
+              "    )",
+              ")"
+            ],
+            "formatString": "#,#"
           }
         ]
       },
@@ -7323,7 +7423,7 @@
         "measures": [
           {
             "name": "051_total_income",
-            "description": "درامد",
+            "description": "درآمد عملیاتی",
             "expression": [
               "",
               "CALCULATE(",
@@ -7375,6 +7475,133 @@
               ")"
             ],
             "formatString": "0.0%;-0.0%;0.0%"
+          },
+          {
+            "name": "071_operating_profit_to_sales_ratio",
+            "description": "نسبت سود عملیاتی به فروش",
+            "expression": " DIVIDE('rah sales'[052_operating_profit_ytd],'rah sales'[051_total_income],0)*100"
+          },
+          {
+            "name": "072_profit_before_tax_to_sales",
+            "description": "نسبت سود خالص قبل از کسر مالیات به فروش",
+            "expression": " DIVIDE('rah cost_center_expense_details'[066_net_profit_per_cost_center],'rah sales'[051_total_income])*100"
+          }
+        ]
+      },
+      {
+        "name": "FinancialTitles",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "Title",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Title]",
+            "sortByColumn": "SortOrder"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "SortOrder",
+            "dataType": "int64",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[SortOrder]"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "CalculatedTable 1",
+            "source": {
+              "type": "calculated",
+              "expression": [
+                "",
+                "DATATABLE(",
+                "    \"Title\", STRING,",
+                "    \"SortOrder\", INTEGER,",
+                "    {",
+                "        {\"درآمد عملیاتی\",1},",
+                "        {\"هزینه مواد\",2},",
+                "        {\"هزینه دستمزد\",3},",
+                "        {\"هزینه سربار\",4},",
+                "        {\"جمع هزینه های عملیاتی\",5},",
+                "        {\"سود و زیان عملیاتی\",6},",
+                "        {\"هزینه های عمومی و اداری\",7},",
+                "        {\"سایر درآمد ها و هزینه های غیر عملیاتی\",8},",
+                "        {\"سود (بدون احتساب هزینه استهلاک، عیدی و سنوات)\",9},",
+                "        {\"نسبت سود عملیاتی به فروش\",10},",
+                "        {\"نسبت سود خالص قبل از کسر مالیات\",11},",
+                "        {\"هزینه حقوق ستادی\",12},",
+                "\t{\"هزینه اداری و تشکیلاتی\",13},",
+                "\t{\"هزینه آشپزخانه پرسنلی\",14},",
+                "\t{\"انبار مواد غذایی\",15},",
+                "\t{\"جمع هزینه های غیر عملیاتی\",16}",
+                "    }",
+                ")"
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "070_financial_result",
+            "description": "قابلیت نمایش مژر در ماتریس به صورت عنوان",
+            "expression": [
+              "",
+              "SWITCH(",
+              "    SELECTEDVALUE(FinancialTitles[Title]),",
+              "",
+              "    \"درآمد عملیاتی\",",
+              "        'rah sales'[051_total_income],",
+              "",
+              "    \"هزینه مواد\",",
+              "        'rah cost_center_expense_details'[047_change_amount_direct_material_cost],",
+              "",
+              "    \"هزینه دستمزد\",",
+              "        'rah cost_center_expense_details'[048_change_amount_direct_labor_cost],",
+              "",
+              "    \"هزینه سربار\",",
+              "        'rah cost_center_expense_details'[049_change_amount_overhead_cost],",
+              "",
+              "    \"جمع هزینه های عملیاتی\",",
+              "        'rah cost_center_expense_details'[050_total_cost_price],",
+              "",
+              "    \"سود و زیان عملیاتی\",",
+              "        'rah sales'[052_operating_profit_ytd],",
+              "",
+              "    \"هزینه های عمومی و اداری\",",
+              "        'rah cost_center_expense_details'[062_total_admin_and_overhead_cost],",
+              "",
+              "    \"سایر درآمد ها و هزینه های غیر عملیاتی\",",
+              "        'rah cost_center_expense_details'[069_other_non_operating_income_and_expenses],",
+              "",
+              "    \"سود (بدون احتساب هزینه استهلاک، عیدی و سنوات)\",",
+              "        'rah cost_center_expense_details'[066_net_profit_per_cost_center],",
+              "",
+              "    \"نسبت سود عملیاتی به فروش\",",
+              "        'rah sales'[071_operating_profit_to_sales_ratio],",
+              "",
+              "    \"نسبت سود خالص قبل از کسر مالیات\",",
+              "        'rah sales'[072_profit_before_tax_to_sales],",
+              "",
+              "    \"هزینه حقوق ستادی\",",
+              "        'rah cost_center_expense_details'[073_hazineh_hoghogh_setadi],",
+              "",
+              "    \"هزینه اداری و تشکیلاتی\",",
+              "        'rah cost_center_expense_details'[074_hazineh_edari_tashkilati],",
+              "",
+              "    \"هزینه آشپزخانه پرسنلی\",",
+              "        'rah cost_center_expense_details'[060_personnel_kitchen_cost],",
+              "",
+              "    \"انبار مواد غذایی\",",
+              "        'rah cost_center_expense_details'[075_hazineh_anbar_mavade_ghazie],",
+              "",
+              "    \"جمع هزینه های غیر عملیاتی\",",
+              "        'rah cost_center_expense_details'[062_total_admin_and_overhead_cost]",
+              "",
+              ")"
+            ],
+            "formatString": "#,#"
           }
         ]
       }
@@ -7831,7 +8058,7 @@
       },
       {
         "name": "f_b_view",
-        "description": "OPARK\\Bi_f&b_view",
+        "description": "داشبوردهای ماترسی هزینه راهکاران-واحد توسعه کسب و کار",
         "modelPermission": "read",
         "members": [
           {
@@ -7843,6 +8070,10 @@
           {
             "name": "rah Inventory_VoucherItem",
             "filterExpression": "'rah Inventory_VoucherItem'[organization_unit] =\"F_B\""
+          },
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[permission_id] = \"1\""
           }
         ]
       },
@@ -9157,6 +9388,12 @@
             "memberName": "OPARK\\BI_HR_View",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2772"
           }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[permission_id] = \"5\""
+          }
         ]
       },
       {
@@ -9238,7 +9475,58 @@
         "tablePermissions": [
           {
             "name": "rah cost_center_expense_details",
-            "filterExpression": "'rah cost_center_expense_details'[Code_DL_level5] = \"61031\""
+            "filterExpression": "'rah cost_center_expense_details'[permission_id] = \"3\""
+          }
+        ]
+      },
+      {
+        "name": "BI_bahrebardari",
+        "description": "داشبوردهای ماترسی هزینه راهکاران-بهره برداری",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_bahrebardari",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-3179"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[permission_id] = \"2\""
+          }
+        ]
+      },
+      {
+        "name": "BI_Sales_FullView",
+        "description": "داشبوردهای ماترسی هزینه راهکاران-واحد فروش",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_Sales_FullView",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2734"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[permission_id] = \"6\""
+          }
+        ]
+      },
+      {
+        "name": "BI_qc",
+        "description": "داشبوردهای ماترسی هزینه راهکاران-روابط عمومی",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "OPARK\\BI_qc",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-3180"
+          }
+        ],
+        "tablePermissions": [
+          {
+            "name": "rah cost_center_expense_details",
+            "filterExpression": "'rah cost_center_expense_details'[permission_id] = \"4\""
           }
         ]
       }
