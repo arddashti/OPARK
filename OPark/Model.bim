@@ -8112,20 +8112,8 @@
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2723"
           },
           {
-            "memberName": "OPARK\\BI_General_View",
-            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2727"
-          },
-          {
             "memberName": "OPARK\\a.dashti",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2706"
-          },
-          {
-            "memberName": "OPARK\\F.Ahmadi",
-            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2748"
-          },
-          {
-            "memberName": "OLAP\\ahmadi",
-            "memberId": "S-1-5-21-4155188726-212848779-2432443270-1005"
           }
         ]
       },
@@ -8171,8 +8159,8 @@
         "modelPermission": "read",
         "members": [
           {
-            "memberName": "OPARK\\BI_F&B_View",
-            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2730"
+            "memberName": "OPARK\\BI_BD_FullView",
+            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-3186"
           }
         ],
         "tablePermissions": [
