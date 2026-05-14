@@ -6246,6 +6246,11 @@
             "name": "frist_date_flag",
             "dataType": "int64",
             "sourceColumn": "frist_date_flag"
+          },
+          {
+            "name": "opark_BI_ID",
+            "dataType": "int64",
+            "sourceColumn": "opark_BI_ID"
           }
         ],
         "partitions": [
@@ -6720,16 +6725,6 @@
         "description": "خلاصه‌ی خرید/بازدید مشتری",
         "columns": [
           {
-            "name": "CustomerMobile",
-            "dataType": "string",
-            "sourceColumn": "CustomerMobile"
-          },
-          {
-            "name": "CustomerName",
-            "dataType": "string",
-            "sourceColumn": "CustomerName"
-          },
-          {
             "name": "min_date",
             "dataType": "string",
             "sourceColumn": "min_date"
@@ -6753,6 +6748,16 @@
             "name": "sum_ticket_price",
             "dataType": "int64",
             "sourceColumn": "sum_ticket_price"
+          },
+          {
+            "name": "number_of_people",
+            "dataType": "double",
+            "sourceColumn": "number_of_people"
+          },
+          {
+            "name": "opark_BI_ID",
+            "dataType": "int64",
+            "sourceColumn": "opark_BI_ID"
           }
         ],
         "partitions": [
@@ -6764,10 +6769,9 @@
               "expression": [
                 "let",
                 "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
-                "    analyze_Customer_Activity_Summary = Source{[Schema=\"analyze\",Item=\"Customer_Activity_Summary\"]}[Data],",
-                "    #\"Replaced Value\" = Table.ReplaceValue(analyze_Customer_Activity_Summary,\"ي\",\"ی\",Replacer.ReplaceText,{\"CustomerName\"})",
+                "    analyze_Customer_Activity_Summary = Source{[Schema=\"analyze\",Item=\"Customer_Activity_Summary\"]}[Data]",
                 "in",
-                "    #\"Replaced Value\""
+                "    analyze_Customer_Activity_Summary"
               ]
             }
           }
@@ -7103,11 +7107,6 @@
               "        ALL('rah cost_center_expense_details'),  // کلید حل مشکل",
               "        (",
               "            (",
-              "                'rah cost_center_expense_details'[Code_DL_level4] IN { \"51103\", \"51104\", \"51105\" } &&",
-              "                'rah cost_center_expense_details'[Code_DL_level5] = \"61008\"",
-              "            )",
-              "            ||",
-              "            (",
               "                'rah cost_center_expense_details'[Code_DL_level4] IN { \"51104\", \"51105\" } &&",
               "                'rah cost_center_expense_details'[Code_DL_level5] = \"61023\"",
               "            )",
@@ -7122,9 +7121,9 @@
             "name": "062_total_admin_and_overhead_cost",
             "description": "کل هزینه های ستادی و اداری",
             "expression": [
-              " 'rah cost_center_expense_details'[058_total_admin_overhead_personnel_costs] + ",
-              " ( 'rah cost_center_expense_details'[060_personnel_kitchen_cost])",
-              ""
+              " ",
+              "    'rah cost_center_expense_details'[058_total_admin_overhead_personnel_costs] ",
+              "    + 'rah cost_center_expense_details'[060_personnel_kitchen_cost]+'rah cost_center_expense_details'[075_hazineh_anbar_mavade_ghazie]"
             ],
             "formatString": "#,#"
           },
@@ -7268,17 +7267,16 @@
               "",
               "CALCULATE(",
               "    SUM('rah cost_center_expense_details'[change_amount]),",
-              "    USERELATIONSHIP(",
-              "        'rah sales'[profit_loss_id],",
-              "        'rah cost_center_expense_details'[profit_loss_id]",
-              "    ),",
               "    FILTER(",
-              "        'rah cost_center_expense_details',",
-              "        'rah cost_center_expense_details'[doc_type] = \"هزينه\" &&",
+              "        ALL('rah cost_center_expense_details'),  // کلید حل مشکل",
               "        (",
-              "             'rah cost_center_expense_details'[Code_DL_level4] IN { \"51103\", \"51104\", \"51105\" } ",
-              "         )",
-              "    )",
+              "            (",
+              "                'rah cost_center_expense_details'[Code_DL_level4] IN { \"51103\", \"51104\", \"51105\" } &&",
+              "                'rah cost_center_expense_details'[Code_DL_level5] = \"61008\"",
+              "            )",
+              "        )",
+              "    ),",
+              "    KEEPFILTERS('bi DimDate_YearMonth')  // تضمین اضافی برای حفظ فیلتر تاریخ",
               ")"
             ],
             "formatString": "#,#"
@@ -7601,6 +7599,117 @@
               "",
               ")"
             ],
+            "formatString": "#,#"
+          }
+        ]
+      },
+      {
+        "name": "analyze Customer",
+        "columns": [
+          {
+            "name": "CustomerMobile",
+            "dataType": "string",
+            "sourceColumn": "CustomerMobile"
+          },
+          {
+            "name": "CustomerName",
+            "dataType": "string",
+            "sourceColumn": "CustomerName"
+          },
+          {
+            "name": "opark_BI_ID",
+            "dataType": "int64",
+            "sourceColumn": "opark_BI_ID"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    analyze_Customer = Source{[Schema=\"analyze\",Item=\"Customer\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(analyze_Customer,\"ي\",\"ی\",Replacer.ReplaceText,{\"CustomerName\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "club OnlinePOS_Sales",
+        "columns": [
+          {
+            "name": "CustomerMobile",
+            "dataType": "string",
+            "sourceColumn": "CustomerMobile"
+          },
+          {
+            "name": "PspName",
+            "dataType": "string",
+            "sourceColumn": "PspName"
+          },
+          {
+            "name": "MIN(IssuedDate)",
+            "dataType": "string",
+            "sourceColumn": "MIN(IssuedDate)"
+          },
+          {
+            "name": "MIN(InsertDate)",
+            "dataType": "string",
+            "sourceColumn": "MIN(InsertDate)"
+          },
+          {
+            "name": "is_new_customer",
+            "dataType": "string",
+            "sourceColumn": "is_new_customer"
+          },
+          {
+            "name": "FinalSumPayment",
+            "dataType": "int64",
+            "sourceColumn": "FinalSumPayment"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    club_OnlinePOS_Sales = Source{[Schema=\"club\",Item=\"OnlinePOS_Sales\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(club_OnlinePOS_Sales,\"ي\",\"ی\",Replacer.ReplaceText,{\"is_new_customer\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "075_total_customer",
+            "expression": "CALCULATE(COUNT('club OnlinePOS_Sales'[is_new_customer]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "076_new_customer",
+            "expression": "CALCULATE(COUNT('club OnlinePOS_Sales'[is_new_customer]),FILTER('club OnlinePOS_Sales','club OnlinePOS_Sales'[is_new_customer] = \"جدید\"))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "078_total_customer_amount",
+            "expression": "CALCULATE(SUM('club OnlinePOS_Sales'[FinalSumPayment]))",
+            "formatString": "#,#"
+          },
+          {
+            "name": "077_new_custome_amountr",
+            "expression": "CALCULATE(SUM('club OnlinePOS_Sales'[FinalSumPayment]),FILTER('club OnlinePOS_Sales','club OnlinePOS_Sales'[is_new_customer] = \"جدید\"))",
             "formatString": "#,#"
           }
         ]
