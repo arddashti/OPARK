@@ -4045,6 +4045,11 @@
             "name": "date_target",
             "dataType": "string",
             "sourceColumn": "date_target"
+          },
+          {
+            "name": "EmployeeID",
+            "dataType": "string",
+            "sourceColumn": "EmployeeID"
           }
         ],
         "partitions": [
@@ -8090,6 +8095,13 @@
         "toColumn": "profit_loss_id",
         "isActive": false,
         "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "d9398a99-fbd2-40e6-863e-57ff55a120e2",
+        "fromTable": "report sales_target",
+        "fromColumn": "EmployeeID",
+        "toTable": "rah HR_Employee",
+        "toColumn": "EmployeeID"
       }
     ],
     "roles": [
@@ -8182,261 +8194,6 @@
           {
             "memberName": "OPARK\\BI_Financial_BankView",
             "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2733"
-          }
-        ]
-      },
-      {
-        "name": "CRM_Aftersales",
-        "description": "OPARK\\BI_CRM_Aftersales_FullView",
-        "modelPermission": "read",
-        "members": [
-          {
-            "memberName": "OPARK\\BI_CRM_Aftersales_FullView",
-            "memberId": "S-1-5-21-1872128987-2628600301-4244275057-2741"
-          }
-        ],
-        "tablePermissions": [
-          {
-            "name": "bi DimDate",
-            "columnPermissions": [
-              {
-                "name": "Miladi"
-              },
-              {
-                "name": "Jalali_1"
-              },
-              {
-                "name": "jyear"
-              },
-              {
-                "name": "jmonthN"
-              },
-              {
-                "name": "jmonthT"
-              },
-              {
-                "name": "jnime"
-              },
-              {
-                "name": "JquarterN"
-              },
-              {
-                "name": "JQuarterT"
-              },
-              {
-                "name": "JWeekDay"
-              },
-              {
-                "name": "JWeekNum"
-              },
-              {
-                "name": "date_search"
-              },
-              {
-                "name": "dayNUM"
-              },
-              {
-                "name": "Miladi - text"
-              },
-              {
-                "name": "Counter"
-              }
-            ]
-          },
-          {
-            "name": "rah cash_detail",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "rah cash_balance",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "report Ticket_Type",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "report Station_Reception",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "report Ticket_Calendar",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "report sales_target",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "rah payable_documents_detail",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "rah Inventory_VoucherItem",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "rah payable_documents",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "report Station",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "in select_table_date_now",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "in select_table",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "in permission",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "report Reception_Log",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "bi last_refresh_time_knime",
-            "columnPermissions": [
-              {
-                "name": "Time"
-              },
-              {
-                "name": "Date"
-              },
-              {
-                "name": "Miladi_report_date"
-              },
-              {
-                "name": "report_date"
-              },
-              {
-                "name": "today_index_no"
-              },
-              {
-                "name": "last_week_date"
-              }
-            ]
-          },
-          {
-            "name": "report sales_contract",
-            "metadataPermission": "none"
-          },
-          {
-            "name": "crm main",
-            "columnPermissions": [
-              {
-                "name": "Full_name"
-              },
-              {
-                "name": "Gender"
-              },
-              {
-                "name": "Date_birth"
-              },
-              {
-                "name": "Phone_number"
-              },
-              {
-                "name": "Education"
-              },
-              {
-                "name": "Job"
-              },
-              {
-                "name": "Area"
-              },
-              {
-                "name": "City"
-              },
-              {
-                "name": "Time"
-              },
-              {
-                "name": "ID"
-              },
-              {
-                "name": "Jalali_1"
-              },
-              {
-                "name": "jyear"
-              },
-              {
-                "name": "jmonthN"
-              },
-              {
-                "name": "jmonthT"
-              },
-              {
-                "name": "JWeekDay"
-              },
-              {
-                "name": "date_search"
-              },
-              {
-                "name": "day"
-              },
-              {
-                "name": "Decade_NO"
-              },
-              {
-                "name": "Decade_Name"
-              },
-              {
-                "name": "Decade_Title"
-              },
-              {
-                "name": "first_time"
-              },
-              {
-                "name": "use_ food_section"
-              },
-              {
-                "name": "findout_re-opening_Opark"
-              },
-              {
-                "name": "How_get_know_Opark"
-              },
-              {
-                "name": "use_Opark_again"
-              },
-              {
-                "name": "introduce_Opark_to_friends"
-              },
-              {
-                "name": "How_many_friends_come"
-              },
-              {
-                "name": "member_Opark_customer_club"
-              },
-              {
-                "name": "comments_suggestions"
-              },
-              {
-                "name": "excel_file_name"
-              }
-            ]
-          },
-          {
-            "name": "crm detail_score",
-            "columnPermissions": [
-              {
-                "name": "topic"
-              },
-              {
-                "name": "Score"
-              },
-              {
-                "name": "Phone_number"
-              },
-              {
-                "name": "ID"
-              }
-            ]
           }
         ]
       },
