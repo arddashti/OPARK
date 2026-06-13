@@ -7718,6 +7718,149 @@
             "formatString": "#,#"
           }
         ]
+      },
+      {
+        "name": "rah cost_center_expense_details_budget",
+        "columns": [
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "sourceColumn": "Date"
+          },
+          {
+            "name": "Code_SL",
+            "dataType": "string",
+            "sourceColumn": "Code_SL"
+          },
+          {
+            "name": "Title_SL",
+            "dataType": "string",
+            "sourceColumn": "Title_SL"
+          },
+          {
+            "name": "Code_GL",
+            "dataType": "string",
+            "sourceColumn": "Code_GL"
+          },
+          {
+            "name": "Title_GL",
+            "dataType": "string",
+            "sourceColumn": "Title_GL"
+          },
+          {
+            "name": "Code_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Code_AccountGroup"
+          },
+          {
+            "name": "Title_AccountGroup",
+            "dataType": "string",
+            "sourceColumn": "Title_AccountGroup"
+          },
+          {
+            "name": "Code_DL_level4",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level4"
+          },
+          {
+            "name": "Title_DL_level4",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level4"
+          },
+          {
+            "name": "Code_DL_level5",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level5"
+          },
+          {
+            "name": "Title_DL_level5",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level5"
+          },
+          {
+            "name": "Code_DL_level6",
+            "dataType": "string",
+            "sourceColumn": "Code_DL_level6"
+          },
+          {
+            "name": "Title_DL_level6",
+            "dataType": "string",
+            "sourceColumn": "Title_DL_level6"
+          },
+          {
+            "name": "profit_loss",
+            "dataType": "string",
+            "sourceColumn": "profit_loss"
+          },
+          {
+            "name": "profit_loss_id",
+            "dataType": "string",
+            "sourceColumn": "profit_loss_id"
+          },
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "doc_type",
+            "dataType": "string",
+            "sourceColumn": "doc_type"
+          },
+          {
+            "name": "change_amount",
+            "dataType": "double",
+            "sourceColumn": "change_amount",
+            "formatString": "#,#"
+          },
+          {
+            "name": "Debit",
+            "dataType": "double",
+            "sourceColumn": "Debit"
+          },
+          {
+            "name": "Credit",
+            "dataType": "double",
+            "sourceColumn": "Credit"
+          },
+          {
+            "name": "permission",
+            "dataType": "string",
+            "sourceColumn": "permission"
+          },
+          {
+            "name": "permission_id",
+            "dataType": "string",
+            "sourceColumn": "permission_id"
+          },
+          {
+            "name": "jyear",
+            "dataType": "string",
+            "sourceColumn": "jyear"
+          },
+          {
+            "name": "jmonthN",
+            "dataType": "int64",
+            "sourceColumn": "jmonthN"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/192 168 26 26;OPARK_BI\",",
+                "    rah_cost_center_expense_details_budget = Source{[Schema=\"rah\",Item=\"cost_center_expense_details_budget\"]}[Data],",
+                "    #\"Replaced Value\" = Table.ReplaceValue(rah_cost_center_expense_details_budget,\"ي\",\"ی\",Replacer.ReplaceText,{\"Title_SL\", \"Title_GL\", \"Title_AccountGroup\", \"Title_DL_level4\", \"Title_DL_level5\", \"Title_DL_level6\", \"profit_loss\", \"doc_type\"})",
+                "in",
+                "    #\"Replaced Value\""
+              ]
+            }
+          }
+        ]
       }
     ],
     "relationships": [
